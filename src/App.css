@@ -1,38 +1,57 @@
-.App {
-  text-align: center;
+/* App.css */
+
+/* Header */
+.header {
+  background: #001529;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Logo - You can customize this as needed */
+.logo {
+  height: 32px;
+  width: 120px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 16px 28px 16px 0;
+  float: left;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* Sider (Side Panel) */
+.site-layout-background {
+  background: #fff; /* Background color of the Sider */
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+/* Expand Button */
+.expand-button {
+  padding: 16px;
+  cursor: pointer;
+  color: #fff; /* White text color */
 }
 
-.App-link {
-  color: #61dafb;
+/* Menu */
+.ant-menu {
+  background: #001529; /* Background color of the Menu */
+  color: #fff; /* Text color of the Menu */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Menu Item */
+.ant-menu-item, .ant-menu-submenu-title {
+  color: #fff; /* Text color of Menu Items and Submenu Titles */
+}
+
+/* Active Menu Item */
+.ant-menu-item-selected {
+  background: #1890ff; /* Background color of the selected Menu Item */
+}
+
+/* Breadcrumb */
+.site-layout-background .ant-breadcrumb {
+  margin: 16px 0;
+  color: #001529; /* Text color of Breadcrumb */
+}
+
+/* Content */
+.site-layout-background .site-layout-background {
+  padding: 24px;
+  margin: 0;
+  min-height: 280px;
+  background: #fff; /* Background color of Content */
 }
