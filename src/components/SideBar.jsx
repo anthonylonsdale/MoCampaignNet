@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React from 'react'
 import {Button, Layout, Menu} from 'antd'
 import {
   HomeOutlined,
@@ -9,19 +9,12 @@ import {
 } from '@ant-design/icons'
 
 
-const {Header, Sider, Content} = Layout
+const {Sider, Content} = Layout
 
-function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false)
-
-  const toggleSidebar = () => {
-    setCollapsed(!collapsed)
-  }
-
+function Sidebar({collapsed, toggleSidebar}) {
   return (
     <Layout style={{minHeight: '100vh'}}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className="logo">Logo</div>
         <Menu theme="dark" mode="vertical" defaultSelectedKeys={['1']}>
           <Menu.Item key="1" icon={<HomeOutlined />}>
             Home
@@ -35,8 +28,7 @@ function Sidebar() {
         </Menu>
       </Sider>
       <Layout className="site-layout">
-        <Header className="site-layout-background" style={{padding: 0}}>
-          {collapsed ? (
+        {collapsed ? (
             <Button
               className="trigger"
               onClick={toggleSidebar}
@@ -49,7 +41,6 @@ function Sidebar() {
               icon={<MenuFoldOutlined />}
             />
           )}
-        </Header>
         <Content
           className="site-layout-background"
           style={{
