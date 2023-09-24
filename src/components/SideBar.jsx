@@ -1,15 +1,17 @@
-// App.jsx
 import React, {useState} from 'react'
-import {Button, Layout} from 'antd'
+import {Button, Layout, Menu} from 'antd'
 import {
+  HomeOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  SettingOutlined,
+  UserOutlined,
 } from '@ant-design/icons'
-import Sidebar from './components/SideBar.jsx'
 
-const {Header, Content} = Layout
 
-function App() {
+const {Header, Sider, Content} = Layout
+
+function Sidebar() {
   const [collapsed, setCollapsed] = useState(false)
 
   const toggleSidebar = () => {
@@ -18,7 +20,20 @@ function App() {
 
   return (
     <Layout style={{minHeight: '100vh'}}>
-      <Sidebar collapsed={collapsed} toggleSidebar={toggleSidebar} />
+      <Sider trigger={null} collapsible collapsed={collapsed}>
+        <div className="logo">Logo</div>
+        <Menu theme="dark" mode="vertical" defaultSelectedKeys={['1']}>
+          <Menu.Item key="1" icon={<HomeOutlined />}>
+            Home
+          </Menu.Item>
+          <Menu.Item key="2" icon={<UserOutlined />}>
+            Profile
+          </Menu.Item>
+          <Menu.Item key="3" icon={<SettingOutlined />}>
+            Settings
+          </Menu.Item>
+        </Menu>
+      </Sider>
       <Layout className="site-layout">
         <Header className="site-layout-background" style={{padding: 0}}>
           {collapsed ? (
@@ -51,4 +66,4 @@ function App() {
   )
 }
 
-export default App
+export default Sidebar
