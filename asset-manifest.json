@@ -1,16 +1,15 @@
 {
   "files": {
-    "main.css": "/MoCampaignNet/static/css/main.073c9b0a.css",
-    "main.js": "/MoCampaignNet/static/js/main.1536485d.js",
+    "main.css": "/MoCampaignNet/static/css/main.e6c13ad2.css",
+    "main.js": "/MoCampaignNet/static/js/main.b2c8a29e.js",
     "static/js/787.28cb0dcd.chunk.js": "/MoCampaignNet/static/js/787.28cb0dcd.chunk.js",
-    "static/media/logo.svg": "/MoCampaignNet/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
     "index.html": "/MoCampaignNet/index.html",
-    "main.073c9b0a.css.map": "/MoCampaignNet/static/css/main.073c9b0a.css.map",
-    "main.1536485d.js.map": "/MoCampaignNet/static/js/main.1536485d.js.map",
+    "main.e6c13ad2.css.map": "/MoCampaignNet/static/css/main.e6c13ad2.css.map",
+    "main.b2c8a29e.js.map": "/MoCampaignNet/static/js/main.b2c8a29e.js.map",
     "787.28cb0dcd.chunk.js.map": "/MoCampaignNet/static/js/787.28cb0dcd.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.073c9b0a.css",
-    "static/js/main.1536485d.js"
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.b2c8a29e.js"
   ]
 }
