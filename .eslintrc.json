@@ -1,0 +1,64 @@
+{
+    "parser": "@typescript-eslint/parser",
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "google",
+        "plugin:react/recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:import/recommended"
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "ecmaFeatures": {
+          "modules": true,
+          "jsx": true
+        },
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react",
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "require-jsdoc": "off",
+        "semi": "off",
+        "eqeqeq": ["error", "always"],
+        "comma-dangle": [
+          "warn",
+          {
+            "arrays": "always-multiline",
+            "objects": "always-multiline",
+            "imports": "always-multiline",
+            "exports": "always-multiline",
+            "functions": "always-multiline"
+          }
+        ],
+        "react/display-name": ["off", { "ignoreTranspilerName": false }],
+        "no-underscore-dangle": 0,
+        "@typescript-eslint/semi": ["warn", "never"],
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/no-use-before-define": "off",
+        "react/prop-types": "off",
+        "react/no-unused-prop-types": "warn",
+        "react/jsx-props-no-spreading": "off",
+        "react/require-default-props": "off",
+        "@typescript-eslint/no-unused-vars": "error",
+        "@typescript-eslint/no-explicit-any": "warn",
+        "no-use-before-define": "off",
+        "import/prefer-default-export": "off",
+        //"unused-imports/no-unused-imports-ts": 2,
+        "no-duplicate-imports":"error",
+        "import/no-cycle": 1,
+        "import/extensions": 0,
+        "sort-imports": 1,
+        "import/first": "error",
+        "import/newline-after-import": "error",
+        "import/no-duplicates": "error",
+        //"simple-import-sort/exports": "error",
+        "no-plusplus": "off",
+        "no-console": ["warn", { "allow": ["warn", "error"] }]
+      }
+}
