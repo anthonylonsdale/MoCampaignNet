@@ -13,7 +13,9 @@
   margin: 16px 28px 16px 0;
   float: left;
 }
-
+.disable-select {
+  user-select: none;
+}
 /* Sider (Side Panel) */
 .site-layout-background {
   background: #fff; /* Background color of the Sider */

@@ -1,41 +1,62 @@
-import React, {useState} from 'react'
-import {Layout, Menu} from 'antd'
+import { Divider, Layout, Space, Typography } from 'antd'
+import React, { useState } from 'react'
 
-import Sidebar from './components/SideBar.jsx'
-import {Header} from 'antd/es/layout/layout.js'
+import CustomHeader from './components/CustomHeader.jsx'
+import Sidebar from './components/Sidebar.jsx'
+
+import './App.css'
+
+const { Content } = Layout
+const { Title, Paragraph } = Typography
 
 function App() {
-  const [collapsed, setCollapsed] = useState(false)
+  const [collapsed, setCollapsed] = useState(true)
 
   const toggleSidebar = () => {
     setCollapsed(!collapsed)
   }
 
   return (
-    <Layout style={{minHeight: '100vh'}}>
-      <Header
-        className="site-layout-background"
-        style={{padding: 0, display: 'flex', alignItems: 'center'}}
-      >
-        <div style={{flex: 1}}>
-          <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']}>
-            <Menu.Item key="1">Home</Menu.Item>
-            <Menu.Item key="2">Portfolio</Menu.Item>
-            <Menu.Item key="3">Campaign Tools</Menu.Item>
-          </Menu>
-        </div>
-      </Header>
-      <Sidebar collapsed={collapsed} toggleSidebar={toggleSidebar} />
-      <div
-        style={{
-          padding: 24,
-          minHeight: 280,
-          transition: 'margin-left 0.3s',
-          marginLeft: collapsed ? 80 : 200, // Adjust the width when collapsed
-        }}
-      >
-          Content goes here. This content is in the App component.
-      </div>
+    <Layout style={{ minHeight: '100vh' }}>
+      <CustomHeader />
+      <Layout>
+        <Sidebar collapsed={collapsed} toggleSidebar={toggleSidebar} />
+        <Content
+          style={{
+            padding: 24,
+            minHeight: 280,
+          }}
+        >
+          <Space direction="vertical" style={{ width: '100%' }}>
+            <Title level={2}>Political Campaign Content</Title>
+            <Divider />
+            <Paragraph>
+              Welcome
+              Welcome to our political campaign platform. Here, you can find
+              valuable information, updates, and resources for your campaign.
+            </Paragraph>
+            <Divider />
+            <Space size="large">
+              <div>
+                <Title level={3}>Campaign Images</Title>
+                {/* Add your campaign images here */}
+                <img
+                  src="your-image-url.jpg"
+                  alt="Campaign Image"
+                  style={{ maxWidth: '100%' }}
+                />
+              </div>
+              <div>
+                <Title level={3}>Campaign Updates</Title>
+                {/* Add campaign updates here */}
+                <Paragraph>
+                  Stay tuned for the latest campaign updates and news.
+                </Paragraph>
+              </div>
+            </Space>
+          </Space>
+        </Content>
+      </Layout>
     </Layout>
   )
 }

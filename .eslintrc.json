@@ -36,8 +36,11 @@
             "functions": "always-multiline"
           }
         ],
+        "object-curly-spacing": ["warn", "always"],
+        "quotes": ["error"],
         "react/display-name": ["off", { "ignoreTranspilerName": false }],
         "no-underscore-dangle": 0,
+        "max-len": 1,
         "@typescript-eslint/semi": ["warn", "never"],
         "@typescript-eslint/explicit-module-boundary-types": "off",
         "@typescript-eslint/no-use-before-define": "off",
@@ -49,15 +52,13 @@
         "@typescript-eslint/no-explicit-any": "warn",
         "no-use-before-define": "off",
         "import/prefer-default-export": "off",
-        //"unused-imports/no-unused-imports-ts": 2,
         "no-duplicate-imports":"error",
         "import/no-cycle": 1,
         "import/extensions": 0,
         "sort-imports": 1,
         "import/first": "error",
-        "import/newline-after-import": "error",
+        "import/newline-after-import": "warn",
         "import/no-duplicates": "error",
-        //"simple-import-sort/exports": "error",
         "no-plusplus": "off",
         "no-console": ["warn", { "allow": ["warn", "error"] }]
       }
