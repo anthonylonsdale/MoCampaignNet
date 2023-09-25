@@ -39,13 +39,13 @@ function CustomHeader() {
             maxWidth: '30rem' }}
         >
           <Menu.Item key="1" style={{ flex: 1, textAlign: 'center' }}>
-            Home
+            <Link to="/">Home</Link>
           </Menu.Item>
           <Menu.Item key="2" style={{ flex: 1, textAlign: 'center' }}>
-            Portfolio
+            <Link to="/portfolio">Portfolio</Link>
           </Menu.Item>
           <Menu.Item key="3" style={{ flex: 1, textAlign: 'center' }}>
-            Campaign Tools
+            <Link to="/campaign-tools">Campaign Tools</Link>
           </Menu.Item>
         </Menu>
       </div>

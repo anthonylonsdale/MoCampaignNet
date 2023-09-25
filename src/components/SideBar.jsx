@@ -13,23 +13,32 @@ const { Sider } = Layout
 
 function Sidebar({ collapsed, toggleSidebar }) {
   return (
-    <Sider trigger={null} collapsible collapsed={collapsed}>
+    <Sider
+      trigger={null}
+      collapsible
+      collapsed={collapsed}
+      width={collapsed ? 50 : 150}
+    >
       <Menu theme="dark" mode="vertical" defaultSelectedKeys={['1']}>
-        <Menu.Item key="1" onClick={toggleSidebar}
-          icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}>
+        <Menu.Item
+          key="1"
+          onClick={toggleSidebar}
+          icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+        >
           {collapsed === false && 'Collapse'}
         </Menu.Item>
         <Menu.Item key="2" icon={<HomeOutlined />}>
-            Home
+          Home
         </Menu.Item>
         <Menu.Item key="3" icon={<UserOutlined />}>
-            Profile
+          Profile
         </Menu.Item>
         <Menu.Item key="4" icon={<SettingOutlined />}>
-            Settings
+          Settings
         </Menu.Item>
       </Menu>
     </Sider>
+
   )
 }
 

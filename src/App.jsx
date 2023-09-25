@@ -1,10 +1,11 @@
 import { Divider, Layout, Space, Typography } from 'antd'
 import React, { useState } from 'react'
 
+import './App.css'
+
 import CustomHeader from './components/CustomHeader.jsx'
 import Sidebar from './components/Sidebar.jsx'
 
-import './App.css'
 
 const { Content } = Layout
 const { Title, Paragraph } = Typography
