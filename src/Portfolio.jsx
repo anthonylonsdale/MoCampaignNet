@@ -10,7 +10,7 @@ import Sidebar from './components/SideBar.jsx'
 const { Content } = Layout
 const { Title, Paragraph } = Typography
 
-function App() {
+function Portfolio() {
   const [collapsed, setCollapsed] = useState(true)
 
   const toggleSidebar = () => {
@@ -32,9 +32,7 @@ function App() {
             <Title level={2}>Political Campaign Content</Title>
             <Divider />
             <Paragraph>
-              Welcome
-              Welcome to our political campaign platform. Here, you can find
-              valuable information, updates, and resources for your campaign.
+                Gubs
             </Paragraph>
             <Divider />
             <Space size="large">
@@ -51,7 +49,7 @@ function App() {
                 <Title level={3}>Campaign Updates</Title>
                 {/* Add campaign updates here */}
                 <Paragraph>
-                  Stay tuned for the latest campaign updates and news.
+                  GUBS
                 </Paragraph>
               </div>
             </Space>
@@ -62,4 +60,4 @@ function App() {
   )
 }
 
-export default App
+export default Portfolio
