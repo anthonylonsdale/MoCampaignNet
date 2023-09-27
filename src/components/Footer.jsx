@@ -13,13 +13,11 @@ const importantLinks = [
   { title: 'Services', path: '/services' },
 ]
 
-
 function AppFooter() {
   return (
-    <Footer className="site-layout-background">
-
+    <Footer className="footer">
       <Divider />
-      <Row>
+      <Row justify={'space-around'}>
         <Col>
           <div>
             <Title level={4}>Contact Us</Title>

@@ -2,9 +2,9 @@
 
 /* Footer container */
 .footer {
-    background-color: #333; /* Dark background color for the footer */
-    color: #fff; /* Text color */
+    background-color: #fff; /* Dark background color for the footer */
     padding: 20px 0;
+    justify-content: space-between;
   }
   
   /* Contact info */
