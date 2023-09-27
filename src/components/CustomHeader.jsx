@@ -1,6 +1,6 @@
 import { Image, Layout, Menu, Typography } from 'antd'
-import Link from 'antd/es/typography/Link'
 import React from 'react'
+import { Link } from 'react-router-dom'
 import logo from '../images/logo.png'
 
 const { Header } = Layout
@@ -42,9 +42,6 @@ function CustomHeader() {
             <Link to="/">Home</Link>
           </Menu.Item>
           <Menu.Item key="2" style={{ flex: 1, textAlign: 'center' }}>
-            <Link to="/portfolio">Portfolio</Link>
-          </Menu.Item>
-          <Menu.Item key="3" style={{ flex: 1, textAlign: 'center' }}>
             <Link to="/campaign-tools">Campaign Tools</Link>
           </Menu.Item>
         </Menu>
