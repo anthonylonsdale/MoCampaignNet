@@ -1,25 +1,25 @@
 import { Divider, Layout, Space, Typography } from 'antd'
-import React, { useState } from 'react'
+import React from 'react'
 
 import '../App.css'
 
-import Sidebar from '../components/SideBar.jsx'
 
 const { Content } = Layout
 const { Title, Paragraph } = Typography
 
 
 function Homescreen() {
-  const [collapsed, setCollapsed] = useState(true)
+  /* const [collapsed, setCollapsed] = useState(true)
 
   const toggleSidebar = () => {
     setCollapsed(!collapsed)
   }
+  */
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Layout>
-        <Sidebar collapsed={collapsed} toggleSidebar={toggleSidebar} />
+        {/* <Sidebar collapsed={collapsed} toggleSidebar={toggleSidebar} />*/}
         <Content
           style={{
             padding: 24,
@@ -28,9 +28,8 @@ function Homescreen() {
         >
           <Space direction="vertical" style={{ width: '100%' }}>
             <Title level={2}>
-                      Specializing in independent Software Development,
-                      Modeling and Political Consulting. Founded in 2021
-
+              Specializing in independent Software Development,
+              Modeling and Political Consulting. Founded in 2021
             </Title>
             <Divider />
             <Paragraph>

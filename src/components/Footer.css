@@ -1,0 +1,42 @@
+/* AppFooter.css */
+
+/* Footer container */
+.footer {
+    background-color: #333; /* Dark background color for the footer */
+    color: #fff; /* Text color */
+    padding: 20px 0;
+  }
+  
+  /* Contact info */
+  .contact-info h4 {
+    font-size: 18px; /* Adjust the font size as needed */
+    margin-bottom: 10px;
+  }
+  
+  /* Important Links container */
+  .important-links {
+    background-color: #444; /* Background color for the important links section */
+    padding: 20px;
+    border-radius: 8px; /* Rounded corners */
+    width: 100%
+  }
+  
+  /* Important Links title */
+  .important-links h4 {
+    color: #fff; /* Text color for the title */
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  /* Important Links list */
+  .important-links .ant-list-item {
+    margin-bottom: 6px;
+  }
+  
+  /* Copyright text */
+  .copyright {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+  }
+  

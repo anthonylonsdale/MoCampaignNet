@@ -1,3 +1,8 @@
+import {
+  HomeOutlined,
+  SettingOutlined,
+  UserOutlined,
+} from '@ant-design/icons'
 import { Image, Layout, Menu, Typography } from 'antd'
 import React from 'react'
 import { Link } from 'react-router-dom'
@@ -33,15 +38,24 @@ function CustomHeader() {
         <Menu
           theme="dark"
           mode="horizontal"
-          defaultSelectedKeys={['1']}
-          className="disable-select"
-          style={{ display: 'flex', justifyContent: 'space-between', flex: 1,
-            maxWidth: '30rem' }}
+          className="disable-select custom-menu"
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            flex: 1,
+            maxWidth: '30rem',
+          }}
         >
-          <Menu.Item key="1" style={{ flex: 1, textAlign: 'center' }}>
+          <Menu.Item key="1" className="custom-menu-item"
+            icon={<HomeOutlined />}>
             <Link to="/">Home</Link>
           </Menu.Item>
-          <Menu.Item key="2" style={{ flex: 1, textAlign: 'center' }}>
+          <Menu.Item key="2" className="custom-menu-item"
+            icon={<UserOutlined />}>
+            <Link to="/portfolio">Portfolio</Link>
+          </Menu.Item>
+          <Menu.Item key="3" className="custom-menu-item"
+            icon={<SettingOutlined />}>
             <Link to="/campaign-tools">Campaign Tools</Link>
           </Menu.Item>
         </Menu>
