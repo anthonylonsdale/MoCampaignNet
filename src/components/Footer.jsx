@@ -1,9 +1,7 @@
 import { Col, Divider, Layout, List, Row, Typography } from 'antd'
 import React from 'react'
-
 import { Link } from 'react-router-dom'
 import './Footer.css'; // Import the CSS file
-
 
 const { Footer } = Layout
 const { Title, Text } = Typography
@@ -17,25 +15,27 @@ function AppFooter() {
   return (
     <Footer className="footer">
       <Divider />
-      <Row justify={'space-around'}>
-        <Col>
-          <div>
-            <Title level={4}>Contact Us</Title>
-            <Text>Email: alonsdale@bernoullitechnologies.net</Text><br />
-            <Text>Phone: (816) 872-7762</Text><br />
-            <Text>Address: 1320 Huntington Drive, Liberty MO 64068</Text>
+      <Row gutter={[16, 16]} justify="space-around">
+        <Col xs={24} sm={12} md={8} lg={6}>
+          <div className="contact-info">
+            <Title level={4} className="title">Contact Us</Title>
+            <address>
+              <Text>Email: alonsdale@bernoullitechnologies.net</Text><br />
+              <Text>Phone: (816) 872-7762</Text><br />
+              <Text>Address: 1320 Huntington Drive, Liberty MO 64068</Text>
+            </address>
           </div>
         </Col>
-        <Col>
+        <Col xs={24} sm={12} md={8} lg={6}>
           <div className="important-links">
-            <Title level={4}>Important Links</Title>
+            <Title level={4} className="title">Important Links</Title>
             <List
               size="small"
               bordered
               dataSource={importantLinks}
               renderItem={(item) => (
                 <List.Item>
-                  <Link to={item.path}>{item.title}</Link>
+                  <Link to={item.path} className="link">{item.title}</Link>
                 </List.Item>
               )}
             />
@@ -44,8 +44,7 @@ function AppFooter() {
       </Row>
       <Divider />
       <div className="copyright">
-        <Text>&copy; {new Date().getFullYear()} Bernoulli Technologies.
-        All rights reserved.</Text>
+        <Text>&copy; {new Date().getFullYear()} Bernoulli Technologies. All rights reserved.</Text>
       </div>
     </Footer>
   )

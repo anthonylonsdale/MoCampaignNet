@@ -3,6 +3,8 @@ import React from 'react'
 
 import './Homescreen.css'
 
+import TypingEffect from '../components/TypingEffect.jsx'
+
 
 const { Content } = Layout
 const { Title, Paragraph } = Typography
@@ -19,13 +21,23 @@ function Homescreen() {
           }}
         >
           <Space direction="vertical" style={{ width: '100%' }}>
-            <Title level={2}>
-              Specializing in
-            </Title>
-            <Title level={3} className='type-animation'>
-              independent Software Development,
-              Modeling and Political Consulting. Founded in 2021
-            </Title>
+            <div style={{ display: 'flex', marginTop: '2rem',
+              alignItems: 'center', justifyContent: 'start' }}>
+              <Title level={2} style={{ marginBlockStart: '36px' }}>
+                Specializing in&nbsp;
+              </Title>
+              <TypingEffect
+                phrases={[
+                  'Innovating Political Strategies',
+                  'Advanced Data Modeling and Analysis',
+                  'Affordability and Reliability',
+                  'Delivering Conservative Victories',
+                ]}
+                typingSpeed={50}
+                pauseDuration={1500}
+              />
+            </div>
+
             <Divider />
             <Paragraph>
             Welcome to our political campaign platform. Here, you can find

@@ -1,42 +1,49 @@
-/* AppFooter.css */
-
 /* Footer container */
 .footer {
-    background-color: #fff; /* Dark background color for the footer */
-    padding: 20px 0;
-    justify-content: space-between;
-  }
-  
-  /* Contact info */
-  .contact-info h4 {
-    font-size: 18px; /* Adjust the font size as needed */
-    margin-bottom: 10px;
-  }
-  
-  /* Important Links container */
-  .important-links {
-    background-color: #444; /* Background color for the important links section */
-    padding: 20px;
-    border-radius: 8px; /* Rounded corners */
-    width: 100%
-  }
-  
-  /* Important Links title */
-  .important-links h4 {
-    color: #fff; /* Text color for the title */
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
-  
-  /* Important Links list */
-  .important-links .ant-list-item {
-    margin-bottom: 6px;
-  }
-  
-  /* Copyright text */
-  .copyright {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 14px;
-  }
-  
+  background-color: #fff;
+  padding: 20px;
+  justify-content: space-between;
+}
+
+/* Contact info */
+.contact-info .title {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+/* Address */
+address {
+  font-style: normal;
+}
+
+/* Important Links container */
+.important-links {
+  background-color: #444;
+  padding: 20px;
+  border-radius: 8px;
+  width: 100%;
+}
+
+/* Title */
+.title {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+/* Important Links list */
+.important-links .ant-list-item {
+  margin-bottom: 6px;
+}
+
+/* Link */
+.link:hover {
+  color: #0073e6;
+  text-decoration: underline;
+}
+
+/* Copyright text */
+.copyright {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+}

@@ -1,54 +1,38 @@
+.text-container {
+  display: inline-block; /* Make the container inline to fit the text width */
+  white-space: nowrap; /* Prevent line breaks within the text */
+  overflow: hidden; /* Hide overflow to clip the animation */
+  width: 100%; /* Set a fixed width for the container */
+}
 
 .type-animation {
-    font-size: 24px;
-    color: #1890ff;
-    font-weight: bold;
-    text-transform: uppercase;
-    text-align: center;
-    overflow: hidden;
-    white-space: nowrap;
-    top: 0;
-    transition: width 1.5s linear;
-    animation: typing 5s steps(100) infinite, untyping 5s steps(100) infinite 3s;
-    position: relative; /* Required for cursor positioning */
+  font-size: 24px;
+  color: #1890ff;
+  font-weight: bold;
+  text-transform: uppercase;
+  position: relative; /* Required for cursor positioning */
+  width: 100%; /* Set the same fixed width as the container */
+  animation: typing 5s steps(100) infinite;
 }
 
-  .blink {
-    animation: blinking 2s step-start infinite;
-  }
-
-  @keyframes blinking {
-    0%, 100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0;
-    }
-  }
-  
-  @keyframes untyping {
-    0%, 100% {
-      width: 100%;
-    }
-    50% {
-      width: 0;
-    }
+.blink {
+  animation: blinking 2s step-start infinite;
 }
 
-  @keyframes typing {
-    0%, 100% {
-      width: 0;
-    }
-    50% {
-      width: 100%;
-    }
+@keyframes blinking {
+  0%, 100% {
+    opacity: 1;
   }
-  
-  @keyframes untyping {
-    0%, 100% {
-      width: 100%;
-    }
-    50% {
-      width: 0;
-    }
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes typing {
+  0% {
+    width: 0; /* Start with zero width */
+  }
+  100% {
+    width: 100%; /* End with full width */
+  }
 }
