@@ -6,7 +6,7 @@ import { Typography } from 'antd'
 const { Title } = Typography
 
 
-const TypingEffect = ({ phrases, typingSpeed = 100, pauseDuration = 2000 }) => {
+const TypingEffect = ({ phrases, typingSpeed, untypeSpeed, pauseDuration }) => {
   const [displayedText, setDisplayedText] = useState('')
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0)
   const timeoutIds = useRef([])
@@ -35,7 +35,7 @@ const TypingEffect = ({ phrases, typingSpeed = 100, pauseDuration = 2000 }) => {
         const timeoutId = setTimeout(type, typingSpeed)
         timeoutIds.current.push(timeoutId)
       } else {
-        const timeoutId = setTimeout(untype, typingSpeed)
+        const timeoutId = setTimeout(untype, untypeSpeed)
         timeoutIds.current.push(timeoutId)
       }
     }

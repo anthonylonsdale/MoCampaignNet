@@ -1,8 +1,9 @@
-import { Button, Form, Input, Typography } from 'antd'
+import { Button, Form, Image, Input, Typography, message } from 'antd'
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import './auth.css'; // Import the CSS file
+import logo from '../images/logo.png'
+import './auth.css'
 
 
 const { Text } = Typography
@@ -16,6 +17,7 @@ function Auth() {
     const auth = getAuth()
     try {
       await signInWithEmailAndPassword(auth, email, password)
+      message.success('Account created successfully')
       history('/campaign-tools')
     } catch (error) {
       setError(error.message)
@@ -24,6 +26,7 @@ function Auth() {
 
   return (
     <div className="auth-container">
+      <Image src={logo} alt="Your Logo" className="logo" preview={false} />
       <Form
         name="signin"
         onFinish={onFinish}
@@ -40,7 +43,7 @@ function Auth() {
             },
           ]}
         >
-          <Input placeholder="Email" />
+          <Input />
         </Form.Item>
         <Form.Item
           label="Password"
@@ -52,7 +55,7 @@ function Auth() {
             },
           ]}
         >
-          <Input.Password placeholder="Password" />
+          <Input.Password />
         </Form.Item>
         {error && <div className="error">{error}</div>}
         <Form.Item>

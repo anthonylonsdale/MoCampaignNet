@@ -28,20 +28,21 @@ function Homescreen() {
               </Title>
               <TypingEffect
                 phrases={[
-                  'Innovating Political Strategies',
+                  'Innovative Political Strategies',
                   'Advanced Data Modeling and Analysis',
                   'Affordability and Reliability',
                   'Delivering Conservative Victories',
                 ]}
                 typingSpeed={50}
+                untypeSpeed={25}
                 pauseDuration={1500}
               />
             </div>
 
             <Divider />
             <Paragraph>
-            Welcome to our political campaign platform. Here, you can find
-            valuable information, updates, and resources for your campaign.
+              Welcome to our political campaign platform. Here, you can find
+              valuable information, updates, and resources for your campaign.
             </Paragraph>
             <Divider />
             <Space size="large">
@@ -56,7 +57,7 @@ function Homescreen() {
               <div>
                 <Title level={3}>Campaign Updates</Title>
                 <Paragraph>
-                Stay tuned for the latest campaign updates and news.
+                  Stay tuned for the latest campaign updates and news.
                 </Paragraph>
               </div>
             </Space>
