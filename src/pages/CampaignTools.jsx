@@ -1,8 +1,8 @@
-// CampaignTools.js
 import { Button, Layout, Space, Typography } from 'antd'
 import { GoogleAuthProvider, getAuth, signInWithPopup, signOut } from 'firebase/auth'
 import React, { useEffect, useState } from 'react'
 import '../App.css'
+import AccountSettingsModal from '../auth/AccountSettingsModal.jsx'
 import SignIn from '../auth/Signin.jsx'
 import CustomHeader from '../components/CustomHeader.jsx'
 import Sidebar from '../components/SideBar.jsx'
@@ -10,9 +10,10 @@ import Sidebar from '../components/SideBar.jsx'
 const { Content } = Layout
 const { Title } = Typography
 
-const CampaignTools = () => {
+function CampaignTools() {
   const [collapsed, setCollapsed] = useState(true)
   const [user, setUser] = useState(null)
+  const [modalVisible, setModalVisible] = useState(false)
   const auth = getAuth()
   console.log(auth)
 
@@ -61,7 +62,14 @@ const CampaignTools = () => {
           <Space direction="vertical" style={{ width: '100%' }}>
             <Title level={2}>TEST</Title>
             {user ? (
-              <Button onClick={handleSignOut}>Sign Out</Button>
+              <>
+                <Button onClick={handleSignOut}>Sign Out</Button>
+                <Button onClick={() => setModalVisible(true)}>Account Settings</Button>
+                <AccountSettingsModal
+                  visible={modalVisible}
+                  onCancel={() => setModalVisible(false)}
+                />
+              </>
             ) : (
               <SignIn handleSignIn={handleSignIn} />
             )}

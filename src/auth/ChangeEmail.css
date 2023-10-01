@@ -1,0 +1,59 @@
+/* ResetPassword.css */
+
+/* Style for the container */
+.container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Style for the title */
+  h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  /* Style for the input field */
+  .input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  /* Style for the button */
+  .submit-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    height: fit-content;
+  }
+  
+  /* Style for the message div */
+  .message {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #007bff;
+  }
+  
+  /* Style for the password requirements list */
+  .password-requirements {
+    list-style-type: none;
+    margin: 10px 0;
+    padding: 0;
+  }
+  
+  .password-requirements li {
+    font-size: 14px;
+    margin-left: 20px;
+    position: relative;
+  }

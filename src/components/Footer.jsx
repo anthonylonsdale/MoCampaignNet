@@ -44,7 +44,8 @@ function AppFooter() {
       </Row>
       <Divider />
       <div className="copyright">
-        <Text>&copy; {new Date().getFullYear()} Bernoulli Technologies. All rights reserved.</Text>
+        <Text>&copy; {new Date().getFullYear()} Bernoulli
+        Technologies. All rights reserved.</Text>
       </div>
     </Footer>
   )
