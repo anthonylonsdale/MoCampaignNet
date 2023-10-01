@@ -4,11 +4,17 @@
   "private": true,
   "homepage": "https://bernoullitechnologies.net",
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.4.2",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "antd": "^5.9.2",
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "firebaseui": "^6.1.0",
+    "fortawesome": "^0.0.1-security",
     "leaflet": "^1.9.4",
+    "mongoose": "^7.5.3",
     "react": "^18.2.0",
     "react-bootstrap": "^2.8.0",
     "react-dom": "^18.2.0",
@@ -45,11 +51,11 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "eslint": "^8.50.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-react": "^7.33.2",
     "gh-pages": "^6.0.0",
-    "prettier": "^3.0.3",
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+    "prettier": "^3.0.3"
   }
 }
