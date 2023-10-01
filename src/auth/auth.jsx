@@ -1,20 +1,69 @@
-import React, { useEffect } from 'react'
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
-import './auth.css'; // Importing a new CSS file
-import { ui, uiConfig } from './firebase.jsx'
+import { Button, Form, Input, Typography } from 'antd'
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import './auth.css'; // Import the CSS file
 
-const Auth = () => {
-  useEffect(() => {
-    ui.start('#firebaseui-auth-container', uiConfig)
-  }, [])
+
+const { Text } = Typography
+
+function Auth() {
+  const [error, setError] = useState('')
+  const history = useNavigate()
+
+  const onFinish = async (values) => {
+    const { email, password } = values
+    const auth = getAuth()
+    try {
+      await signInWithEmailAndPassword(auth, email, password)
+      history('/campaign-tools')
+    } catch (error) {
+      setError(error.message)
+    }
+  }
 
   return (
     <div className="auth-container">
-      <div id="firebaseui-auth-container"></div>
-      <div className="auth-links">
-        <Link to="/signin" className="auth-link">Sign In</Link>
-        <Link to="/signup" className="auth-link">Sign Up</Link>
-      </div>
+      <Form
+        name="signin"
+        onFinish={onFinish}
+        layout="vertical"
+      >
+        <Form.Item
+          label="Email"
+          name="email"
+          rules={[
+            {
+              required: true,
+              type: 'email',
+              message: 'Please enter a valid email address!',
+            },
+          ]}
+        >
+          <Input placeholder="Email" />
+        </Form.Item>
+        <Form.Item
+          label="Password"
+          name="password"
+          rules={[
+            {
+              required: true,
+              message: 'Please enter your password!',
+            },
+          ]}
+        >
+          <Input.Password placeholder="Password" />
+        </Form.Item>
+        {error && <div className="error">{error}</div>}
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Sign In
+          </Button>
+        </Form.Item>
+      </Form>
+      <Text>
+      Don&apos;t have an account? <Link to="/signup" className="auth-link">Sign Up</Link>
+      </Text>
     </div>
   )
 }

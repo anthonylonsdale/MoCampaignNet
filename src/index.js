@@ -7,7 +7,6 @@ import ProtectedRoute from './auth/protectedRoute.jsx'; // Import ProtectedRoute
 import './index.css'
 import CampaignTools from './pages/CampaignTools.jsx'
 
-import SignIn from './auth/Signin.jsx'
 import Signup from './auth/Signup.jsx'
 import Auth from './auth/auth.jsx'
 
@@ -18,7 +17,6 @@ root.render(
         <Route exact path='/' element={<App />} />
         <Route exact path='/login' element={<Auth />} />
         <Route exact path='/signup' element={<Signup />} />
-        <Route exact path='/signin' element={<SignIn />} />
         <Route path='/campaign-tools' element={
           <ProtectedRoute>
             <CampaignTools />

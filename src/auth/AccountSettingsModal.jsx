@@ -22,7 +22,7 @@ function AccountSettingsModal({ visible, onCancel }) {
           onClick={() => setActiveTab('resetPassword')}
           type={activeTab === 'resetPassword' ? 'primary' : 'default'}
         >
-          Reset Password
+          Change Password
         </Button>
         <Button
           onClick={() => setActiveTab('changeEmail')}

@@ -3,7 +3,7 @@ import { GoogleAuthProvider, getAuth, signInWithPopup, signOut } from 'firebase/
 import React, { useEffect, useState } from 'react'
 import '../App.css'
 import AccountSettingsModal from '../auth/AccountSettingsModal.jsx'
-import SignIn from '../auth/Signin.jsx'
+import Auth from '../auth/auth.jsx'
 import CustomHeader from '../components/CustomHeader.jsx'
 import Sidebar from '../components/SideBar.jsx'
 
@@ -71,7 +71,7 @@ function CampaignTools() {
                 />
               </>
             ) : (
-              <SignIn handleSignIn={handleSignIn} />
+              <Auth handleSignIn={handleSignIn} />
             )}
           </Space>
         </Content>
