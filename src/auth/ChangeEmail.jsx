@@ -10,7 +10,6 @@ function ChangeEmail() {
 
   const handleChangeEmail = async () => {
     const auth = getAuth()
-    console.log(auth)
     try {
       await updateEmail(auth.currentUser, newEmail)
       message.success('Email updated successfully.')

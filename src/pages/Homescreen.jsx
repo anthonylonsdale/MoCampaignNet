@@ -1,28 +1,28 @@
-import { Divider, Layout, Space, Typography } from 'antd'
-import React from 'react'
+import { Button, Carousel, Divider, Image, Layout, Space, Typography } from 'antd'
+import React, { useRef } from 'react'
 
 import './Homescreen.css'
 
 import TypingEffect from '../components/TypingEffect.jsx'
 
+import logo2 from '../images/JCRPlogo.jpg'
+import logo1 from '../images/JacksonCountyLogo.jpg'
+import logo4 from '../images/KCFOPLogo.png'
+import logo3 from '../images/NLStrongLogo.jpg'
 
 const { Content } = Layout
 const { Title, Paragraph } = Typography
 
 
 function Homescreen() {
+  const partnershipRef = useRef()
+
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout className="layout-min-height">
       <Layout>
-        <Content
-          style={{
-            padding: 24,
-            minHeight: 280,
-          }}
-        >
-          <Space direction="vertical" style={{ width: '100%' }}>
-            <div style={{ display: 'flex', marginTop: '2rem',
-              alignItems: 'center', justifyContent: 'start' }}>
+        <Content className="content-style">
+          <Space direction="vertical" className="space-direction">
+            <div className="flex-container">
               <Title level={2} style={{ marginBlockStart: '36px' }}>
                 Specializing in&nbsp;
               </Title>
@@ -61,6 +61,52 @@ function Homescreen() {
                 </Paragraph>
               </div>
             </Space>
+            <Divider />
+            <div className="carousel-container">
+              <Title level={3}>Our Valued Partnerships</Title>
+              <Carousel dots={false} autoplay ref={partnershipRef}>
+                <div>
+                  <Image
+                    src={logo1}
+                    alt="Logo"
+                    className="header-logo"
+                    preview={false}
+                  />
+                </div>
+                <div>
+                  <Image
+                    src={logo2}
+                    alt="Logo"
+                    className="header-logo"
+                    preview={false}
+                  />
+                </div>
+                <div>
+                  <Image
+                    src={logo3}
+                    alt="Logo"
+                    className="header-logo"
+                    preview={false}
+                  />
+                </div>
+                <div>
+                  <Image
+                    src={logo4}
+                    alt="Logo"
+                    className="header-logo"
+                    preview={false}
+                  />
+                </div>
+              </Carousel>
+              <Button className="carousel-arrow carousel-arrow-left"
+                onClick={() => {
+                  partnershipRef.current.prev()
+                }}>&lt;</Button>
+              <Button className="carousel-arrow carousel-arrow-right"
+                onClick={() => {
+                  partnershipRef.current.next()
+                }}>&gt;</Button>
+            </div>
           </Space>
         </Content>
       </Layout>

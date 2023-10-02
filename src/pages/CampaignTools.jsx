@@ -1,21 +1,21 @@
 import { Button, Layout, Space, Typography } from 'antd'
 import { GoogleAuthProvider, getAuth, signInWithPopup, signOut } from 'firebase/auth'
 import React, { useEffect, useState } from 'react'
-import '../App.css'
 import AccountSettingsModal from '../auth/AccountSettingsModal.jsx'
 import Auth from '../auth/auth.jsx'
 import CustomHeader from '../components/CustomHeader.jsx'
 import Sidebar from '../components/SideBar.jsx'
 
+import './CampaignTools.css'
+
 const { Content } = Layout
-const { Title } = Typography
+const { Text } = Typography
 
 function CampaignTools() {
   const [collapsed, setCollapsed] = useState(true)
   const [user, setUser] = useState(null)
   const [modalVisible, setModalVisible] = useState(false)
   const auth = getAuth()
-  console.log(auth)
 
   const toggleSidebar = () => {
     setCollapsed(!collapsed)
@@ -48,32 +48,39 @@ function CampaignTools() {
     return () => unsubscribe()
   }, [auth])
 
+  const userContainer = () => {
+    return (
+      <Space direction="vertical" className="user-space">
+        {user ? (
+          <Space direction="horizontal" className="user-info">
+            <Text className="welcome-text">Welcome, {user.displayName}</Text>
+            <Button className="action-button" onClick={() =>
+              setModalVisible(true)}>
+              Account Settings
+            </Button>
+            <Button className="action-button" onClick={handleSignOut}>
+              Sign Out</Button>
+            <AccountSettingsModal
+              visible={modalVisible}
+              onCancel={() => setModalVisible(false)}
+            />
+          </Space>
+        ) : (
+          <Auth handleSignIn={handleSignIn} />
+        )}
+      </Space>
+    )
+  }
+
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout className="campaign-layout">
       <CustomHeader />
       <Layout>
         <Sidebar collapsed={collapsed} toggleSidebar={toggleSidebar} />
-        <Content
-          style={{
-            padding: 24,
-            minHeight: 280,
-          }}
-        >
-          <Space direction="vertical" style={{ width: '100%' }}>
-            <Title level={2}>TEST</Title>
-            {user ? (
-              <>
-                <Button onClick={handleSignOut}>Sign Out</Button>
-                <Button onClick={() => setModalVisible(true)}>Account Settings</Button>
-                <AccountSettingsModal
-                  visible={modalVisible}
-                  onCancel={() => setModalVisible(false)}
-                />
-              </>
-            ) : (
-              <Auth handleSignIn={handleSignIn} />
-            )}
-          </Space>
+        <Content className="content">
+          <div className="user-container">
+            {userContainer()}
+          </div>
         </Content>
       </Layout>
     </Layout>

@@ -1,0 +1,42 @@
+.campaign-layout {
+    background-color: #f9f9f9; /* subtle background color */
+    min-height: 100vh;
+}
+
+.content {
+    padding: 24px;
+    min-height: 280px;
+}
+
+.user-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    background-color: #fff;
+  }
+
+.user-space {
+    width: 100%;
+}
+
+.user-info {
+    align-items: center;
+}
+
+.welcome-text {
+    font-weight: 500; /* slightly bold */
+    margin-right: 10px; /* space between text and buttons */
+}
+
+.action-button {
+    margin: 0 5px; /* space between buttons */
+    transition: background-color 0.3s; /* smooth color transition */
+}
+
+.action-button:hover {
+    background-color: #f0f0f0; /* change color on hover */
+}

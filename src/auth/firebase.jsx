@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
+import { getDatabase } from 'firebase/database'
 import * as firebaseui from 'firebaseui'
 
 const firebaseConfig = {
@@ -12,8 +13,8 @@ const firebaseConfig = {
   measurementId: 'G-M65Z2LZH55',
 }
 
-const app = initializeApp(firebaseConfig)
-const auth = getAuth(app)
+const FireBase = initializeApp(firebaseConfig)
+const auth = getAuth(FireBase)
 
 const uiConfig = {
   signInSuccessUrl: '/campaign-tools',
@@ -28,5 +29,7 @@ const uiConfig = {
 
 const ui = new firebaseui.auth.AuthUI(auth)
 
-export { auth, ui, uiConfig }
+export const db = getDatabase(FireBase)
+
+export { FireBase, auth, ui, uiConfig }
 

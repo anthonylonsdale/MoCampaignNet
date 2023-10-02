@@ -6,7 +6,6 @@ import React from 'react'
 
 function ProtectedRoute({ children }) {
   const user = auth.currentUser
-  console.log(auth)
 
   return user ? children : <Navigate to="/login" />
 }

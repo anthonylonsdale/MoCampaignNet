@@ -36,3 +36,66 @@
     width: 100%; /* End with full width */
   }
 }
+
+.carousel-container {
+  position: relative;
+  height: fit-content;
+  width: 50rem;
+}
+
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  width: 30px;
+  height: 30px;
+  transform: translateY(-50%);
+  background-color: rgba(0,0,0,0.5);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: none;
+}
+
+.carousel-container:hover .carousel-arrow {
+  display: block;
+}
+
+.carousel-arrow-left {
+  left: 10px;
+}
+
+.carousel-arrow-right {
+  right: 10px;
+}
+
+.header-logo {
+  object-fit: contain;
+}
+
+.layout-min-height {
+  min-height: 100vh;
+}
+
+.content-style {
+  padding: 24px;
+  min-height: 280px;
+}
+
+.space-direction {
+  width: 100%;
+}
+
+.flex-container {
+  display: flex;
+  margin-top: 2rem;
+  align-items: center;
+  justify-content: start;
+}
+
+.title-margin {
+  margin-block-start: 36px;
+}
+
+.campaign-image {
+  max-width: 100%;
+}
