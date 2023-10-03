@@ -6,6 +6,8 @@ import Auth from '../auth/auth.jsx'
 import CustomHeader from '../components/CustomHeader.jsx'
 import Sidebar from '../components/SideBar.jsx'
 
+import HtmlDisplay from '../components/HtmlDisplay.jsx'
+
 import './CampaignTools.css'
 
 const { Content } = Layout
@@ -52,21 +54,22 @@ function CampaignTools() {
     return (
       <Space direction="vertical" className="user-space">
         {user ? (
-          <Space direction="horizontal" className="user-info">
-            <Text className="welcome-text">Welcome, {user.displayName}</Text>
-            <Button className="action-button" onClick={() =>
-              setModalVisible(true)}>
-              Account Settings
-            </Button>
-            <Button className="action-button" onClick={handleSignOut}>
-              Sign Out</Button>
-            <AccountSettingsModal
-              visible={modalVisible}
-              onCancel={() => setModalVisible(false)}
-            />
-          </Space>
+          <div className="user-info">
+            <div className="text-container">
+              <Text className="welcome-text">Welcome, {user.displayName}</Text>
+              <Button className="action-button" onClick={() =>
+                setModalVisible(true)}>
+                Account Settings
+              </Button>
+            </div>
+            <div className="button-container">
+              <Button className="action-button" onClick={handleSignOut}>
+                Sign Out
+              </Button>
+            </div>
+          </div>
         ) : (
-          <Auth handleSignIn={handleSignIn} />
+            <Auth handleSignIn={handleSignIn} />
         )}
       </Space>
     )
@@ -75,11 +78,18 @@ function CampaignTools() {
   return (
     <Layout className="campaign-layout">
       <CustomHeader />
+      <AccountSettingsModal
+        visible={modalVisible}
+        onCancel={() => setModalVisible(false)}
+      />
       <Layout>
         <Sidebar collapsed={collapsed} toggleSidebar={toggleSidebar} />
         <Content className="content">
           <div className="user-container">
             {userContainer()}
+          </div>
+          <div className="html-container">
+            <HtmlDisplay file="mohouse.html" />
           </div>
         </Content>
       </Layout>

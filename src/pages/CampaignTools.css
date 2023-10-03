@@ -25,7 +25,11 @@
 
 .user-info {
     align-items: center;
+    display: flex;  /* Ensure this container uses flexbox */
+    justify-content: flex-end;  /* Aligns content to the right */
+    width: 100%;  /* Takes full width */
 }
+
 
 .welcome-text {
     font-weight: 500; /* slightly bold */

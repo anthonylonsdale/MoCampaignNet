@@ -22,7 +22,6 @@ function AppFooter() {
             <address>
               <Text>Email: alonsdale@bernoullitechnologies.net</Text><br />
               <Text>Phone: (816) 872-7762</Text><br />
-              <Text>Address: 1320 Huntington Drive, Liberty MO 64068</Text>
             </address>
           </div>
         </Col>
