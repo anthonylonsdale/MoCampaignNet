@@ -7,7 +7,7 @@ import './ChangeEmail.css'
 
 const { Text } = Typography
 
-function ResetPassword() {
+function ChangePassword() {
   const [newPassword, setNewPassword] = useState('')
   const [message, setMessage] = useState('')
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true)
@@ -105,4 +105,4 @@ function ResetPassword() {
   )
 }
 
-export default ResetPassword
+export default ChangePassword

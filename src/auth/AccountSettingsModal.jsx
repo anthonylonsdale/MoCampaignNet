@@ -1,7 +1,7 @@
 import { Button, Modal, Space } from 'antd'
 import React, { useState } from 'react'
 import ChangeEmail from './ChangeEmail.jsx'
-import ResetPassword from './ResetPassword.jsx'
+import ChangePassword from './ChangePassword.jsx'
 
 function AccountSettingsModal({ visible, onCancel }) {
   const [activeTab, setActiveTab] = useState('resetPassword')
@@ -30,7 +30,7 @@ function AccountSettingsModal({ visible, onCancel }) {
         >
           Change Email
         </Button>
-        {activeTab === 'resetPassword' ? <ResetPassword /> : <ChangeEmail />}
+        {activeTab === 'resetPassword' ? <ChangePassword /> : <ChangeEmail />}
       </Space>
     </Modal>
   )

@@ -1,17 +1,17 @@
-import { Button, Layout, Space, Typography } from 'antd'
+import { Button, Layout, Space, Tabs, Typography } from 'antd'
 import { GoogleAuthProvider, getAuth, signInWithPopup, signOut } from 'firebase/auth'
 import React, { useEffect, useState } from 'react'
 import AccountSettingsModal from '../auth/AccountSettingsModal.jsx'
 import Auth from '../auth/auth.jsx'
 import CustomHeader from '../components/CustomHeader.jsx'
-import Sidebar from '../components/SideBar.jsx'
-
 import HtmlDisplay from '../components/HtmlDisplay.jsx'
+import Sidebar from '../components/SideBar.jsx'
 
 import './CampaignTools.css'
 
+const { TabPane } = Tabs
 const { Content } = Layout
-const { Text } = Typography
+const { Text, Title } = Typography
 
 function CampaignTools() {
   const [collapsed, setCollapsed] = useState(true)
@@ -87,7 +87,20 @@ function CampaignTools() {
               {userContainer()}
             </div>
             <div className="html-container">
-              <HtmlDisplay />
+              <Title level={4}>
+                Common Geographic Subdivisions:
+              </Title>
+              <Tabs defaultActiveKey="1">
+                <TabPane tab="Missouri House Districts (2022)" key="1">
+                  <HtmlDisplay fileName={'mohouse'} />
+                </TabPane>
+                <TabPane tab="Missouri Senate Districts (2022)" key="2">
+                  <HtmlDisplay fileName={'mosenate'} />
+                </TabPane>
+                <TabPane tab="Missouri Cities (2022)" key="3">
+                  <HtmlDisplay fileName={'mocities'} />
+                </TabPane>
+              </Tabs>
             </div>
           </>
           ) : (

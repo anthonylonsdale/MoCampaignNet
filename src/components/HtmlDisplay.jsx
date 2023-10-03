@@ -1,8 +1,8 @@
 // HtmlDisplay.jsx
 import React from 'react'
 
-function HtmlDisplay() {
-  const mapUrl = 'https://bernoullitechnologies.net/mohouse.html'
+function HtmlDisplay({ fileName }) {
+  const mapUrl = `https://bernoullitechnologies.net/${fileName}.html`
 
   return (
     <iframe
