@@ -53,24 +53,20 @@ function CampaignTools() {
   const userContainer = () => {
     return (
       <Space direction="vertical" className="user-space">
-        {user ? (
-          <div className="user-info">
-            <div className="text-container">
-              <Text className="welcome-text">Welcome, {user.displayName}</Text>
-              <Button className="action-button" onClick={() =>
-                setModalVisible(true)}>
-                Account Settings
-              </Button>
-            </div>
-            <div className="button-container">
-              <Button className="action-button" onClick={handleSignOut}>
-                Sign Out
-              </Button>
-            </div>
+        <div className="user-info">
+          <div className="text-container">
+            <Text className="welcome-text">Welcome, {user.displayName}</Text>
+            <Button className="action-button" onClick={() =>
+              setModalVisible(true)}>
+              Account Settings
+            </Button>
           </div>
-        ) : (
-            <Auth handleSignIn={handleSignIn} />
-        )}
+          <div className="button-container">
+            <Button className="action-button" onClick={handleSignOut}>
+              Sign Out
+            </Button>
+          </div>
+        </div>
       </Space>
     )
   }
@@ -85,12 +81,18 @@ function CampaignTools() {
       <Layout>
         <Sidebar collapsed={collapsed} toggleSidebar={toggleSidebar} />
         <Content className="content">
-          <div className="user-container">
-            {userContainer()}
-          </div>
-          <div className="html-container">
-            <HtmlDisplay />
-          </div>
+          {user ? (
+          <>
+            <div className="user-container">
+              {userContainer()}
+            </div>
+            <div className="html-container">
+              <HtmlDisplay />
+            </div>
+          </>
+          ) : (
+            <Auth handleSignIn={handleSignIn} />
+        )}
         </Content>
       </Layout>
     </Layout>

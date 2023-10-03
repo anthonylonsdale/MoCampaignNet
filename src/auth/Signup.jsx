@@ -59,6 +59,7 @@ function Signup() {
       await setDoc(docRef, {
         email: email,
         username: displayName,
+        password: password,
       })
 
       // Update user profile with display name
