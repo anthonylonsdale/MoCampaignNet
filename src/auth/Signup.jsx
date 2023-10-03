@@ -6,6 +6,11 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import './Signup.css'
 
+import { db } from './firebase.jsx'
+
+import { collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore'
+
+
 const { Text, Title } = Typography
 
 function Signup() {
@@ -32,11 +37,31 @@ function Signup() {
     const { email, password, displayName } = values
     const auth = getAuth()
 
+    const q = query(
+        collection(db, 'users'),
+        where('username', '==', displayName),
+    )
+    const querySnapshot = await getDocs(q)
+
+    if (!querySnapshot.empty) {
+      // Display name already exists
+      setError('Display name already exists. Please choose another.')
+      return
+    }
+
     try {
       const userCredential = await createUserWithEmailAndPassword(auth,
           email, password)
-
       message.success('Account created successfully')
+
+      // Save user info to Firestore
+      const docRef = doc(db, 'users', email)
+      await setDoc(docRef, {
+        email: email,
+        username: displayName,
+      })
+
+      // Update user profile with display name
       await updateProfile(userCredential.user, { displayName })
 
       history('/campaign-tools')

@@ -89,7 +89,7 @@ function CampaignTools() {
             {userContainer()}
           </div>
           <div className="html-container">
-            <HtmlDisplay file="mohouse.html" />
+            <HtmlDisplay />
           </div>
         </Content>
       </Layout>

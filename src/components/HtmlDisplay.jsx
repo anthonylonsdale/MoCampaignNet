@@ -1,21 +1,15 @@
 // HtmlDisplay.jsx
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
-import '../htmlfiles/mohouse.html'
-
-function HtmlDisplay({ file }) {
-  const [htmlContent, setHtmlContent] = useState('')
-
-  useEffect(() => {
-    console.log(`../htmlfiles/${file}`)
-    fetch(`../htmlfiles/${file}`)
-        .then((response) => response.text())
-        .then((data) => setHtmlContent(data))
-  }, [file])
+function HtmlDisplay() {
+  const mapUrl = 'https://bernoullitechnologies.net/mohouse.html'
 
   return (
-    <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
-  )
+    <iframe
+      src={mapUrl}
+      style={{ width: '100%', height: '500px', border: 'none' }}
+      title="Folium Map"
+    />)
 }
 
 export default HtmlDisplay

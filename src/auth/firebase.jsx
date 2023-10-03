@@ -1,7 +1,8 @@
 import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
-import { getDatabase } from 'firebase/database'
 import * as firebaseui from 'firebaseui'
+
+import { getFirestore } from 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyDQEl7Yx5qYGy_A6Lcwd6_BJzGu4HkXrnU',
@@ -27,9 +28,9 @@ const uiConfig = {
   ],
 }
 
+const db = getFirestore(FireBase)
+
 const ui = new firebaseui.auth.AuthUI(auth)
 
-export const db = getDatabase(FireBase)
-
-export { FireBase, auth, ui, uiConfig }
+export { FireBase, auth, db, ui, uiConfig }
 
