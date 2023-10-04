@@ -9,6 +9,7 @@ import CampaignTools from './pages/CampaignTools.jsx'
 
 import Signup from './auth/Signup.jsx'
 import Auth from './auth/auth.jsx'
+import Portfolio from './pages/Portfolio.jsx'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
@@ -17,6 +18,7 @@ root.render(
         <Route exact path='/' element={<App />} />
         <Route exact path='/login' element={<Auth />} />
         <Route exact path='/signup' element={<Signup />} />
+        <Route exact path='/portfolio' element={<Portfolio />} />
         <Route path='/campaign-tools' element={
           <ProtectedRoute>
             <CampaignTools />
