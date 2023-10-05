@@ -1,15 +1,18 @@
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { Button, Form, Input, List, Typography, message } from 'antd'
 import { useForm } from 'antd/es/form/Form'
-import { createUserWithEmailAndPassword, getAuth, updateProfile } from 'firebase/auth'
+import {
+  createUserWithEmailAndPassword, getAuth,
+  updateProfile,
+} from 'firebase/auth'
+import {
+  collection, doc, getDocs, query, setDoc,
+  where,
+} from 'firebase/firestore'
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import './Signup.css'
-
 import { db } from './firebase.jsx'
-
-import { collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore'
-
 
 const { Text, Title } = Typography
 
@@ -35,6 +38,7 @@ function Signup() {
 
   const onFinish = async (values) => {
     const { email, password, displayName } = values
+
     const auth = getAuth()
 
     const q = query(

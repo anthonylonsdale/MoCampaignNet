@@ -1,10 +1,29 @@
-import { Button, Modal, Space } from 'antd'
+import { Button, Modal, Space, Tabs, message } from 'antd'
 import React, { useState } from 'react'
 import ChangeEmail from './ChangeEmail.jsx'
 import ChangePassword from './ChangePassword.jsx'
 
+import { getAuth, sendPasswordResetEmail } from 'firebase/auth'
+
+const { TabPane } = Tabs
+
 function AccountSettingsModal({ visible, onCancel }) {
-  const [activeTab, setActiveTab] = useState('resetPassword')
+  const [activeTab, setActiveTab] = useState('changePassword')
+
+  const auth = getAuth()
+
+  const sendPasswordReset = () => {
+    const currentUser = auth.currentUser
+    if (currentUser?.email) {
+      sendPasswordResetEmail(auth, currentUser.email)
+          .then(() => {
+            message.success('Password reset email sent!')
+          })
+          .catch((error) => {
+            message.error(error.message)
+          })
+    }
+  }
 
   return (
     <Modal
@@ -18,19 +37,15 @@ function AccountSettingsModal({ visible, onCancel }) {
       ]}
     >
       <Space direction="vertical" style={{ width: '100%' }}>
-        <Button
-          onClick={() => setActiveTab('resetPassword')}
-          type={activeTab === 'resetPassword' ? 'primary' : 'default'}
-        >
-          Change Password
-        </Button>
-        <Button
-          onClick={() => setActiveTab('changeEmail')}
-          type={activeTab === 'changeEmail' ? 'primary' : 'default'}
-        >
-          Change Email
-        </Button>
-        {activeTab === 'resetPassword' ? <ChangePassword /> : <ChangeEmail />}
+        <Tabs activeKey={activeTab} onChange={setActiveTab}>
+          <TabPane tab="Change Email" key="changeEmail">
+            <ChangeEmail />
+          </TabPane>
+          <TabPane tab="Change Password" key="changePassword">
+            <ChangePassword />
+          </TabPane>
+        </Tabs>
+        <Button onClick={sendPasswordReset}>Send Password Reset Email</Button>
       </Space>
     </Modal>
   )
