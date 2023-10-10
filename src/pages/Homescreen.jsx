@@ -1,8 +1,10 @@
-import { Button, Carousel, Divider, Image, Layout, Space, Typography } from 'antd'
-import React, { useRef } from 'react'
-
 import './Homescreen.css'
 
+import {
+  Button, Carousel, Divider, Image, Layout, Space,
+  Typography,
+} from 'antd'
+import React, { useRef } from 'react'
 import TypingEffect from '../components/TypingEffect.jsx'
 
 import logo2 from '../images/JCRPlogo.jpg'
@@ -12,7 +14,6 @@ import logo3 from '../images/NLStrongLogo.jpg'
 
 const { Content } = Layout
 const { Title, Paragraph } = Typography
-
 
 function Homescreen() {
   const partnershipRef = useRef()

@@ -1,13 +1,16 @@
+import './CampaignTools.css'
+
 import { Button, Layout, Space, Tabs, Typography } from 'antd'
-import { GoogleAuthProvider, getAuth, signInWithPopup, signOut } from 'firebase/auth'
+import {
+  GoogleAuthProvider, getAuth, signInWithPopup,
+  signOut,
+} from 'firebase/auth'
 import React, { useEffect, useState } from 'react'
 import AccountSettingsModal from '../auth/AccountSettingsModal.jsx'
 import Auth from '../auth/auth.jsx'
 import CustomHeader from '../components/CustomHeader.jsx'
 import HtmlDisplay from '../components/HtmlDisplay.jsx'
 import Sidebar from '../components/SideBar.jsx'
-
-import './CampaignTools.css'
 
 const { TabPane } = Tabs
 const { Content } = Layout
@@ -94,10 +97,16 @@ function CampaignTools() {
                 <TabPane tab="Missouri House Districts (2022)" key="1">
                   <HtmlDisplay fileName={'mohouse'} />
                 </TabPane>
-                <TabPane tab="Missouri Senate Districts (2022)" key="2">
+                <TabPane tab="Missouri House Districts (2011)" key="2">
+                  <HtmlDisplay fileName={'mohouse2011'} />
+                </TabPane>
+                <TabPane tab="Missouri Senate Districts (2022)" key="3">
                   <HtmlDisplay fileName={'mosenate'} />
                 </TabPane>
-                <TabPane tab="Missouri Cities (2022)" key="3">
+                <TabPane tab="Missouri Senate Districts (2012)" key="4">
+                  <HtmlDisplay fileName={'mosenate2011'} />
+                </TabPane>
+                <TabPane tab="Missouri Cities (2022)" key="5">
                   <HtmlDisplay fileName={'mocities'} />
                 </TabPane>
               </Tabs>

@@ -38,7 +38,6 @@ function Signup() {
 
   const onFinish = async (values) => {
     const { email, password, displayName } = values
-
     const auth = getAuth()
 
     const q = query(

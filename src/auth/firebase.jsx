@@ -1,8 +1,8 @@
 import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
-import * as firebaseui from 'firebaseui'
-
 import { getFirestore } from 'firebase/firestore'
+import * as firebaseui from 'firebaseui'
+import UAParser from 'ua-parser-js'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyDQEl7Yx5qYGy_A6Lcwd6_BJzGu4HkXrnU',
@@ -20,7 +20,6 @@ const auth = getAuth(FireBase)
 const uiConfig = {
   signInSuccessUrl: '/campaign-tools',
   signInOptions: [
-    // Email and password sign-in
     {
       provider: 'password',
       requireDisplayName: true,
@@ -28,9 +27,27 @@ const uiConfig = {
   ],
 }
 
+async function getUserIP() {
+  try {
+    const response = await fetch('https://httpbin.org/ip')
+    const data = await response.json()
+    return data.origin
+  } catch (error) {
+    console.error('Failed to get IP address:', error)
+    return null
+  }
+}
+
+function getUserDeviceInfo() {
+  const parser = new UAParser()
+  const result = parser.getResult()
+
+  return { result }
+}
+
 const db = getFirestore(FireBase)
 
 const ui = new firebaseui.auth.AuthUI(auth)
 
-export { FireBase, auth, db, ui, uiConfig }
+export { FireBase, auth, db, getUserDeviceInfo, getUserIP, ui, uiConfig }
 

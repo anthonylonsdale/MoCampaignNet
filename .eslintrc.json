@@ -55,7 +55,6 @@
         "no-duplicate-imports":"error",
         "import/no-cycle": 1,
         "import/extensions": 0,
-        "sort-imports": 1,
         "import/first": "error",
         "import/newline-after-import": "warn",
         "import/no-duplicates": "error",
