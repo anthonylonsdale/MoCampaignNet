@@ -6,11 +6,14 @@ import {
   signOut,
 } from 'firebase/auth'
 import React, { useEffect, useState } from 'react'
+import { useDropzone } from 'react-dropzone'
+import * as XLSX from 'xlsx'
 import AccountSettingsModal from '../auth/AccountSettingsModal.jsx'
 import Auth from '../auth/auth.jsx'
 import CustomHeader from '../components/CustomHeader.jsx'
 import HtmlDisplay from '../components/HtmlDisplay.jsx'
 import Sidebar from '../components/SideBar.jsx'
+import ExcelColumnSelector from '../modals/ExcelColumnSelector.jsx'
 
 const { TabPane } = Tabs
 const { Content } = Layout
@@ -20,7 +23,10 @@ function CampaignTools() {
   const [collapsed, setCollapsed] = useState(true)
   const [user, setUser] = useState(null)
   const [modalVisible, setModalVisible] = useState(false)
+  const [excelModalVisible, setExcelModalVisible] = useState(false)
+  const [excelData, setExcelData] = useState(null) // Store Excel data
   const auth = getAuth()
+
 
   const toggleSidebar = () => {
     setCollapsed(!collapsed)
@@ -46,12 +52,125 @@ function CampaignTools() {
   }
 
   useEffect(() => {
-    // Check the current user's authentication status
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       setUser(currentUser)
     })
     return () => unsubscribe()
   }, [auth])
+
+  const handleDrop = (acceptedFiles) => {
+    if (acceptedFiles.length === 0) return
+    const file = acceptedFiles[0]
+    const reader = new FileReader()
+
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target.result)
+      const workbook = XLSX.read(data, { type: 'array' })
+      const sheetName = workbook.SheetNames[0]
+      const sheet = workbook.Sheets[sheetName]
+
+      const dataDict = {}
+      const columns = []
+
+      for (const cell in sheet) {
+        if (sheet.hasOwnProperty(cell)) {
+          // Extract column name and row number from the cell reference
+          const match = /^([A-Z]+)(\d+)$/.exec(cell)
+
+          if (match) {
+            const columnName = match[1]
+            const rowNumber = parseInt(match[2], 10)
+
+            if (rowNumber === 1) {
+              columns.push(`${sheet[cell].v} (${columnName})`)
+              dataDict[columnName] = []
+            } else {
+              if (!dataDict[columnName]) {
+                dataDict[columnName] = []
+              }
+              dataDict[columnName].push(sheet[cell].v)
+            }
+          }
+        }
+      }
+      console.log(dataDict)
+
+      setExcelData({
+        sheetName,
+        columns,
+        data: dataDict,
+      })
+      setExcelModalVisible(true)
+    }
+    reader.readAsArrayBuffer(file)
+  }
+
+  function generateAndDownloadNewExcelFile(newData) {
+    if (!newData || Object.keys(newData).length === 0) {
+      return
+    }
+
+    const { sheetName, data } = newData
+    const workbook = XLSX.utils.book_new()
+    const worksheet = XLSX.utils.aoa_to_sheet([])
+
+    const columns = Object.keys(data)
+    XLSX.utils.sheet_add_aoa(worksheet, [columns], { origin: 'A1' })
+
+    const columnData = Object.values(data)
+    const maxRows = Math.max(...columnData.map((col) => col.length))
+    for (let rowIdx = 0; rowIdx < maxRows; rowIdx++) {
+      const rowData = columns.map((col) => data[col][rowIdx])
+      XLSX.utils.sheet_add_aoa(worksheet,
+          [rowData], { origin: `A${rowIdx + 2}` })
+    }
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName)
+
+    // const blob = XLSX.write(workbook, { bookType: 'xlsx', type: 'blob' })
+
+    // Use FileSaver.js to save the Blob
+    // saveAs(blob, `${sheetName}_filtered.xlsx`)
+    XLSX.writeFile(workbook, `${sheetName}_filtered.xlsx`)
+  }
+
+
+  function reformatData(excelData, selected) {
+    const { data } = excelData
+    const newData = {}
+
+    console.log(selected)
+    console.log(excelData)
+
+    for (const col of selected) {
+      const matches = col.match(/\(([^)]+)\)/)
+      if (matches) {
+        const letters = matches[1] // Get the letters
+        newData[col] = data[letters]
+      }
+    }
+
+    console.log(newData)
+
+    return {
+      sheetName: excelData.sheetName,
+      columns: selected,
+      data: newData,
+    }
+  }
+
+
+  const handleColumnSelection = (selected) => {
+    setExcelModalVisible(false)
+    console.log(selected)
+    console.log(excelData)
+
+    // Reformat the data to include only the selected columns
+    const newExcelData = reformatData(excelData, selected)
+    generateAndDownloadNewExcelFile(newExcelData)
+  }
+
+  const { getRootProps, getInputProps } = useDropzone({ onDrop: handleDrop })
 
   const userContainer = () => {
     return (
@@ -76,6 +195,12 @@ function CampaignTools() {
 
   return (
     <Layout className="campaign-layout">
+      <ExcelColumnSelector
+        visible={excelModalVisible}
+        columns={excelData?.columns}
+        onCancel={() => setExcelModalVisible(false)}
+        onConfirm={handleColumnSelection}
+      />
       <CustomHeader />
       <AccountSettingsModal
         visible={modalVisible}
@@ -110,6 +235,17 @@ function CampaignTools() {
                   <HtmlDisplay fileName={'mocities'} />
                 </TabPane>
               </Tabs>
+            </div>
+            <div className="upload-container">
+              <div className="upload-text">
+                <p>Drag and drop an Excel file here</p>
+                <p>or</p>
+                <p>Click to select one</p>
+              </div>
+              <div {...getRootProps()} className="upload-button">
+                <input {...getInputProps()} />
+                <Button>Upload Excel File</Button>
+              </div>
             </div>
           </>
           ) : (
