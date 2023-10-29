@@ -43,9 +43,11 @@ function AccountSettingsModal({ visible, onCancel }) {
           </TabPane>
           <TabPane tab="Change Password" key="changePassword">
             <ChangePassword />
+            <Button onClick={sendPasswordReset}>
+              Send Password Reset Email
+            </Button>
           </TabPane>
         </Tabs>
-        <Button onClick={sendPasswordReset}>Send Password Reset Email</Button>
       </Space>
     </Modal>
   )

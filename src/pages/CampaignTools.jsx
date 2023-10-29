@@ -20,17 +20,12 @@ const { Content } = Layout
 const { Text, Title } = Typography
 
 function CampaignTools() {
-  const [collapsed, setCollapsed] = useState(true)
   const [user, setUser] = useState(null)
   const [modalVisible, setModalVisible] = useState(false)
   const [excelModalVisible, setExcelModalVisible] = useState(false)
   const [excelData, setExcelData] = useState(null) // Store Excel data
   const auth = getAuth()
 
-
-  const toggleSidebar = () => {
-    setCollapsed(!collapsed)
-  }
 
   const handleSignIn = async () => {
     const provider = new GoogleAuthProvider() // Using Google Sign-In
@@ -93,8 +88,6 @@ function CampaignTools() {
           }
         }
       }
-      console.log(dataDict)
-
       setExcelData({
         sheetName,
         columns,
@@ -126,11 +119,6 @@ function CampaignTools() {
     }
 
     XLSX.utils.book_append_sheet(workbook, worksheet, sheetName)
-
-    // const blob = XLSX.write(workbook, { bookType: 'xlsx', type: 'blob' })
-
-    // Use FileSaver.js to save the Blob
-    // saveAs(blob, `${sheetName}_filtered.xlsx`)
     XLSX.writeFile(workbook, `${sheetName}_filtered.xlsx`)
   }
 
@@ -139,9 +127,6 @@ function CampaignTools() {
     const { data } = excelData
     const newData = {}
 
-    console.log(selected)
-    console.log(excelData)
-
     for (const col of selected) {
       const matches = col.match(/\(([^)]+)\)/)
       if (matches) {
@@ -149,8 +134,6 @@ function CampaignTools() {
         newData[col] = data[letters]
       }
     }
-
-    console.log(newData)
 
     return {
       sheetName: excelData.sheetName,
@@ -162,8 +145,6 @@ function CampaignTools() {
 
   const handleColumnSelection = (selected) => {
     setExcelModalVisible(false)
-    console.log(selected)
-    console.log(excelData)
 
     // Reformat the data to include only the selected columns
     const newExcelData = reformatData(excelData, selected)
@@ -201,13 +182,13 @@ function CampaignTools() {
         onCancel={() => setExcelModalVisible(false)}
         onConfirm={handleColumnSelection}
       />
-      <CustomHeader />
       <AccountSettingsModal
         visible={modalVisible}
         onCancel={() => setModalVisible(false)}
       />
+      <CustomHeader />
       <Layout>
-        <Sidebar collapsed={collapsed} toggleSidebar={toggleSidebar} />
+        <Sidebar />
         <Content className="content">
           {user ? (
           <>
@@ -250,7 +231,7 @@ function CampaignTools() {
           </>
           ) : (
             <Auth handleSignIn={handleSignIn} />
-        )}
+          )}
         </Content>
       </Layout>
     </Layout>

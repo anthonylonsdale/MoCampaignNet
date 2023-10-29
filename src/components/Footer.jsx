@@ -1,50 +1,47 @@
-import { Col, Divider, Layout, List, Row, Typography } from 'antd'
+import {
+  MailOutlined,
+  PhoneOutlined,
+} from '@ant-design/icons'
+import { Image, Layout, Typography } from 'antd'
 import React from 'react'
-import { Link } from 'react-router-dom'
-import './Footer.css'; // Import the CSS file
+import logo from '../images/logo.png'
+import styles from './Footer.module.css'
 
 const { Footer } = Layout
-const { Title, Text } = Typography
-
-const importantLinks = [
-  { title: 'About Us', path: '/about' },
-  { title: 'Services', path: '/services' },
-]
+const { Title } = Typography
 
 function AppFooter() {
   return (
-    <Footer className="footer">
-      <Divider />
-      <Row gutter={[16, 16]} justify="space-around">
-        <Col xs={24} sm={12} md={8} lg={6}>
-          <div className="contact-info">
-            <Title level={4} className="title">Contact Us</Title>
-            <address>
-              <Text>Email: alonsdale@bernoullitechnologies.net</Text><br />
-              <Text>Phone: (816) 872-7762</Text><br />
-            </address>
+    <Footer className={styles.footer}>
+      <div className={styles.footerContent}>
+        <Image
+          src={logo}
+          alt="Logo"
+          style={{ width: '10rem' }}
+          preview={false}
+        />
+        <div className={styles.buttonLikeText}>
+          &copy; {new Date().getFullYear()} Bernoulli Technologies.
+          All rights reserved.
+        </div>
+        <div className={styles.contactInfo}>
+          <div className={styles.contactItem}>
+            <MailOutlined className={styles.icon} />
+            <div>
+              <Title level={5} className={styles.footerText}>
+                alonsdale@bernoullitechnologies.net
+              </Title>
+            </div>
           </div>
-        </Col>
-        <Col xs={24} sm={12} md={8} lg={6}>
-          <div className="important-links">
-            <Title level={4} className="title">Important Links</Title>
-            <List
-              size="small"
-              bordered
-              dataSource={importantLinks}
-              renderItem={(item) => (
-                <List.Item>
-                  <Link to={item.path} className="link">{item.title}</Link>
-                </List.Item>
-              )}
-            />
+          <div className={styles.contactItem}>
+            <PhoneOutlined className={styles.icon} />
+            <div>
+              <Title level={5} className={styles.footerText}>
+                (816) 872-7762
+              </Title>
+            </div>
           </div>
-        </Col>
-      </Row>
-      <Divider />
-      <div className="copyright">
-        <Text>&copy; {new Date().getFullYear()} Bernoulli
-        Technologies. All rights reserved.</Text>
+        </div>
       </div>
     </Footer>
   )

@@ -1,6 +1,7 @@
 .campaign-layout {
     background-color: #f9f9f9; /* subtle background color */
     min-height: 100vh;
+    display: flex;
 }
 
 .content {
