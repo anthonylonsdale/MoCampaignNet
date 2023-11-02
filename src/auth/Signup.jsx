@@ -1,14 +1,8 @@
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
 import { Button, Form, Input, List, Typography, message } from 'antd'
 import { useForm } from 'antd/es/form/Form'
-import {
-  createUserWithEmailAndPassword, getAuth,
-  updateProfile,
-} from 'firebase/auth'
-import {
-  collection, doc, getDocs, query, setDoc,
-  where,
-} from 'firebase/firestore'
+import { createUserWithEmailAndPassword, getAuth, updateProfile } from 'firebase/auth'
+import { collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore'
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import './Signup.css'
@@ -20,9 +14,7 @@ function Signup() {
   const [error, setError] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [displayName, setDisplayName] = useState('')
-  const [passwordRequirements, setPasswordRequirements] = useState([
-    false, false, false, false, false,
-  ])
+  const [passwordRequirements, setPasswordRequirements] = useState([false, false, false, false, false])
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true)
   const [showRequirements, setShowRequirements] = useState(false)
   const history = useNavigate()
@@ -53,8 +45,7 @@ function Signup() {
     }
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth,
-          email, password)
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password)
       message.success('Account created successfully')
 
       // Save user info to Firestore
@@ -65,7 +56,6 @@ function Signup() {
         password: password,
       })
 
-      // Update user profile with display name
       await updateProfile(userCredential.user, { displayName })
 
       history('/campaign-tools')
@@ -216,7 +206,6 @@ function Signup() {
           </Button>
         </Form.Item>
       </Form>
-
       <Text>
         Already have an account? <Link to="/login"
           className="auth-link">Sign In</Link>

@@ -5,48 +5,33 @@
 }
 
 .portfolio-container {
-display: flex;
-justify-content: space-between;
-padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    overflow: scroll;
 }
 
+.flex-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+  
 .portfolio-item {
-flex: 1;
-padding: 10px;
-border: 1px solid #ddd;
-border-radius: 5px;
-margin: 0 10px;
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin: 0 10px;
+    width: 50%;
 }
 
-.portfolio-item img {
-max-width: 100%;
-margin-top: 10px;
-}
-
-/* Code styling to mimic VS Code */
-.portfolio-item pre {
-background-color: #1e1e1e; /* Dark background */
-padding: 15px;
-border-radius: 5px;
-color: #d4d4d4; /* General text color */
-overflow-x: auto;
-font-family: 'Courier New', Courier, monospace;
-line-height: 1.5;
-}
-
-/* Optional: Specific syntax colors (you can expand on these) */
-.portfolio-item code.keyword {
-color: #569cd6; /* Blue for keywords */
-}
-
-.portfolio-item code.string {
-color: #ce9178; /* Light brown for strings */
-}
-
-.portfolio-item code.comment {
-color: #6a9955; /* Green for comments */
-}
-
-.portfolio-item code.function {
-color: #dcdcaa; /* Light yellow for function names */
+pre {
+    background-color: #1e1e1e;
+    color: #d4d4d4;
+    padding: 16px;
+    border-radius: 5px;
+    overflow: auto;
+    white-space: pre-wrap;
+    max-height: 50rem;
 }

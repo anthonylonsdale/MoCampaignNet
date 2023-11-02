@@ -3,6 +3,7 @@ import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import logo from '../images/logo.png'
+import { loginTracer } from './LoginTracer.jsx'
 import './auth.css'
 
 const { Text } = Typography
@@ -16,7 +17,8 @@ function Auth() {
     const auth = getAuth()
     try {
       await signInWithEmailAndPassword(auth, email, password)
-      // loginTracer(auth.currentUser.uid)
+      console.log(auth)
+      loginTracer(auth.currentUser.uid)
 
       history('/campaign-tools')
     } catch (error) {
@@ -43,7 +45,7 @@ function Auth() {
             },
           ]}
         >
-          <Input />
+          <Input autoComplete="on" name='email' />
         </Form.Item>
         <Form.Item
           label="Password"
@@ -55,7 +57,7 @@ function Auth() {
             },
           ]}
         >
-          <Input.Password />
+          <Input.Password autoComplete="" name='password' />
         </Form.Item>
         {error && <div className="error">{error}</div>}
         <Form.Item>
@@ -65,8 +67,8 @@ function Auth() {
         </Form.Item>
       </Form>
       <Text>
-        Don&apos;t have an account?
-        <Link to="/signup" className="auth-link">Sign Up</Link>
+        Don&apos;t have an account? <Link to="/signup"
+          className="auth-link">Sign Up</Link>
       </Text>
     </div>
   )

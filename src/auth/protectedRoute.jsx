@@ -1,10 +1,9 @@
-import React, { useContext } from 'react'
+import { getAuth } from 'firebase/auth'
+import React from 'react'
 import { Navigate } from 'react-router-dom'
-import { AuthContext } from './authContext.jsx'
-
 
 const ProtectedRoute = ({ children }) => {
-  const { currentUser } = useContext(AuthContext)
+  const { currentUser } = getAuth()
 
   if (!currentUser) {
     return <Navigate to="/login" />

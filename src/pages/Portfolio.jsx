@@ -1,10 +1,15 @@
-/* eslint-disable react/no-unescaped-entities */
 import { Button, Layout, Modal, Typography } from 'antd'
 import React, { useState } from 'react'
+import { Document, Page, pdfjs } from 'react-pdf'
 import CustomHeader from '../components/CustomHeader.jsx'
+import file from '../docs/Anthony Lonsdale Resume 23.pdf'
 import './Portfolio.css'
+import PyCharmCodeDisplay from './PythonCode.jsx'
+import ReactCodeDisplay from './ReactCode.jsx'
 
-const { Title, Paragraph } = Typography
+const { Title, Text } = Typography
+pdfjs.GlobalWorkerOptions.workerSrc =
+`//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
 
 function Portfolio() {
   const [isModalVisible, setIsModalVisible] = useState(false)
@@ -19,103 +24,42 @@ function Portfolio() {
 
   return (
     <Layout className="campaign-layout">
-      <CustomHeader onClick={showModal} />
-      <Title>
-        Portfolio
-      </Title>
+      <CustomHeader />
+      <div className='flex-container'>
+        <Title level={3}>Project Collection</Title>
+      </div>
       <div className="portfolio-container">
         <div className="portfolio-item">
           <Title level={3}>Algorithmic Trader</Title>
-          <p>Some brief description about the project.</p>
-          <img src="path_to_algorithmic_trader_image1.jpg" />
-          <img src="path_to_algorithmic_trader_image2.jpg" />
-          <pre>
-            <code className="keyword">function</code>
-            <code className="function">algorithmTrader</code>() {'{'}
-            <code className="comment">This is a comment</code>
-            <code className="string">This is a string</code>;
-            {'}'}
-          </pre>
+          <Text>Shown below is the main entry point of the project which combines together every data fetch, storage and analysis function included. The entire project is 9,500 lines of code which uses custom developed functions to analyze raw tick data from exchanges, and execute paper trades using the Alpaca Brokerage API </Text>
+          <PyCharmCodeDisplay />
         </div>
         <div className="portfolio-item">
           <Title level={3}>Collection of Projects</Title>
-          <Paragraph>
-            <Title level={4}>Personal Website</Title>
-            <Title level={4}>Homescreen</Title>
-            <pre>
-              <code className="keyword">import</code> {'{'}
-              <code className="function">Button, Carousel, Divider,
-              Layout, Space, Typography</code>
-              {'}'} <code className="keyword">from </code>
-              <code className="string">'antd'</code>
-              <br/>
-              <code className="keyword">import</code> <code className="keyword">React</code>, {'{'}
-              <code className="function">useRef</code> {'}'} <code className="keyword">from</code> <code className="string">'react'</code>
-              <br/>
-              <code className="keyword">import</code> CustomHeader <code className="keyword">from</code> <code className="string">'../components/CustomHeader.jsx'</code>
-              <br/>
-              {/* Continue with the rest of the imports */}
-              <br/>
-              <code className="keyword">const</code> {'{'}
-              <code className="function">Content</code>
-              {'}'} = Layout
-              <br/>
-              <code className="keyword">const</code> {'{'}
-              <code className="function">Title</code>
-              {'}'} = Typography
-              <br/>
-              <code className="keyword">function</code> <code className="function">Homescreen</code>() {'{'}
-              <br/>
-              <code className="keyword">const</code> partnershipRef = <code className="function">useRef</code>()
-              <br/>
-              <code className="keyword">return</code> {'('}
-              <br/>
-              {'&lt;'}CustomHeader /{'&gt;'}
-              <br/>
-              {/* Continue with the rest of the Homescreen JSX */}
-              <br/>
-              {'&lt;'}Layout <code className="keyword">className</code>=<code className="string">"layout-min-height"</code>{'&gt;'}
-              <br/>
-                ...
-              <br/>
-              {'&lt;'}Title <code className="keyword">level</code>={'{'}2{'}'} <code className="keyword">style</code>={'{'}
-              <code className="keyword">
-                {'{'} marginBlockStart: '36px' {'}'}</code>{'&gt;'}
-              <br/>
-                Specializing in&nbsp;
-              <br/>
-              {'&lt;'}/Title{'&gt;'}
-              <br/>
-                ...
-              <br/>
-              {'&lt;'}/Layout{'&gt;'}
-              <br/>
-              {'&lt;'}AppFooter /{'&gt;'}
-              <br/>
-              {')'}
-              <br/>
-              {'}'}
-            </pre>
-          </Paragraph>
-          <img src="path_to_collection_image1.jpg" alt="Collection Image 1" />
-          <img src="path_to_collection_image2.jpg" alt="Collection Image 2" />
+          <ReactCodeDisplay />
+          <Title level={5}>
+            View the rest here...
+          </Title>
         </div>
       </div>
-
       <Modal
-        title="Header Details"
-        visible={isModalVisible}
+        title="Resume PDF"
+        open={isModalVisible}
         onCancel={handleCancel}
         footer={[
           <Button key="back" onClick={handleCancel}>
             Close
           </Button>,
         ]}
+        width={700}
       >
-        {/* The CustomHeader code can be rendered here as a component or its preview */}
-        {/* You can also add the code directly but since it's already a component, it's better to reuse */}
-        <CustomHeader />
+        <Document file={file}>
+          <Page pageNumber={1} />
+        </Document>
       </Modal>
+      <div className='flex-container'>
+        <Title level={3} style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }} onClick={showModal}>Resume</Title>
+      </div>
     </Layout>
   )
 }

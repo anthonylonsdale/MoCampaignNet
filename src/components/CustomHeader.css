@@ -16,40 +16,40 @@
         white-space: nowrap;
     }
   }
-  
-.header-logo {
-    min-width: 72px;
-    height: auto; /* Prevent scaling of the logo */
-  }
 
-  /* Logo */
-  .site-layout-background a {
-    cursor: pointer;
-  }
-  
-  /* Logo image */
-  .site-layout-background img {
-    max-width: 64px;
-    height: auto;
-  }
-  
-  /* Header text */
-  .site-layout-background .ant-typography {
-    margin-left: 5rem;
-  }
-  
-  /* Custom menu items */
-  .custom-menu-item {
-    flex: 1;
-    text-align: center;
-  }
-  
-  /* Add hover styles to the custom menu items */
-  .custom-menu-item:hover {
-    background-color: #1890ff; /* Highlight color on hover */
-  }
-  
-  /* Adjust the text color on hover if needed */
-  .custom-menu-item:hover a {
-    color: #fff; /* Text color on hover */
-  }
+.header-logo {
+  min-width: 72px;
+  height: auto; /* Prevent scaling of the logo */
+}
+
+/* Logo */
+.site-layout-background a {
+  cursor: pointer;
+}
+
+/* Logo image */
+.site-layout-background img {
+  max-width: 64px;
+  height: auto;
+}
+
+/* Header text */
+.site-layout-background .ant-typography {
+  margin-left: 5rem;
+}
+
+.site-layout-background .custom-menu .ant-menu-item:hover {
+  background-color: #1890ff;
+}
+
+.site-layout-background .custom-menu .ant-menu-item:hover a {
+  color: #fff;
+}
+
+.site-layout-background .custom-menu .ant-menu-item-selected {
+  background-color: #1890ff;
+}
+
+.site-layout-background .custom-menu .ant-menu-item-selected a {
+  color: #fff;
+}
