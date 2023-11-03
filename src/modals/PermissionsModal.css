@@ -1,0 +1,11 @@
+.permissions-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .admin-icon {
+    color: gold;
+    margin-right: 8px;
+  }
+  

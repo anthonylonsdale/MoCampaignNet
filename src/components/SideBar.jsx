@@ -6,7 +6,10 @@ import {
   UserOutlined,
 } from '@ant-design/icons'
 import { Layout, Menu } from 'antd'
-import React, { useState } from 'react'
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { doc, getDoc } from 'firebase/firestore'
+import React, { useEffect, useState } from 'react'
+import { db } from '../auth/firebase.jsx'
 import PermissionsModal from '../modals/PermissionsModal.jsx'
 
 const { Sider } = Layout
@@ -14,20 +17,28 @@ const { Sider } = Layout
 function Sidebar() {
   const [collapsed, setCollapsed] = useState(true)
   const [permissionsModalVisible, setPermissionsModalVisible] = useState(false)
+  const [isAdministrator, setIsAdministrator] = useState(false)
+  const auth = getAuth()
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userDoc = doc(db, 'users', user.email)
+        const docSnap = await getDoc(userDoc)
+
+        if (docSnap.exists()) {
+          setIsAdministrator(docSnap.data().isAdministrator)
+        }
+      }
+    })
+
+    return () => unsubscribe()
+  }, [auth])
+
 
   const togglePermissionsModal = () => {
     setPermissionsModalVisible(!permissionsModalVisible)
   }
-
-  // Define permissions based on the user's role
-  const userPermissions = ['View Dashboard', 'Edit Profile', 'Change Settings']
-  const administratorPermissions = [
-    ...userPermissions,
-    'Add Users',
-    'Remove Users',
-  ]
-
-  const userRole = 'administrator' // Change this to the user's actual role
 
   return (
     <Sider
@@ -58,12 +69,10 @@ function Sidebar() {
           Settings
         </Menu.Item>
       </Menu>
-
-      {/* Permissions Modal */}
       <PermissionsModal
         visible={permissionsModalVisible}
         onClose={togglePermissionsModal}
-        permissions={userRole === 'administrator' ? administratorPermissions : userPermissions}
+        userRole={isAdministrator ? 'administrator' : 'user'}
       />
     </Sider>
   )

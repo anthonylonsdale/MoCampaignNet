@@ -54,86 +54,67 @@ function Signup() {
         email: email,
         username: displayName,
         password: password,
+        isAdministrator: false,
       })
 
       await updateProfile(userCredential.user, { displayName })
-
       history('/campaign-tools')
     } catch (error) {
       setError(error.message)
     }
   }
 
-  // Check if all requirements are met
-  useEffect( () => {
-    const checkRequirements = async () => {
-      const email = form.getFieldValue('email')
-      const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-      const isDisplayNameEntered = displayName.trim() !== ''
+  const generateIcon = (isMet) => (
+    isMet ? (
+      <CheckCircleOutlined style={{ color: 'green' }} />
+    ) : (
+      <CloseCircleOutlined style={{ color: 'red' }} />
+    )
+  )
 
-      const passwordRequirements = [
-        newPassword.length >= 8,
-        /[A-Z]/.test(newPassword),
-        /[a-z]/.test(newPassword),
-        /[0-9]/.test(newPassword),
-        /[!@#$%^&*]/.test(newPassword),
-      ]
+  const checkRequirements = async () => {
+    const email = form.getFieldValue('email')
+    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    const isDisplayNameEntered = displayName.trim() !== ''
 
-      setPasswordRequirements(passwordRequirements)
+    const passwordRequirements = [
+      newPassword.length >= 8,
+      /[A-Z]/.test(newPassword),
+      /[a-z]/.test(newPassword),
+      /[0-9]/.test(newPassword),
+      /[!@#$%^&*]/.test(newPassword),
+    ]
 
-      const areAllRequirementsMet =
-        isEmailValid &&
-        isDisplayNameEntered &&
-        passwordRequirements.every((requirement) => requirement)
-      setIsSubmitDisabled(!areAllRequirementsMet)
-    }
+    setPasswordRequirements(passwordRequirements)
 
-    checkRequirements()
-  }, [form, newPassword, displayName])
-
+    const areAllRequirementsMet =
+      isEmailValid &&
+      isDisplayNameEntered &&
+      passwordRequirements.every((requirement) => requirement)
+    setIsSubmitDisabled(!areAllRequirementsMet)
+  }
 
   const requirementsData = [
     {
-      icon: passwordRequirements[0] ? (
-        <CheckCircleOutlined style={{ color: 'green' }} />
-      ) : (
-        <CloseCircleOutlined style={{ color: 'red' }} />
-      ),
       text: 'At least 8 characters',
     },
     {
-      icon: passwordRequirements[1] ? (
-        <CheckCircleOutlined style={{ color: 'green' }} />
-      ) : (
-        <CloseCircleOutlined style={{ color: 'red' }} />
-      ),
       text: 'Contains at least one uppercase letter',
     },
     {
-      icon: passwordRequirements[2] ? (
-        <CheckCircleOutlined style={{ color: 'green' }} />
-      ) : (
-        <CloseCircleOutlined style={{ color: 'red' }} />
-      ),
       text: 'Contains at least one lowercase letter',
     },
     {
-      icon: passwordRequirements[3] ? (
-        <CheckCircleOutlined style={{ color: 'green' }} />
-      ) : (
-        <CloseCircleOutlined style={{ color: 'red' }} />
-      ),
       text: 'Contains at least one digit (0-9)',
     },
     {
-      icon: passwordRequirements[4] ? (
-        <CheckCircleOutlined style={{ color: 'green' }} />
-      ) : (
-        <CloseCircleOutlined style={{ color: 'red' }} />
-      ),
       text: 'Contains at least one special character (!@#$%^&*)',
     },
   ]
+
+  useEffect(() => {
+    checkRequirements()
+  }, [form, newPassword, displayName])
 
   return (
     <div className="signup-container">
@@ -188,10 +169,12 @@ function Signup() {
             onChange={(e) => setDisplayName(e.target.value)}
           />
         </Form.Item>
-
         {showRequirements && (
           <List
-            dataSource={requirementsData}
+            dataSource={requirementsData.map((requirement, index) => ({
+              ...requirement,
+              icon: generateIcon(passwordRequirements[index]),
+            }))}
             renderItem={(item) => (
               <List.Item>
                 {item.icon}&nbsp;{item.text}

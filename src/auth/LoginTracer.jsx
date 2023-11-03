@@ -18,12 +18,9 @@ async function loginTracer(userId) {
     }),
     browser: `${deviceInfo.result.browser.name} 
     ${deviceInfo.result.browser.version}`,
-    isActive: true, // Mark the session as active
+    isActive: true,
   }
 
-  console.log(loginDetails)
-
-  // Check if an entry with matching IP and browser exists
   const existingQuery = query(userLoginCollectionRef,
       where('logins.ip', '==', loginDetails.ip),
       where('logins.browser', '==', loginDetails.browser))
@@ -35,20 +32,10 @@ async function loginTracer(userId) {
     const existingEntry = existingEntries.docs[0]
     const existingEntryRef = doc(userLoginCollectionRef, existingEntry.id)
 
-    await updateDoc(existingEntryRef, {
-      logins: loginDetails,
-      isActive: true, // Mark the session as active
-    })
-
-    console.log('Existing login entry updated with ID:', existingEntry.id)
+    await updateDoc(existingEntryRef, { logins: loginDetails })
   } else {
     // If no matching entry exists, add a new entry as active
-    const newLoginDocRef = await addDoc(userLoginCollectionRef, {
-      logins: loginDetails,
-      isActive: true, // Mark the session as active
-    })
-
-    console.log('New login entry added with ID:', newLoginDocRef.id)
+    await addDoc(userLoginCollectionRef, { logins: loginDetails })
   }
 }
 
@@ -59,8 +46,6 @@ async function markSessionAsInactive(userId, sessionId) {
   await updateDoc(sessionRef, {
     isActive: false, // Mark the session as inactive
   })
-
-  console.log('Session marked as inactive:', sessionId)
 }
 
 export { loginTracer, markSessionAsInactive }

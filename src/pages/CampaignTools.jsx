@@ -1,10 +1,7 @@
 import './CampaignTools.css'
 
 import { Button, Layout, Space, Tabs, Typography } from 'antd'
-import {
-  GoogleAuthProvider, getAuth, signInWithPopup,
-  signOut,
-} from 'firebase/auth'
+import { GoogleAuthProvider, getAuth, signInWithPopup, signOut } from 'firebase/auth'
 import React, { useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import * as XLSX from 'xlsx'
@@ -23,12 +20,11 @@ function CampaignTools() {
   const [user, setUser] = useState(null)
   const [modalVisible, setModalVisible] = useState(false)
   const [excelModalVisible, setExcelModalVisible] = useState(false)
-  const [excelData, setExcelData] = useState(null) // Store Excel data
+  const [excelData, setExcelData] = useState(null)
   const auth = getAuth()
 
-
   const handleSignIn = async () => {
-    const provider = new GoogleAuthProvider() // Using Google Sign-In
+    const provider = new GoogleAuthProvider()
     try {
       const result = await signInWithPopup(auth, provider)
       setUser(result.user)
@@ -69,7 +65,6 @@ function CampaignTools() {
 
       for (const cell in sheet) {
         if (sheet.hasOwnProperty(cell)) {
-          // Extract column name and row number from the cell reference
           const match = /^([A-Z]+)(\d+)$/.exec(cell)
 
           if (match) {
@@ -106,7 +101,6 @@ function CampaignTools() {
     const { sheetName, data } = newData
     const workbook = XLSX.utils.book_new()
     const worksheet = XLSX.utils.aoa_to_sheet([])
-
     const columns = Object.keys(data)
     XLSX.utils.sheet_add_aoa(worksheet, [columns], { origin: 'A1' })
 
@@ -121,7 +115,6 @@ function CampaignTools() {
     XLSX.utils.book_append_sheet(workbook, worksheet, sheetName)
     XLSX.writeFile(workbook, `${sheetName}_filtered.xlsx`)
   }
-
 
   function reformatData(excelData, selected) {
     const { data } = excelData
@@ -141,7 +134,6 @@ function CampaignTools() {
       data: newData,
     }
   }
-
 
   const handleColumnSelection = (selected) => {
     setExcelModalVisible(false)
