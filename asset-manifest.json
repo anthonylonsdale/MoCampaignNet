@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.69053cf9.css",
-    "main.js": "/static/js/main.86e6601e.js",
+    "main.css": "/static/css/main.9da85f70.css",
+    "main.js": "/static/js/main.41c7df8a.js",
     "static/media/lance_pollard.jpg": "/static/media/lance_pollard.9cc9937651c7719dcca3.jpg",
     "static/media/jenn_bauer.jpg": "/static/media/jenn_bauer.fa9d505e00fbc4e77529.jpg",
     "static/media/chris_lonsdale_crowd_sign.jpg": "/static/media/chris_lonsdale_crowd_sign.59850f2814f843e224e0.jpg",
@@ -16,11 +16,11 @@
     "static/media/JCRPlogo.jpg": "/static/media/JCRPlogo.2de2234ad625601208fd.jpg",
     "static/media/NLStrongLogo.jpg": "/static/media/NLStrongLogo.314d1b2cf485d919e101.jpg",
     "index.html": "/index.html",
-    "main.69053cf9.css.map": "/static/css/main.69053cf9.css.map",
-    "main.86e6601e.js.map": "/static/js/main.86e6601e.js.map"
+    "main.9da85f70.css.map": "/static/css/main.9da85f70.css.map",
+    "main.41c7df8a.js.map": "/static/js/main.41c7df8a.js.map"
   },
   "entrypoints": [
-    "static/css/main.69053cf9.css",
-    "static/js/main.86e6601e.js"
+    "static/css/main.9da85f70.css",
+    "static/js/main.41c7df8a.js"
   ]
 }
