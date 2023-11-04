@@ -15,7 +15,7 @@ import PermissionsModal from '../modals/PermissionsModal.jsx'
 const { Sider } = Layout
 
 function Sidebar() {
-  const [collapsed, setCollapsed] = useState(true)
+  const [collapsed, setCollapsed] = useState(false)
   const [permissionsModalVisible, setPermissionsModalVisible] = useState(false)
   const [isAdministrator, setIsAdministrator] = useState(false)
   const auth = getAuth()
@@ -35,7 +35,6 @@ function Sidebar() {
     return () => unsubscribe()
   }, [auth])
 
-
   const togglePermissionsModal = () => {
     setPermissionsModalVisible(!permissionsModalVisible)
   }
@@ -45,19 +44,11 @@ function Sidebar() {
       trigger={null}
       collapsed={collapsed}
       width={collapsed ? 50 : 150}
-      style={{
-        position: 'sticky',
-        top: '64px',
-        height: '100vh',
-      }}
+      style={{ position: 'sticky', top: '64px', height: '100vh' }}
     >
       <Menu theme="dark" mode="vertical" defaultSelectedKeys={['1']}>
-        <Menu.Item
-          key="1"
-          onClick={() => setCollapsed(!collapsed)}
-          icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-        >
-          {!collapsed && 'Collapse'}
+        <Menu.Item key="1" onClick={() => setCollapsed(!collapsed)} icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />} >
+          {!collapsed ? 'Collapse': 'Expand'}
         </Menu.Item>
         <Menu.Item key="2" icon={<HomeOutlined />} onClick={() => window.scrollTo(0, 0)}>
           Home

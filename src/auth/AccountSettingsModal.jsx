@@ -42,10 +42,12 @@ function AccountSettingsModal({ visible, onCancel }) {
             <ChangeEmail />
           </TabPane>
           <TabPane tab="Change Password" key="changePassword">
-            <ChangePassword />
-            <Button onClick={sendPasswordReset}>
-              Send Password Reset Email
-            </Button>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+              <ChangePassword />
+              <Button type="primary" onClick={sendPasswordReset} style={{ marginTop: 16 }}>
+                Send Password Reset Email
+              </Button>
+            </div>
           </TabPane>
         </Tabs>
       </Space>

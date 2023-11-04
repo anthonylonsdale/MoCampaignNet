@@ -4,7 +4,6 @@ import { getAuth, updatePassword } from 'firebase/auth'
 import React, { useEffect, useState } from 'react'
 import './ChangeEmail.css'
 
-
 const { Text } = Typography
 
 function ChangePassword() {
@@ -12,7 +11,6 @@ function ChangePassword() {
   const [message, setMessage] = useState('')
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true)
 
-  // Define password requirements
   const passwordRequirements = [
     newPassword.length >= 8,
     /[A-Z]/.test(newPassword),
@@ -21,7 +19,6 @@ function ChangePassword() {
     /[!@#$%^&*]/.test(newPassword),
   ]
 
-  // Check if all password requirements are met
   useEffect(() => {
     setIsSubmitDisabled(passwordRequirements.some(
         (requirement) => !requirement))

@@ -1,17 +1,16 @@
 import { StarOutlined } from '@ant-design/icons'
-import { List, Modal, Tag } from 'antd'
+import { List, Modal, Tag, Typography } from 'antd'
 import React from 'react'
 import './PermissionsModal.css'
 
+const { Paragraph } = Typography
+
 function PermissionsModal({ visible, onClose, userRole }) {
-  // Define permissions here
   const userPermissions = ['View Generic Maps', 'Edit Profile', 'Edit User Settings']
   const additionalAdminPermissions = ['Add Users', 'Remove Users', 'View Premium Data', 'Build and Export Datasets']
 
-  // Determine if the user is an admin
   const isAdmin = userRole === 'administrator'
 
-  // Function to check if the permission is exclusive to admins
   const isAdminPermission = (permission) => {
     return additionalAdminPermissions.includes(permission)
   }
@@ -38,6 +37,11 @@ function PermissionsModal({ visible, onClose, userRole }) {
           </List.Item>
         )}
       />
+      {!isAdmin && (
+        <Paragraph className="admin-contact-info">
+          For elevated privileges, please reach out to Anthony Lonsdale at <a href="tel:234567890">(816) 872-7762</a> or <a href="mailto:alonsdale@bernoullitechnologies.net">alonsdale@bernoullitechnologies.net</a>.
+        </Paragraph>
+      )}
     </Modal>
   )
 }

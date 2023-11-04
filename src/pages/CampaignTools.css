@@ -1,67 +1,75 @@
 .campaign-layout {
-    background-color: #f9f9f9; /* subtle background color */
-    min-height: 100vh;
-    display: flex;
+  background-color: #f9f9f9; /* subtle background color */
+  min-height: 100vh;
+  display: flex;
 }
 
 .content {
-    padding: 24px;
-    min-height: 280px;
+  padding: 24px;
+  min-height: 280px;
 }
 
 .user-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    margin: 0 auto;
-    background-color: #fff;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+  background-color: #fff;
+}
+
+.html-container {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%
+}
 
 .user-space {
-    width: 100%;
+  width: 100%;
 }
 
 .user-info {
-    align-items: center;
-    display: flex;  /* Ensure this container uses flexbox */
-    justify-content: flex-end;  /* Aligns content to the right */
-    width: 100%;  /* Takes full width */
+  align-items: center;
+  display: flex;  /* Ensure this container uses flexbox */
+  justify-content: flex-end;  /* Aligns content to the right */
+  width: 100%;  /* Takes full width */
 }
 
 .upload-container {
-    background-color: rgba(0, 0, 0, 0.1); /* Shaded background color */
-    border: 2px dashed #cccccc; /* Dashed border style */
-    padding: 20px; /* Padding for the container */
-    text-align: center; /* Center align the text and button */
-    margin-top: 20px; /* Adjust the margin as needed */
-  }
-  
-  .upload-text p {
-    margin: 0;
-    font-size: 16px;
-  }
-  
-  .upload-button {
-    margin-top: 10px; /* Adjust the margin as needed */
-  }
-  
-  /* Style for the "Upload Excel File" button */
-  .upload-button button {
-    background-color: #1890ff;
-    color: #ffffff;
-    border: none;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .upload-button button:hover {
-    background-color: #096dd9;
-  }
-  
+  background-color: rgba(0, 0, 0, 0.1); /* Shaded background color */
+  border: 2px dashed #cccccc; /* Dashed border style */
+  padding: 20px; /* Padding for the container */
+  text-align: center; /* Center align the text and button */
+  margin-top: 20px; /* Adjust the margin as needed */
+}
+
+.upload-text p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.upload-button {
+  margin-top: 10px; /* Adjust the margin as needed */
+}
+
+/* Style for the "Upload Excel File" button */
+.upload-button button {
+  background-color: #1890ff;
+  color: #ffffff;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.upload-button button:hover {
+  background-color: #096dd9;
+}
+
 
 .welcome-text {
     font-weight: 500;
