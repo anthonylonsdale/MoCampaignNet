@@ -5,7 +5,7 @@ import * as firebaseui from 'firebaseui'
 import UAParser from 'ua-parser-js'
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyDQEl7Yx5qYGy_A6Lcwd6_BJzGu4HkXrnU',
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: 'leaddrive-pro.firebaseapp.com',
   projectId: 'leaddrive-pro',
   storageBucket: 'leaddrive-pro.appspot.com',
