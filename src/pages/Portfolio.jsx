@@ -4,8 +4,8 @@ import { Document, Page, pdfjs } from 'react-pdf'
 import CustomHeader from '../components/CustomHeader.jsx'
 import file from '../docs/Anthony Lonsdale Resume 23.pdf'
 import './Portfolio.css'
-import PyCharmCodeDisplay from './PythonCode.jsx'
-import ReactCodeDisplay from './ReactCode.jsx'
+import PyCharmCodeDisplay from './PortfolioComponents/PythonCode.jsx'
+import ReactCodeDisplay from './PortfolioComponents/ReactCode.jsx'
 
 const { Title, Text } = Typography
 pdfjs.GlobalWorkerOptions.workerSrc =

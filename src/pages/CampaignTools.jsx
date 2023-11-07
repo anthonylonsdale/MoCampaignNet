@@ -7,10 +7,10 @@ import Auth from '../auth/auth.jsx'
 import CustomHeader from '../components/CustomHeader.jsx'
 import HtmlDisplay from '../components/HtmlDisplay.jsx'
 import Sidebar from '../components/SideBar.jsx'
+import missouriDotMap from '../images/MissouriPolSpotMap.png'
 import ExcelColumnSelector from '../modals/ExcelColumnSelector.jsx'
 import './CampaignTools.css'
 
-import missouriDotMap from '../images/MissouriPolSpotMap.png'
 
 const { Content } = Layout
 const { Text, Title } = Typography
@@ -50,6 +50,25 @@ function CampaignTools() {
     })
     return () => unsubscribe()
   }, [auth])
+
+  const sendMessage = async () => {
+    try {
+      const functionUrl = 'https://us-central1-leaddrive-pro.cloudfunctions.net/addmessage'
+      const response = await fetch(functionUrl, {
+        method: 'POST',
+        body: JSON.stringify(),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const result = await response.json()
+      console.log(result)
+      alert(`Message sent! ID: ${result.result}`)
+    } catch (error) {
+      console.error('Error:', error)
+      alert('An error occurred while sending the message.')
+    }
+  }
 
   const userContainer = () => {
     return (
@@ -118,6 +137,7 @@ function CampaignTools() {
                 Premium Data Map:
               </Title>
             </div>
+            <button onClick={sendMessage}>Send Message</button>
             <div style={{ 'backgroundColor': '#000' }}>
               <img src={missouriDotMap} />
             </div>
