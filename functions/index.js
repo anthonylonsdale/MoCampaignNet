@@ -18,6 +18,8 @@ const corsHandler = cors((req, callback) => {
   callback(null, corsOptions)
 })
 
+// above is the config required, below is a sample request
+
 exports.addmessage = functions.https.onRequest((req, res) => {
   corsHandler(req, res, () => {
     if (req.method === "POST") {
