@@ -119,10 +119,19 @@
 .offer-image {
   background-size: cover;
   background-position: center;
-  height: 15rem; /* Set the height to match the Card */
-  border-radius: 4px; /* Match the border-radius of antd Card */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Match the shadow of antd Card */
-  display: block; /* Display block to fill the container */
+  height: 15rem;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  display: block;
+}
+
+.offer-image-2 {
+  background-size: cover;
+  background-position: center;
+  height: 22rem;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  display: block;
 }
 
 .image-container.custom-height-1 .offer-image {
@@ -135,6 +144,13 @@
 
 .image-container.custom-height-3 .offer-image {
   height: 25rem;
+}
+
+.image-container.custom-height-3 .image-row {
+  display: flex; /* This will line up the images in a row */
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
 
 .image-container.custom-height-4 .offer-image {

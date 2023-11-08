@@ -19,6 +19,7 @@ import logo1 from '../images/JacksonCountyLogo.jpg'
 import logo4 from '../images/KCFOPLogo.png'
 import logo3 from '../images/NLStrongLogo.jpg'
 import sendgrid from '../images/SendgridDashboard.png'
+import voiceinsights from '../images/VoiceInsights.png'
 import billallen from '../images/bill_allen.jpg'
 import clonsdale from '../images/chris_lonsdale_crowd_sign.jpg'
 import debbieflorido from '../images/debbieflorido.jpg'
@@ -137,7 +138,10 @@ function Homescreen() {
                   </Card>
                 </Col>
                 <Col xs={24} md={12} className="image-container custom-height-3">
-                  <img className="offer-image" src={robocalls} alt="Robocall Campaigns" />
+                  <div className="image-row">
+                    <img className="offer-image-2" src={robocalls} alt="Robocall Campaigns" />
+                    <img className="offer-image-2" src={voiceinsights} alt="Robocall Insights" />
+                  </div>
                 </Col>
               </Row>
               <Row gutter={[16, 16]} className="offer-section">
