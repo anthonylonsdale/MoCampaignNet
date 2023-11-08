@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import AccountSettingsModal from '../auth/AccountSettingsModal.jsx'
 import Auth from '../auth/auth.jsx'
 import CustomHeader from '../components/CustomHeader.jsx'
+import AppFooter from '../components/Footer.jsx'
 import HtmlDisplay from '../components/HtmlDisplay.jsx'
 import Sidebar from '../components/SideBar.jsx'
 import missouriDotMap from '../images/MissouriPolSpotMap.png'
@@ -91,21 +92,22 @@ function CampaignTools() {
   }
 
   return (
-    <Layout className="campaign-layout">
-      <ExcelColumnSelector
-        visible={excelModalVisible}
-        onCancel={() => setExcelModalVisible(false)}
-        droppedFile={droppedFile}
-      />
-      <AccountSettingsModal
-        visible={modalVisible}
-        onCancel={() => setModalVisible(false)}
-      />
-      <CustomHeader />
-      <Layout>
-        <Sidebar />
-        <Content className="content">
-          {user ? (
+    <>
+      <Layout className="campaign-layout">
+        <ExcelColumnSelector
+          visible={excelModalVisible}
+          onCancel={() => setExcelModalVisible(false)}
+          droppedFile={droppedFile}
+        />
+        <AccountSettingsModal
+          visible={modalVisible}
+          onCancel={() => setModalVisible(false)}
+        />
+        <CustomHeader />
+        <Layout>
+          <Sidebar />
+          <Content className="content">
+            {user ? (
           <>
             <div className="user-container">
               {userContainer()}
@@ -141,6 +143,12 @@ function CampaignTools() {
             <div style={{ 'backgroundColor': '#000' }}>
               <img src={missouriDotMap} />
             </div>
+            <div>
+              <Title level={4}>
+                Clay County Traffic Route Map
+              </Title>
+              <HtmlDisplay fileName={'route_map'} />
+            </div>
             <div className="html-container">
               <Title level={4}>
                 Format Excel Data Into Walkbook:
@@ -169,9 +177,11 @@ function CampaignTools() {
           ) : (
             <Auth handleSignIn={handleSignIn} />
           )}
-        </Content>
+          </Content>
+        </Layout>
       </Layout>
-    </Layout>
+      <AppFooter />
+    </>
   )
 }
 

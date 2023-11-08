@@ -74,6 +74,7 @@
 
 .layout-min-height {
   min-height: 100vh;
+  width: 100%;
 }
 
 .content-style {
@@ -90,6 +91,123 @@
   margin-top: 2rem;
   align-items: center;
   justify-content: flex-start;
+}
+
+.offer-section {
+  width: 100%;
+  padding: 4px;
+  display: flex;
+  align-items: center; /* This will vertically center the card */
+  justify-content: center; /* This will horizontally center the card (if needed) */
+}
+
+.offer-card {
+  background: #f0f2f5;
+  height: 15rem; /* Set the height */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* This centers the content of the card vertically */
+  border-radius: 4px; /* Match the border-radius of antd Card */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Match the shadow of antd Card */
+}
+
+/* Additional container to match Card style */
+.image-container {
+  padding: 5px; /* Padding to match Card's layout, if needed */
+}
+
+.offer-image {
+  background-size: cover;
+  background-position: center;
+  height: 15rem; /* Set the height to match the Card */
+  border-radius: 4px; /* Match the border-radius of antd Card */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Match the shadow of antd Card */
+  display: block; /* Display block to fill the container */
+}
+
+.image-container.custom-height-1 .offer-image {
+  height: 20rem;
+}
+
+.image-container.custom-height-2 .offer-image {
+  height: 25rem;
+}
+
+.image-container.custom-height-3 .offer-image {
+  height: 25rem;
+}
+
+.image-container.custom-height-4 .offer-image {
+  height: 27.5rem;
+}
+
+.image-container.custom-height-5 .image-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-container.custom-height-5 .offer-image {
+  /* Set max-width if images are too large */
+  max-width: 25rem; /* Adjust the calc value as needed */
+  height: auto;
+  margin: 0 10px; /* This adds space for the plus sign */
+}
+
+.image-container.custom-height-5 .plus-sign {
+  color: white;
+  font-size: 4rem; /* Adjust size as needed */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%; /* Match the height of images */
+}
+
+.custom-list .custom-list-item {
+  position: relative;
+  padding-left: 24px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  transform-origin: left center;
+  font-weight: 600;
+}
+
+.custom-list .custom-list-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  background-color: #1890ff; /* Bullet point color */
+  border-radius: 50%;
+}
+
+.custom-list .custom-list-item:hover {
+  transform: scaleX(1.05); 
+}
+
+.icon-style {
+  font-size: 24px; /* Icon size */
+  color: #0050b3; /* Icon color */
+  margin-bottom: 4px; /* Space below the icon */
+}
+
+.ant-card {
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .offer-card, .image-container {
+    height: auto; /* Adjust height for mobile */
+  }
+  .offer-image {
+    height: auto; /* Adjust height for mobile */
+  }
 }
 
 .center-container {
