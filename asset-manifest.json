@@ -1,14 +1,19 @@
 {
   "files": {
-    "main.css": "/static/css/main.1c2714f1.css",
-    "main.js": "/static/js/main.05a5f444.js",
+    "main.css": "/static/css/main.3ff2b658.css",
+    "main.js": "/static/js/main.6c69b713.js",
+    "static/media/reactspin.gif": "/static/media/reactspin.c9090fa86c81f9d45d35.gif",
     "static/media/lance_pollard.jpg": "/static/media/lance_pollard.9cc9937651c7719dcca3.jpg",
     "static/media/jenn_bauer.jpg": "/static/media/jenn_bauer.fa9d505e00fbc4e77529.jpg",
+    "static/media/text_messages.jpg": "/static/media/text_messages.d2a332fb5e516f93df76.jpg",
     "static/media/chris_lonsdale_crowd_sign.jpg": "/static/media/chris_lonsdale_crowd_sign.59850f2814f843e224e0.jpg",
+    "static/media/robocalling.jpg": "/static/media/robocalling.b89be48a062a27495f5c.jpg",
     "static/media/josiah_town.jpg": "/static/media/josiah_town.02743732a40b19f99b82.jpg",
     "static/media/bill_allen.jpg": "/static/media/bill_allen.c1663220f8e2ff793195.jpg",
     "static/media/nathan_willett_crowd.jpg": "/static/media/nathan_willett_crowd.b748b9814bec1ad52a00.jpg",
     "static/media/debbieflorido.jpg": "/static/media/debbieflorido.ca4af75674f405eda9e4.jpg",
+    "static/media/walkbook_gen.JPG": "/static/media/walkbook_gen.619dc64224c849e2af04.JPG",
+    "static/media/SendgridDashboard.png": "/static/media/SendgridDashboard.85f6525b05107b383a71.png",
     "static/media/jay_johnson.jpg": "/static/media/jay_johnson.45f5876188355b9843ff.jpg",
     "static/media/JacksonCountyLogo.jpg": "/static/media/JacksonCountyLogo.ee2d5654b255f58d3b67.jpg",
     "static/media/MissouriPolSpotMap.png": "/static/media/MissouriPolSpotMap.e216e1de0a16192fbe63.png",
@@ -16,12 +21,13 @@
     "static/media/KCFOPLogo.png": "/static/media/KCFOPLogo.c2ac9b5cd9495b2c00ec.png",
     "static/media/JCRPlogo.jpg": "/static/media/JCRPlogo.2de2234ad625601208fd.jpg",
     "static/media/NLStrongLogo.jpg": "/static/media/NLStrongLogo.314d1b2cf485d919e101.jpg",
+    "static/media/ghub_pages.jpg": "/static/media/ghub_pages.363356910dc9a8b14f00.jpg",
     "index.html": "/index.html",
-    "main.1c2714f1.css.map": "/static/css/main.1c2714f1.css.map",
-    "main.05a5f444.js.map": "/static/js/main.05a5f444.js.map"
+    "main.3ff2b658.css.map": "/static/css/main.3ff2b658.css.map",
+    "main.6c69b713.js.map": "/static/js/main.6c69b713.js.map"
   },
   "entrypoints": [
-    "static/css/main.1c2714f1.css",
-    "static/js/main.05a5f444.js"
+    "static/css/main.3ff2b658.css",
+    "static/js/main.6c69b713.js"
   ]
 }
