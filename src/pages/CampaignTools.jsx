@@ -8,7 +8,7 @@ import CustomHeader from '../components/CustomHeader.jsx'
 import AppFooter from '../components/Footer.jsx'
 import HtmlDisplay from '../components/HtmlDisplay.jsx'
 import Sidebar from '../components/SideBar.jsx'
-import missouriDotMap from '../images/MissouriPolSpotMap.png'
+import missouriDotMap from '../images/mokan.png'
 import ExcelColumnSelector from '../modals/ExcelColumnSelector.jsx'
 import './CampaignTools.css'
 

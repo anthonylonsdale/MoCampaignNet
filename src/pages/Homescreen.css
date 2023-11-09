@@ -241,7 +241,7 @@
 
 .carousel-container {
   max-width: 800px;
-  max-height: 500px;
+  max-height: 600px;
   margin: 0 auto;
   align-items: center;
   justify-content: center;
@@ -261,13 +261,41 @@
 .carousel-image {
   display: block; /* Remove inline default */
   width: 100%;
-  max-height: 100%; /* Adjust this value as needed */
+  max-height: 650px; /* Adjust this value as needed */
   transition: transform 0.5s ease, opacity 0.5s ease; /* Smooth transition for zoom and fade */
 }
 
 .carousel-item:hover .carousel-image {
   transform: scale(1.1); /* Zoom effect */
   opacity: 0.7; /* Fade effect */
+}
+
+
+.custom-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  font-size: 24px;
+  color: #333;
+  height: 30px;
+  width: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.custom-arrow:hover {
+  background-color: #e8e8e8;
+}
+.custom-prev-arrow {
+  left: 10px;
+}
+
+.custom-next-arrow {
+  right: 10px;
 }
 
 .overlay {

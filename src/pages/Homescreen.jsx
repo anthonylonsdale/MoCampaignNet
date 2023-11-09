@@ -1,6 +1,5 @@
-import { GlobalOutlined, LineChartOutlined, MailOutlined, MessageOutlined, PhoneOutlined } from '@ant-design/icons'
+import { GlobalOutlined, LeftOutlined, LineChartOutlined, MailOutlined, MessageOutlined, PhoneOutlined, RightOutlined } from '@ant-design/icons'
 import {
-  Button,
   Card,
   Carousel,
   Col,
@@ -41,6 +40,14 @@ const { Title } = Typography
 
 function Homescreen() {
   const partnershipRef = useRef()
+
+  const goToPrev2 = () => {
+    partnershipRef.current.prev()
+  }
+
+  const goToNext2 = () => {
+    partnershipRef.current.next()
+  }
 
   return (
     <>
@@ -223,23 +230,19 @@ function Homescreen() {
             </div>
 
             <Divider />
-            <div className="center-container">
-              <div className="carousel-container">
-                <Title level={3}>Our Valued Partnerships</Title>
-                <Carousel autoplay ref={partnershipRef}>
-                  <img className="carousel-image" src={logo1} />
-                  <img className="carousel-image" src={logo2} />
-                  <img className="carousel-image" src={logo3} />
-                  <img className="carousel-image" src={logo4} />
-                </Carousel>
-                <Button className="carousel-arrow carousel-arrow-left"
-                  onClick={() => {
-                    partnershipRef.current.prev()
-                  }}>&lt;</Button>
-                <Button className="carousel-arrow carousel-arrow-right"
-                  onClick={() => {
-                    partnershipRef.current.next()
-                  }}>&gt;</Button>
+            <div className="carousel-container">
+              <Title level={3}>Our Valued Partnerships</Title>
+              <Carousel autoplay ref={partnershipRef}>
+                <img className="carousel-image" src={logo1} />
+                <img className="carousel-image" src={logo2} />
+                <img className="carousel-image" src={logo3} />
+                <img className="carousel-image" src={logo4} />
+              </Carousel>
+              <div className="custom-prev-arrow custom-arrow" onClick={goToPrev2}>
+                <LeftOutlined />
+              </div>
+              <div className="custom-next-arrow custom-arrow" onClick={goToNext2}>
+                <RightOutlined />
               </div>
             </div>
           </Space>

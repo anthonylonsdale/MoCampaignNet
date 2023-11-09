@@ -38,10 +38,8 @@ function Portfolio() {
           </div>
           <div className="portfolio-item">
             <Title level={3}>Collection of Projects</Title>
+            <Text>Below is (outdated) code for the homescreen of this website.</Text>
             <ReactCodeDisplay />
-            <Title level={5}>
-            View the rest here...
-            </Title>
           </div>
         </div>
         <Modal
