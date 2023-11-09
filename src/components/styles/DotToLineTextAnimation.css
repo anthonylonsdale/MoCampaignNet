@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:500|Open+Sans:500|Helvetica+Neue:500');
+
+
+.animation-container {
+    position: relative;
+    min-width: 500px; /* Minimum width, but can grow */
+    min-height: 300px; /* Minimum height, but can grow */
+    background: transparent;
+    overflow: hidden;
+    left: -30%; /* Move the container 10% from the left side of the page */
+}
+
+.covering-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 8px;
+    transform: translateX(-50%);
+    background-color: #00008B; 
+    z-index: 1;
+}
+
+/* Ensure the original line has a lower z-index */
+.animated-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 8px;
+    transform: translateX(-50%);
+    background-color: #FFFFFF;
+    z-index: 0;
+}
+
+.animated-line.left {
+    left: 0;
+    transform: translateX(-50%);
+  }
+  
+  .animated-line.right {
+    right: 0;
+    transform: translateX(50%);
+  }
+  
+.text-panel {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Soft shadow for a modern look */
+    transform: translateX(-100%);
+    background-color: rgba(17, 15, 15, 0.5);
+}
+
+.text-panel p {
+    margin: 0;
+    color: rgb(223, 214, 214);
+    font-size: 48px; /* Adjust font size as needed */
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase; /* Make text all caps */
+    font-family: 'Roboto', 'Open Sans', 'Helvetica Neue', sans-serif; /* Modern typefaces, with a generic fallback */
+}

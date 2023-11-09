@@ -13,22 +13,23 @@ import {
 import React, { useRef } from 'react'
 import CustomHeader from '../components/CustomHeader.jsx'
 import AppFooter from '../components/Footer.jsx'
-import TypingEffect from '../components/TypingEffect.jsx'
+import DotToLineTextAnimation from '../components/styles/DotToLineTextAnimation.jsx'
+import TypingEffect from '../components/styles/TypingEffect.jsx'
 import logo2 from '../images/JCRPlogo.jpg'
 import logo1 from '../images/JacksonCountyLogo.jpg'
 import logo4 from '../images/KCFOPLogo.png'
 import logo3 from '../images/NLStrongLogo.jpg'
 import sendgrid from '../images/SendgridDashboard.png'
 import voiceinsights from '../images/VoiceInsights.png'
-import billallen from '../images/bill_allen.jpg'
-import clonsdale from '../images/chris_lonsdale_crowd_sign.jpg'
+import billallen from '../images/billallen.jpg'
+import clonsdale from '../images/chrislonsdale.jpg'
 import debbieflorido from '../images/debbieflorido.jpg'
 import githubpages from '../images/ghub_pages.jpg'
-import jayjohnson from '../images/jay_johnson.jpg'
+import jayjohnson from '../images/jayjohnson.jpg'
 import jennbauer from '../images/jenn_bauer.jpg'
 import josiahtown from '../images/josiah_town.jpg'
 import lancepollard from '../images/lance_pollard.jpg'
-import nathanwillett from '../images/nathan_willett_crowd.jpg'
+import nathanwillett from '../images/nathanwillett.jpg'
 import reactspin from '../images/reactspin.gif'
 import robocalls from '../images/robocalling.jpg'
 import textmsgs from '../images/text_messages.jpg'
@@ -45,8 +46,12 @@ function Homescreen() {
     <>
       <CustomHeader />
       <Layout className="layout-min-height">
-        <Content className="content-style">
+        <Content>
           <Space direction="vertical" className="space-direction">
+            <div className="record-container">
+              <DotToLineTextAnimation text={'Proven Record of Success in Americas Heartland'}/>
+            </div>
+            <Divider />
             <div className="center-container">
               <div className="flex-container">
                 <Title level={2} style={{ marginBlockStart: '36px' }}>
@@ -65,23 +70,56 @@ function Homescreen() {
                 />
               </div>
             </div>
-            <Divider />
-            <div className="center-container">
-              <div className="carousel-container">
-                <Title level={3}>
-                Proven Record of Success in America&apos;s Heartland
-                </Title>
-                <Carousel autoplay>
+            <div className="carousel-container">
+              <Carousel autoplay>
+                <div className="carousel-item">
                   <img className="carousel-image" src={clonsdale} />
+                  <div className="overlay">
+                    <div className="text">Chris Lonsdale (MO R-38)</div>
+                  </div>
+                </div>
+                <div className="carousel-item">
                   <img className="carousel-image" src={billallen} />
+                  <div className="overlay">
+                    <div className="text">Bill Allen (MO R-17)</div>
+                  </div>
+                </div>
+                <div className="carousel-item">
                   <img className="carousel-image" src={jennbauer} />
+                  <div className="overlay">
+                    <div className="text">Jenn Bauer (Liberty Public Schools SB)</div>
+                  </div>
+                </div>
+                <div className="carousel-item">
                   <img className="carousel-image" src={jayjohnson} />
+                  <div className="overlay">
+                    <div className="text">Jay Johnson (Clay Co E. Commissioner)</div>
+                  </div>
+                </div>
+                <div className="carousel-item">
                   <img className="carousel-image" src={debbieflorido} />
+                  <div className="overlay">
+                    <div className="text">Debbie Florido (Clay Co Health Board)</div>
+                  </div>
+                </div>
+                <div className="carousel-item">
                   <img className="carousel-image" src={josiahtown} />
+                  <div className="overlay">
+                    <div className="text">Josiah Town (Henry Co Health Board)</div>
+                  </div>
+                </div>
+                <div className="carousel-item">
                   <img className="carousel-image" src={lancepollard} />
+                  <div className="overlay">
+                    <div className="text">Lance Pollard (Grain Valley SB)</div>
+                  </div>
+                </div><div className="carousel-item">
                   <img className="carousel-image" src={nathanwillett} />
-                </Carousel>
-              </div>
+                  <div className="overlay">
+                    <div className="text">KC Councilman Nathan Willett</div>
+                  </div>
+                </div>
+              </Carousel>
             </div>
             <Divider />
             <div className="center-container">
@@ -98,7 +136,7 @@ function Homescreen() {
                     <Title level={3}>Mass Email Campaigns</Title>
                     <div className="custom-list">
                       <div className="custom-list-item">Custom-designed email templates tailored to campaign branding</div>
-                      <div className="custom-list-item">Advanced segmentation for targeted outreach</div>
+                      <div className="custom-list-item">Advanced audience segmentation for targeted outreach</div>
                       <div className="custom-list-item">Comprehensive analytics for campaign optimization</div>
                     </div>
                   </Card>
