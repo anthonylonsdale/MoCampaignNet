@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.8212bd79.css",
-    "main.js": "/static/js/main.09b410f5.js",
+    "main.css": "/static/css/main.ee7b9f6f.css",
+    "main.js": "/static/js/main.3565878b.js",
     "static/media/reactspin.gif": "/static/media/reactspin.c9090fa86c81f9d45d35.gif",
     "static/media/lance_pollard.jpg": "/static/media/lance_pollard.9cc9937651c7719dcca3.jpg",
     "static/media/jenn_bauer.jpg": "/static/media/jenn_bauer.fa9d505e00fbc4e77529.jpg",
@@ -18,18 +18,17 @@
     "static/media/debbieflorido.jpg": "/static/media/debbieflorido.74f3d8a26e208da55772.jpg",
     "static/media/VoiceInsights.png": "/static/media/VoiceInsights.b144c4f507364d61a690.png",
     "static/media/JacksonCountyLogo.jpg": "/static/media/JacksonCountyLogo.ee2d5654b255f58d3b67.jpg",
-    "static/media/MissouriPolSpotMap.png": "/static/media/MissouriPolSpotMap.e216e1de0a16192fbe63.png",
     "static/media/Anthony Lonsdale Resume 23.pdf": "/static/media/Anthony Lonsdale Resume 23.66d056c932d735a01225.pdf",
     "static/media/KCFOPLogo.png": "/static/media/KCFOPLogo.c2ac9b5cd9495b2c00ec.png",
     "static/media/JCRPlogo.jpg": "/static/media/JCRPlogo.2de2234ad625601208fd.jpg",
     "static/media/NLStrongLogo.jpg": "/static/media/NLStrongLogo.314d1b2cf485d919e101.jpg",
     "static/media/ghub_pages.jpg": "/static/media/ghub_pages.363356910dc9a8b14f00.jpg",
     "index.html": "/index.html",
-    "main.8212bd79.css.map": "/static/css/main.8212bd79.css.map",
-    "main.09b410f5.js.map": "/static/js/main.09b410f5.js.map"
+    "main.ee7b9f6f.css.map": "/static/css/main.ee7b9f6f.css.map",
+    "main.3565878b.js.map": "/static/js/main.3565878b.js.map"
   },
   "entrypoints": [
-    "static/css/main.8212bd79.css",
-    "static/js/main.09b410f5.js"
+    "static/css/main.ee7b9f6f.css",
+    "static/js/main.3565878b.js"
   ]
 }
