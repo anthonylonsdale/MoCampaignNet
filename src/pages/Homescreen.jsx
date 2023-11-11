@@ -100,7 +100,7 @@ function Homescreen() {
                 <div className="carousel-item">
                   <img className="carousel-image" src={jayjohnson} />
                   <div className="overlay">
-                    <div className="text">Jay Johnson (Clay Co E. Commissioner)</div>
+                    <div className="text">Jay Johnson (Clay Co Eastern Commissioner)</div>
                   </div>
                 </div>
                 <div className="carousel-item">
@@ -118,9 +118,10 @@ function Homescreen() {
                 <div className="carousel-item">
                   <img className="carousel-image" src={lancepollard} />
                   <div className="overlay">
-                    <div className="text">Lance Pollard (Grain Valley SB)</div>
+                    <div className="text">Lance Pollard (Grain Valley School Board)</div>
                   </div>
-                </div><div className="carousel-item">
+                </div>
+                <div className="carousel-item">
                   <img className="carousel-image" src={nathanwillett} />
                   <div className="overlay">
                     <div className="text">KC Councilman Nathan Willett</div>

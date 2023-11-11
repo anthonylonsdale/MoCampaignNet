@@ -1,17 +1,18 @@
 import { InboxOutlined } from '@ant-design/icons'
 import { Button, Layout, Space, Tabs, Typography, Upload, message } from 'antd'
 import { GoogleAuthProvider, getAuth, signInWithPopup, signOut } from 'firebase/auth'
+import 'leaflet/dist/leaflet.css'
 import React, { useEffect, useState } from 'react'
 import AccountSettingsModal from '../auth/AccountSettingsModal.jsx'
 import Auth from '../auth/auth.jsx'
 import CustomHeader from '../components/CustomHeader.jsx'
 import AppFooter from '../components/Footer.jsx'
 import HtmlDisplay from '../components/HtmlDisplay.jsx'
+import InteractiveMapper from '../components/InteractiveMapper.jsx'
 import Sidebar from '../components/SideBar.jsx'
 import missouriDotMap from '../images/mokan.png'
 import ExcelColumnSelector from '../modals/ExcelColumnSelector.jsx'
 import './CampaignTools.css'
-
 
 const { Content } = Layout
 const { Text, Title } = Typography
@@ -23,8 +24,13 @@ function CampaignTools() {
   const [modalVisible, setModalVisible] = useState(false)
   const [excelModalVisible, setExcelModalVisible] = useState(false)
   const [droppedFile, setDroppedFile] = useState(null)
+  const [mapPoints, setMapPoints] = useState([])
 
   const auth = getAuth()
+
+  const clearMapPoints = () => {
+    setMapPoints([])
+  }
 
   const handleSignIn = async () => {
     const provider = new GoogleAuthProvider()
@@ -98,6 +104,7 @@ function CampaignTools() {
           visible={excelModalVisible}
           onCancel={() => setExcelModalVisible(false)}
           droppedFile={droppedFile}
+          setMapPoints={setMapPoints}
         />
         <AccountSettingsModal
           visible={modalVisible}
@@ -134,16 +141,23 @@ function CampaignTools() {
                 <HtmlDisplay fileName={'mocities'} />
               </TabPane>
             </Tabs>
-            <div>
+
+            <div className="html-container">
+              <Title level={4}>
+                Backend Server Integration Test (Firebase Functions)
+              </Title>
+              <Button onClick={sendMessage}>Send Message</Button>
+            </div>
+
+            <div className="html-container">
               <Title level={4}>
                 Premium Data Map:
               </Title>
             </div>
-            <button onClick={sendMessage}>Send Message</button>
             <div style={{ 'backgroundColor': '#000' }}>
               <img src={missouriDotMap} />
             </div>
-            <div>
+            <div className="html-container">
               <Title level={4}>
                 Clay County Traffic Route Map
               </Title>
@@ -173,6 +187,17 @@ function CampaignTools() {
                 <p className="ant-upload-text">Drag and drop an Excel file here or click here to select one</p>
               </Dragger>
             </div>
+            <div className="html-container">
+              <Title level={4}>
+                Data Visualization
+              </Title>
+              {mapPoints.length > 0 && (
+                <Button onClick={clearMapPoints} style={{ marginBottom: '10px' }}>
+                  Clear Data
+                </Button>
+              )}
+            </div>
+            <InteractiveMapper mapPoints={mapPoints} clearMapPoints={clearMapPoints} />
           </>
           ) : (
             <Auth handleSignIn={handleSignIn} />

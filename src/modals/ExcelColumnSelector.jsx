@@ -1,10 +1,16 @@
-import { Button, Checkbox, Modal } from 'antd'
+import { Alert, Button, Checkbox, Modal, Radio, Select, message } from 'antd'
 import React, { useEffect, useState } from 'react'
 import * as XLSX from 'xlsx'
 
-function ExcelColumnSelector({ visible, onCancel, droppedFile }) {
+function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints }) {
   const [excelData, setExcelData] = useState(null)
   const [selectedColumns, setSelectedColumns] = useState([])
+  const [actionType, setActionType] = useState(null)
+  const [error, setError] = useState(false)
+
+  const [latitudeColumn, setLatitudeColumn] = useState(null)
+  const [longitudeColumn, setLongitudeColumn] = useState(null)
+  const [nameColumn, setNameColumn] = useState(null)
 
   useEffect(() => {
     if (!droppedFile) {
@@ -59,10 +65,34 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile }) {
     setSelectedColumns(updatedSelection)
   }
 
+  const handleActionChange = (e) => {
+    setActionType(e.target.value)
+  }
+
   const handleConfirm = () => {
-    const newExcelData = reformatData(excelData, selectedColumns)
-    generateAndDownloadNewExcelFile(newExcelData)
-    onCancel() // close the modal
+    if (actionType === 'format') {
+      const newExcelData = reformatData(excelData, selectedColumns)
+      generateAndDownloadNewExcelFile(newExcelData)
+    } else if (actionType === 'map') {
+      if (latitudeColumn && longitudeColumn && nameColumn && excelData?.data) {
+        const latitudeKey = latitudeColumn.match(/\(([^)]+)\)/)[1] // Extract the column letter
+        const longitudeKey = longitudeColumn.match(/\(([^)]+)\)/)[1] // Extract the column letter
+        const nameKey = nameColumn.match(/\(([^)]+)\)/)[1] // Extract the column letter
+
+        const mapData = excelData.data[latitudeKey].map((_, idx) => ({
+          lat: excelData.data[latitudeKey][idx],
+          lng: excelData.data[longitudeKey][idx],
+          name: excelData.data[nameKey][idx],
+        }))
+        setMapPoints(mapData)
+      } else {
+        // Error handling: required columns not selected
+        message.error('Please select all required columns.', 5)
+        setError(true)
+        return
+      }
+    }
+    onCancel() // Close the modal
   }
 
   const reformatData = (excelData, selected) => {
@@ -107,29 +137,75 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile }) {
     XLSX.writeFile(workbook, `${sheetName}_filtered.xlsx`)
   }
 
+  const renderMapColumnSelectors = () => (
+    <div>
+      {['Latitude', 'Longitude', 'Marker Name'].map((placeholder, index) => (
+        <Select
+          key={placeholder}
+          placeholder={`Select ${placeholder} Column`}
+          style={{ width: 200, marginBottom: 10, borderColor: error ? 'red' : undefined }}
+          onChange={(value) => {
+            setError(false) // Reset error on new selection
+            if (index === 0) setLatitudeColumn(value)
+            if (index === 1) setLongitudeColumn(value)
+            if (index === 2) setNameColumn(value)
+          }}>
+          {excelData.columns.map((column) => (
+            <Select.Option key={column} value={column}>
+              {column}
+            </Select.Option>
+          ))}
+        </Select>
+      ))}
+    </div>
+  )
+
   return (
     <Modal
       open={visible}
-      title="Select Columns to Keep"
+      title="Excel Data Options"
       onCancel={onCancel}
       footer={[
         <Button key="cancel" onClick={onCancel}>
-          Cancel
+        Cancel
         </Button>,
-        <Button key="confirm" type="primary" onClick={handleConfirm}>
-          Confirm
+        <Button key="confirm" type="primary" onClick={handleConfirm} disabled={!actionType}>
+        Confirm
         </Button>,
       ]}
     >
-      {excelData?.columns?.map((column) => (
-        <Checkbox
-          key={column}
-          onChange={() => handleCheckboxChange(column)}
-          checked={selectedColumns.includes(column)}
-        >
-          {column}
-        </Checkbox>
-      ))}
+      <Radio.Group onChange={handleActionChange} value={actionType}>
+        <Radio value="format">Format Excel Document</Radio>
+        <Radio value="map">Display on Map</Radio>
+      </Radio.Group>
+      {excelData && actionType === 'format' && (
+        <div>
+          <h3>Select Columns:</h3>
+          {excelData.columns.map((column) => (
+            <Checkbox
+              key={column}
+              onChange={() => handleCheckboxChange(column)}
+              checked={selectedColumns.includes(column)}
+            >
+              {column}
+            </Checkbox>
+          ))}
+        </div>
+      )}
+      {excelData && actionType === 'map' && (
+        <>
+          {renderMapColumnSelectors()}
+          {Object.keys(excelData.data).some((key) => excelData.data[key].length > 10000) && (
+            <Alert
+              message="Warning"
+              description="Large datasets may result in slow performance."
+              type="warning"
+              showIcon
+              style={{ marginTop: '20px' }}
+            />
+          )}
+        </>
+      )}
     </Modal>
   )
 }

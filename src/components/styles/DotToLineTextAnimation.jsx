@@ -13,16 +13,13 @@ const DotToLineTextAnimation = ({ text, direction = 'left' }) => {
     },
   }
 
-  const animationDuration = 5
-  const animationDelay = 0.5
-
   const coveringLineVariants = {
     hidden: { height: 0 },
     visible: {
       height: '100%',
       transition: {
-        duration: animationDuration,
-        delay: animationDuration + animationDelay,
+        duration: 4,
+        delay: 2,
         ease: 'easeInOut',
         repeat: Infinity,
         repeatType: 'reverse',
