@@ -8,9 +8,9 @@ import Auth from '../auth/auth.jsx'
 import CustomHeader from '../components/CustomHeader.jsx'
 import AppFooter from '../components/Footer.jsx'
 import HtmlDisplay from '../components/HtmlDisplay.jsx'
-import InteractiveMapper from '../components/InteractiveMapper.jsx'
 import Sidebar from '../components/SideBar.jsx'
 import missouriDotMap from '../images/mokan.png'
+import InteractiveMapper from '../mapping/InteractiveMapper.jsx'
 import ExcelColumnSelector from '../modals/ExcelColumnSelector.jsx'
 import './CampaignTools.css'
 
@@ -141,10 +141,9 @@ function CampaignTools() {
                 <HtmlDisplay fileName={'mocities'} />
               </TabPane>
             </Tabs>
-
             <div className="html-container">
               <Title level={4}>
-                Backend Server Integration Test (Firebase Functions)
+                (Demo) Backend Server Integration Test
               </Title>
               <Button onClick={sendMessage}>Send Message</Button>
             </div>
@@ -159,9 +158,13 @@ function CampaignTools() {
             </div>
             <div className="html-container">
               <Title level={4}>
-                Clay County Traffic Route Map
+                (Demo) Clay County Traffic Route Map:
               </Title>
               <HtmlDisplay fileName={'route_map'} />
+              <Title level={4}>
+                (Demo) Travelling Salesman Problem Solver for Voters in Walkbook:
+              </Title>
+              <HtmlDisplay fileName={'optimized_route_map'} />
             </div>
             <div className="html-container">
               <Title level={4}>
@@ -197,7 +200,9 @@ function CampaignTools() {
                 </Button>
               )}
             </div>
-            <InteractiveMapper mapPoints={mapPoints} clearMapPoints={clearMapPoints} />
+            <div>
+              <InteractiveMapper mapPoints={mapPoints} clearMapPoints={clearMapPoints} />
+            </div>
           </>
           ) : (
             <Auth handleSignIn={handleSignIn} />
