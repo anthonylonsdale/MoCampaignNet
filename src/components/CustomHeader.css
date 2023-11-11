@@ -1,25 +1,32 @@
 .site-layout-background {
-    padding: 0;
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    align-items: center;
-
-    .header-title {
-        font-size: 24px;
-        color: #1890ff;
-        font-weight: bold;
-        text-transform: uppercase;
-        white-space: nowrap;
-    }
-  }
+  padding: 0 24px; /* Add horizontal padding */
+  display: flex;
+  width: 100%;
+  justify-content: space-between; /* Keeps the logo, title, and menu spaced out */
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  align-items: center; /* This should vertically center all children, including your title */
+  height: 64px; /* Set a fixed height for your header */
+  background-color: #fff; /* Dark blue background color */
+  box-shadow: 0 2px 8px rgba(0,0,0,.1); /* Optional: Adds shadow for depth */
+}
 
 .header-logo {
-  min-width: 72px;
-  height: auto; /* Prevent scaling of the logo */
+  width: auto; /* Your logo width */
+  height: 32px; /* Adjust as necessary */
+}
+
+/* Adjustments to header title */
+.header-title {
+  font-size: 20px; /* Adjust font size as desired */
+  color: #1890ff; /* Your brand color */
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-left: 24px; /* Space from the logo */
+  padding: 0; /* Reset any padding */
+  line-height: 64px; /* Match your header height to vertically center the text */
+  white-space: nowrap;
 }
 
 /* Logo */

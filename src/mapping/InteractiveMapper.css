@@ -1,17 +1,11 @@
 .interactive-mapper-container {
     display: flex;
     height: 600px; /* Adjust the height as needed */
-  }
-  
-  .tool-panel {
-    /* Keep the styles from the previous ToolPanel.css, and make sure this width is the same as defined there */
-    width: 250px; /* This width should match the width of the tool panel */
-    flex-shrink: 0; /* Prevent the tool panel from shrinking */
-    /* Add any additional styling for the tool panel here */
-  }
-  
-  /* Ensure the MapContainer has a flex property */
-  .leaflet-container {
+    width: 100%;
+}
+
+/* Ensure the MapContainer has a flex property */
+.leaflet-container {
     flex: 1;
-  }
-  
+    width: 100%;
+}

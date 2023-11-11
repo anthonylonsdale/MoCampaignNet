@@ -7,7 +7,7 @@ import { Image, Layout, Menu, Typography } from 'antd'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import logo from '../images/logoblank.png'
-import './CustomHeader.css'; // Import the CSS file for custom styles
+import './CustomHeader.css'
 
 const { Header } = Layout
 const { Title } = Typography

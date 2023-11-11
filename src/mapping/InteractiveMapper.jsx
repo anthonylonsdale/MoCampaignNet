@@ -2,12 +2,11 @@ import * as turf from '@turf/turf'
 import { Button, message } from 'antd'
 import L from 'leaflet'
 import 'leaflet-draw/dist/leaflet.draw.css'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { FeatureGroup, MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
 import { EditControl } from 'react-leaflet-draw'
 import * as XLSX from 'xlsx'
 import './InteractiveMapper.css'
-import ToolPanel from './ToolPanel.jsx'
 
 const createCustomIcon = () => {
   return L.divIcon({
@@ -25,27 +24,9 @@ const SetViewToBounds = ({ points }) => {
   return null
 }
 
-const InteractiveMapper = ({ mapPoints }) => {
+const InteractiveMapper = ({ mapPoints, setSelectedPoints, selectedPoints }) => {
   const mapPointsRef = useRef(mapPoints)
   const featureGroupRef = useRef()
-  const [selectedPoints, setSelectedPoints] = useState([])
-  const [drawingMode, setDrawingMode] = useState(null)
-
-  console.log(drawingMode)
-
-  const handleDrawPolygon = () => {
-    setDrawingMode('polygon')
-    // Implement logic to enable drawing a polygon
-  }
-
-  const handleDrawRectangle = () => {
-    setDrawingMode('rectangle')
-    // Implement logic to enable drawing a rectangle
-  }
-
-  const handleExport = () => {
-    // Implement logic to export data
-  }
 
   useEffect(() => {
     mapPointsRef.current = mapPoints
@@ -86,12 +67,7 @@ const InteractiveMapper = ({ mapPoints }) => {
 
   return (
     <div className="interactive-mapper-container">
-      <ToolPanel
-        onDrawPolygon={handleDrawPolygon}
-        onDrawRectangle={handleDrawRectangle}
-        onExport={handleExport}
-      />
-      <MapContainer center={[38.573936, -92.603760]} zoom={13} style={{ height: '600px', width: '100%', flex: 1 }}>
+      <MapContainer center={[38.573936, -92.603760]} zoom={13}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

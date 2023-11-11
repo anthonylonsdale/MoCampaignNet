@@ -1,5 +1,4 @@
-import { InboxOutlined } from '@ant-design/icons'
-import { Button, Layout, Space, Tabs, Typography, Upload, message } from 'antd'
+import { Button, Layout, Space, Tabs, Typography } from 'antd'
 import { GoogleAuthProvider, getAuth, signInWithPopup, signOut } from 'firebase/auth'
 import 'leaflet/dist/leaflet.css'
 import React, { useEffect, useState } from 'react'
@@ -10,27 +9,18 @@ import AppFooter from '../components/Footer.jsx'
 import HtmlDisplay from '../components/HtmlDisplay.jsx'
 import Sidebar from '../components/SideBar.jsx'
 import missouriDotMap from '../images/mokan.png'
-import InteractiveMapper from '../mapping/InteractiveMapper.jsx'
-import ExcelColumnSelector from '../modals/ExcelColumnSelector.jsx'
+import MappingContainer from '../mapping/MapContainer.jsx'
 import './CampaignTools.css'
 
 const { Content } = Layout
 const { Text, Title } = Typography
 const { TabPane } = Tabs
-const { Dragger } = Upload
 
 function CampaignTools() {
   const [user, setUser] = useState(null)
   const [modalVisible, setModalVisible] = useState(false)
-  const [excelModalVisible, setExcelModalVisible] = useState(false)
-  const [droppedFile, setDroppedFile] = useState(null)
-  const [mapPoints, setMapPoints] = useState([])
 
   const auth = getAuth()
-
-  const clearMapPoints = () => {
-    setMapPoints([])
-  }
 
   const handleSignIn = async () => {
     const provider = new GoogleAuthProvider()
@@ -100,12 +90,6 @@ function CampaignTools() {
   return (
     <>
       <Layout className="campaign-layout">
-        <ExcelColumnSelector
-          visible={excelModalVisible}
-          onCancel={() => setExcelModalVisible(false)}
-          droppedFile={droppedFile}
-          setMapPoints={setMapPoints}
-        />
         <AccountSettingsModal
           visible={modalVisible}
           onCancel={() => setModalVisible(false)}
@@ -119,6 +103,7 @@ function CampaignTools() {
             <div className="user-container">
               {userContainer()}
             </div>
+            <MappingContainer />
             <div className="html-container">
               <Title level={4}>
                 Common Geographic Subdivisions:
@@ -165,43 +150,6 @@ function CampaignTools() {
                 (Demo) Travelling Salesman Problem Solver for Voters in Walkbook:
               </Title>
               <HtmlDisplay fileName={'optimized_route_map'} />
-            </div>
-            <div className="html-container">
-              <Title level={4}>
-                Format Excel Data Into Walkbook:
-              </Title>
-            </div>
-            <div className="upload-container">
-              <Dragger
-                beforeUpload={(file) => {
-                  if (!/\.(xlsx|xls|csv)$/i.test(file.name)) {
-                    message.error('File is not in Excel format', 3)
-                    return Upload.LIST_IGNORE
-                  }
-                  setDroppedFile(file)
-                  setExcelModalVisible(true)
-                  return false
-                }}
-                multiple={false}
-              >
-                <p className="ant-upload-drag-icon">
-                  <InboxOutlined />
-                </p>
-                <p className="ant-upload-text">Drag and drop an Excel file here or click here to select one</p>
-              </Dragger>
-            </div>
-            <div className="html-container">
-              <Title level={4}>
-                Data Visualization
-              </Title>
-              {mapPoints.length > 0 && (
-                <Button onClick={clearMapPoints} style={{ marginBottom: '10px' }}>
-                  Clear Data
-                </Button>
-              )}
-            </div>
-            <div>
-              <InteractiveMapper mapPoints={mapPoints} clearMapPoints={clearMapPoints} />
             </div>
           </>
           ) : (
