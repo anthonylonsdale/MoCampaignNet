@@ -1,9 +1,60 @@
-/* auth.css */
+.auth-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+}
+
+.auth-header {
+  width: 100%;
+  margin: 0 auto; /* Center the header */
+  background-color: #fff;
+  padding: 10px 20px;
+  display: flex; /* Use flexbox to align items */
+  align-items: center; /* Align items vertically */
+  justify-content: flex-start; /* Start the items from the left */
+  text-align: left; /* Align the text to the left */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  position: relative;
+}
+
+.auth-logo {
+  width: 80px; /* Adjust the size of your logo */
+}
+
+.auth-title {
+  color: #000000;
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: background-color 0.3s ease;  
+  flex: 0;
+  text-align: center;
+  margin: 0 auto; /* This will center the title */
+  margin-left: 25%;
+}
 
 .auth-container {
-  max-width: 300px;
-  margin: 0 auto;
+  width: 100%;
+  padding: 20px;
+  background-color: #fff;
+  border-bottom-left-radius: 10px; /* Maintain bottom border-radius */
+  border-bottom-right-radius: 10px; /* Maintain bottom border-radius */
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
   text-align: center;
+  position: relative; /* Ensures proper stacking context */
+}
+
+.auth-header,
+.auth-container {
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 h2 {
@@ -12,24 +63,51 @@ h2 {
 }
 
 input[type="email"],
-input[type="password"]
+input[type="password"] {
+  margin-bottom: 10px;
+}
 
 .error {
   color: red;
+  margin-bottom: 10px;
 }
 
 button[type="submit"] {
-  width: 100%;
-  background-color: blue;
-  color: white;
-  padding: 10px;
+  background-color: #0052cc;
   border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  height: 100%;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #fff;
+  transition: background-color 0.3s ease;
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+button[type="submit"]:hover {
+  background-color: #003d99;
+}
+
+input[type="email"],
+input[type="password"] {
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  padding: 15px;
+  font-size: 16px;
 }
 
 .auth-link {
   text-decoration: none;
-  color: blue;
+  color: #007bff;
+  margin-top: 10px;
+  display: block;
+}
+
+@media (max-width: 600px) { /* Example media query for small screens */
+  .auth-header,
+  .auth-container {
+    padding: 10px;
+  }
 }
