@@ -1,19 +1,17 @@
+
 .tool-panel {
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 300px; /* Adjust width as needed */
-  background: white;
-  box-shadow: -2px 0px 5px rgba(0, 0, 0, 0.2);
-  z-index: 400;
-  overflow-y: auto; /* Allows scrolling if content is too long */
-  padding: 10px;
+  width: 300px; /* Fixed width or use flex-basis if you want it flexible */
+  background-color: #f8f9fa; /* Light gray background for the panel */
+  padding: 20px; /* Padding inside the panel */
+  box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1); /* Right shadow for depth */
+  z-index: 1; /* Above the map to cast a shadow */
+  border-right: 1px solid #eaeaea; /* Border to separate from the map */
 }
 
 .tool-panel h3 {
-  margin-top: 0;
   color: #333;
   font-size: 18px;
+  padding: 4px;
 }
 
 .tool-panel ul {

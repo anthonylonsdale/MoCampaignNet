@@ -7,5 +7,4 @@
 /* Ensure the MapContainer has a flex property */
 .leaflet-container {
     flex: 1;
-    width: 100%;
 }

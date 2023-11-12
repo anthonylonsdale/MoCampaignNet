@@ -37,7 +37,7 @@
           }
         ],
         "object-curly-spacing": ["warn", "always"],
-        "quotes": ["error"],
+        "quotes": ["warn"],
         "react/display-name": ["off", { "ignoreTranspilerName": false }],
         "no-underscore-dangle": 0,
         "max-len": 0,

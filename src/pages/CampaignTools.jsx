@@ -1,4 +1,4 @@
-import { Button, Layout, Space, Tabs, Typography } from 'antd'
+import { Button, Layout, Tabs, Typography } from 'antd'
 import { GoogleAuthProvider, getAuth, signInWithPopup, signOut } from 'firebase/auth'
 import 'leaflet/dist/leaflet.css'
 import React, { useEffect, useState } from 'react'
@@ -69,21 +69,19 @@ function CampaignTools() {
 
   const userContainer = () => {
     return (
-      <Space direction="vertical" className="user-space">
-        <div className="user-info">
-          <div className="text-container">
-            <Text className="welcome-text">Welcome, {user.displayName}</Text>
-            <Button className="action-button" onClick={() => setModalVisible(true)}>
-              Account Settings
-            </Button>
-          </div>
-          <div className="button-container">
-            <Button className="action-button" onClick={handleSignOut}>
-              Sign Out
-            </Button>
-          </div>
+      <div className="user-info">
+        <div className="text-container">
+          <Text className="welcome-text">Welcome, {user.displayName}</Text>
+          <Button className="action-button" onClick={() => setModalVisible(true)}>
+            Account Settings
+          </Button>
         </div>
-      </Space>
+        <div className="button-container">
+          <Button className="action-button" onClick={handleSignOut}>
+            Sign Out
+          </Button>
+        </div>
+      </div>
     )
   }
 
@@ -132,7 +130,6 @@ function CampaignTools() {
               </Title>
               <Button onClick={sendMessage}>Send Message</Button>
             </div>
-
             <div className="html-container">
               <Title level={4}>
                 Premium Data Map:

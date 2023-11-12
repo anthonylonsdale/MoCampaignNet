@@ -3,7 +3,7 @@ import { Button, message } from 'antd'
 import L from 'leaflet'
 import 'leaflet-draw/dist/leaflet.draw.css'
 import React, { useEffect, useRef } from 'react'
-import { FeatureGroup, MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
+import { FeatureGroup, MapContainer, Marker, Polygon, Popup, TileLayer, useMap } from 'react-leaflet'
 import { EditControl } from 'react-leaflet-draw'
 import * as XLSX from 'xlsx'
 import './InteractiveMapper.css'
@@ -24,7 +24,7 @@ const SetViewToBounds = ({ points }) => {
   return null
 }
 
-const InteractiveMapper = ({ mapPoints, setSelectedPoints, selectedPoints }) => {
+const InteractiveMapper = ({ mapPoints, setSelectedPoints, selectedPoints, shapes }) => {
   const mapPointsRef = useRef(mapPoints)
   const featureGroupRef = useRef()
 
@@ -97,6 +97,9 @@ const InteractiveMapper = ({ mapPoints, setSelectedPoints, selectedPoints }) => 
                 </Marker>
               )
             })
+          ))}
+          {shapes.map((shape, index) => (
+            <Polygon key={index} positions={shape.geometry.coordinates} />
           ))}
         </FeatureGroup>
       </MapContainer>

@@ -1,14 +1,19 @@
-import './index.css'
+import { Buffer } from 'buffer'
 
 import React from 'react'
+import 'react-app-polyfill/stable'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import App from './App.jsx'
 import Signup from './auth/Signup.jsx'
 import Auth from './auth/auth.jsx'
 import ProtectedRoute from './auth/protectedRoute.jsx'
+import './index.css'
 import CampaignTools from './pages/CampaignTools.jsx'
 import Portfolio from './pages/Portfolio.jsx'
+
+window.Buffer = Buffer
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
