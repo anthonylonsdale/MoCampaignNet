@@ -1,5 +1,3 @@
-import { Buffer } from 'buffer'
-
 import React from 'react'
 import 'react-app-polyfill/stable'
 import ReactDOM from 'react-dom/client'
@@ -11,8 +9,6 @@ import ProtectedRoute from './auth/protectedRoute.jsx'
 import './index.css'
 import CampaignTools from './pages/CampaignTools.jsx'
 import Portfolio from './pages/Portfolio.jsx'
-
-window.Buffer = Buffer
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'))

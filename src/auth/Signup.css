@@ -81,7 +81,7 @@
 .auth-requirements-list .ant-list-item {
   display: flex;
   align-items: center;
-  justify-content: start;
+  justify-content: flex-start;
 }
 
 .auth-submit-button {
