@@ -20,3 +20,50 @@
 .excel-column-selector-modal .ant-select {
   margin-right: 8px;
 }
+
+.column-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+  padding-right: 10px; /* Adjust if needed to not cut off text */
+}
+
+.column-container::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+  border-radius: 10px;
+}
+
+.column-container::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 10px;
+}
+
+.column-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.column-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.checkbox-label .ant-checkbox-wrapper {
+  flex-shrink: 0; /* Prevent the checkbox from shrinking */
+  margin-right: 5px; /* Space between checkbox and text */
+}
+
+/* Set a max-width on the span to allow for ellipsis */
+.checkbox-label span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 11rem; /* Adjust the max-width as needed */
+}

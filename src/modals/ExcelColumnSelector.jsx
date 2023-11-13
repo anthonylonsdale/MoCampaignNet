@@ -1,4 +1,4 @@
-import { Alert, Button, Checkbox, Modal, Radio, Select, Switch, message } from 'antd'
+import { Alert, Button, Checkbox, Input, Modal, Radio, Select, Switch, message } from 'antd'
 import React, { useEffect, useState } from 'react'
 import * as XLSX from 'xlsx'
 import './ExcelColumnSelector.css'
@@ -13,6 +13,7 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints }) {
   const [nameColumn, setNameColumn] = useState(null)
 
   const [selectedColumns, setSelectedColumns] = useState([])
+  const [searchQuery, setSearchQuery] = useState('')
   const [sortColumn, setSortColumn] = useState(null)
   const [sortOrder, setSortOrder] = useState('ascend')
   const [cleanDataOptions, setCleanDataOptions] = useState({
@@ -56,6 +57,7 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints }) {
           }
         }
       }
+
       setExcelData({
         sheetName,
         columns,
@@ -63,7 +65,7 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints }) {
       })
     }
     reader.readAsArrayBuffer(droppedFile)
-  }, [droppedFile])
+  }, [droppedFile, visible])
 
   const handleCheckboxChange = (column) => {
     const updatedSelection = selectedColumns.includes(column) ?
@@ -275,15 +277,27 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints }) {
         <>
           <div>
             <h3>Select Columns:</h3>
-            {excelData.columns.map((column) => (
-              <Checkbox
-                key={column}
-                onChange={() => handleCheckboxChange(column)}
-                checked={selectedColumns.includes(column)}
-              >
-                {column}
-              </Checkbox>
-            ))}
+            <Input
+              type="text"
+              placeholder="Search columns..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value.toLowerCase())}
+              style={{ marginBottom: '10px', padding: '5px', width: '100%' }}
+            />
+            <div className="column-container">
+              {excelData.columns
+                  .filter((column) => column.toLowerCase().includes(searchQuery))
+                  .map((column) => (
+                    <div key={column} className="checkbox-label">
+                      <Checkbox
+                        onChange={() => handleCheckboxChange(column)}
+                        checked={selectedColumns.includes(column)}
+                      >
+                        <span>{column}</span>
+                      </Checkbox>
+                    </div>
+                  ))}
+            </div>
           </div>
           <div style={{ marginBottom: 20 }}>
             <h3>Data Cleaning Options:</h3>

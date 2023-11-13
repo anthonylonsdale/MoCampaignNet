@@ -1,11 +1,10 @@
 import * as turf from '@turf/turf'
-import { Button, message } from 'antd'
+import { message } from 'antd'
 import L from 'leaflet'
 import 'leaflet-draw/dist/leaflet.draw.css'
 import React, { useEffect, useRef } from 'react'
 import { FeatureGroup, MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
 import { EditControl } from 'react-leaflet-draw'
-import * as XLSX from 'xlsx'
 import './InteractiveMapper.css'
 
 const createCustomIcon = () => {
@@ -24,7 +23,47 @@ const SetViewToBounds = ({ points }) => {
   return null
 }
 
-const InteractiveMapper = ({ mapPoints, setSelectedPoints, selectedPoints, shapes }) => {
+const ShapefileLayer = ({ data, featureGroupRef }) => {
+  const map = useMap()
+
+  useEffect(() => {
+    if (!data) return
+
+    const shapefileLayer = L.featureGroup()
+
+    L.geoJson(data, {
+      onEachFeature: function tooltip(f, l) {
+        const out = []
+        if (f.properties) {
+          Object.keys(f.properties).forEach((key) => {
+            out.push(`${key}: ${f.properties[key]}`)
+          })
+          l.bindTooltip(out.join('<br />'))
+        }
+      },
+    }).addTo(shapefileLayer)
+
+    if (featureGroupRef && featureGroupRef.current) {
+      featureGroupRef.current.addLayer(shapefileLayer)
+    } else {
+      shapefileLayer.addTo(map)
+    }
+
+    map.fitBounds(shapefileLayer.getBounds())
+
+    return () => {
+      if (featureGroupRef && featureGroupRef.current) {
+        featureGroupRef.current.removeLayer(shapefileLayer)
+      } else {
+        map.removeLayer(shapefileLayer)
+      }
+    }
+  }, [data, map, featureGroupRef])
+
+  return null
+}
+
+const InteractiveMapper = ({ mapPoints, setSelectedPoints, shapes }) => {
   const mapPointsRef = useRef(mapPoints)
   const featureGroupRef = useRef()
 
@@ -48,12 +87,6 @@ const InteractiveMapper = ({ mapPoints, setSelectedPoints, selectedPoints, shape
     message.info(`${pointsSelected.length} points have been selected.`)
   }
 
-  const exportToExcel = () => {
-    const ws = XLSX.utils.json_to_sheet(selectedPoints)
-    const wb = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(wb, ws, 'SelectedPoints')
-    XLSX.writeFile(wb, 'selectedPoints.xlsx')
-  }
 
   const groupedPoints = mapPoints.reduce((acc, point) => {
     const key = `${point.lat}-${point.lng}`
@@ -63,36 +96,6 @@ const InteractiveMapper = ({ mapPoints, setSelectedPoints, selectedPoints, shape
     acc[key].push(point)
     return acc
   }, {})
-
-  const ShapefileLayer = ({ data }) => {
-    const map = useMap()
-
-    useEffect(() => {
-      if (!data) return
-
-      const shapefileLayer = L.featureGroup().addTo(map)
-
-      L.geoJson(data, {
-        onEachFeature: function popUp(f, l) {
-          const out = []
-          if (f.properties) {
-            Object.keys(f.properties).forEach((key) => {
-              out.push(`${key}: ${f.properties[key]}`)
-            })
-            l.bindPopup(out.join('<br />'))
-          }
-        },
-      }).addTo(shapefileLayer)
-
-      map.fitBounds(shapefileLayer.getBounds())
-
-      return () => {
-        map.removeLayer(shapefileLayer)
-      }
-    }, [data, map])
-
-    return null
-  }
 
   return (
     <div className="interactive-mapper-container">
@@ -128,13 +131,8 @@ const InteractiveMapper = ({ mapPoints, setSelectedPoints, selectedPoints, shape
             })
           ))}
         </FeatureGroup>
-        {shapes && <ShapefileLayer data={shapes} />}
+        {shapes && <ShapefileLayer data={shapes} featureGroupRef={featureGroupRef} />}
       </MapContainer>
-      {selectedPoints.length > 0 && (
-        <Button onClick={exportToExcel}>
-          Export Selected Points
-        </Button>
-      )}
     </div>
   )
 }

@@ -1,6 +1,6 @@
 
 .tool-panel {
-  width: 300px; /* Fixed width or use flex-basis if you want it flexible */
+  width: 25rem; /* Fixed width or use flex-basis if you want it flexible */
   background-color: #f8f9fa; /* Light gray background for the panel */
   padding: 20px; /* Padding inside the panel */
   box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1); /* Right shadow for depth */
@@ -85,6 +85,15 @@
   border-radius: 4px;
 }
 
+.file-item span {
+  display: inline-block;
+  max-width: 90%; /* or the maximum percentage width you want */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
 .file-item:hover {
   background-color: #f0f0f0;
 }
@@ -96,4 +105,19 @@
 
 .file-delete-icon:hover {
   background-color: transparent;
+}
+
+.export-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+}
+
+.export-content span {
+  margin-right: 16px;
+}
+
+.section-container {
+  margin-top: 20px;
 }
