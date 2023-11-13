@@ -1,9 +1,9 @@
 import { InboxOutlined } from '@ant-design/icons'
 import { Collapse, Select, Switch, Upload, message } from 'antd'
 import React, { useState } from 'react'
-import shp from 'shpjs'
 import ExcelColumnSelector from '../modals/ExcelColumnSelector.jsx'
 import './ToolPanel.css'
+import { extractShapes } from './utils/ExtractShapes.jsx'
 
 const { Panel } = Collapse
 const { Dragger } = Upload
@@ -20,29 +20,8 @@ const handleVisualizationChange = (value) => {
 }
 
 const ToolPanel = ({ setMapPoints, setShapes }) => {
-  const [fileList, setFileList] = useState([])
   const [excelModalVisible, setExcelModalVisible] = useState(false)
   const [droppedFile, setDroppedFile] = useState(null)
-
-  const handleFileUpload = async (info) => {
-    const file = info.file // Use info.file directly
-
-    console.log(file)
-
-    if (file && /\.(zip)$/i.test(file.name)) {
-      const reader = new FileReader()
-      reader.onload = async (e) => {
-        const buffer = e.target.result
-
-        const geojson = await shp.parseZip(buffer)
-        setShapes(geojson.features) // Set the shapes in the parent component's state
-      }
-      reader.readAsArrayBuffer(file)
-    } else {
-      message.error('Uploaded file is not a .shp file or file is undefined')
-    }
-    setFileList([info.file]) // Set the latest file
-  }
 
   const genExtra = () => (
     <InboxOutlined
@@ -102,11 +81,19 @@ const ToolPanel = ({ setMapPoints, setShapes }) => {
         </li>
         <li>
           <span className="tool-icon">🗺️</span>
-          <Upload accept=".zip" beforeUpload={() => false} onChange={handleFileUpload} fileList={fileList} >
+          <Upload accept=".zip" multiple={false}
+            beforeUpload={async (file) => {
+              if (!/\.(zip)$/i.test(file.name)) {
+                message.error('Uploaded File is not a ZIP archive', 3)
+                return Upload.LIST_IGNORE
+              }
+              const shapesData = await extractShapes([file])
+              setShapes(shapesData)
+              return false
+            }} >
             Upload Shapefile
           </Upload>
         </li>
-        {/* Add other tools and handlers as needed */}
       </ul>
       <ExcelColumnSelector
         visible={excelModalVisible}

@@ -7,8 +7,6 @@ const extractShapes = async (files) => {
     data: null,
   }
 
-  console.log(files)
-
   const _parseFile = async (file) => {
     return new Promise((resolve) => {
       const reader = new FileReader()

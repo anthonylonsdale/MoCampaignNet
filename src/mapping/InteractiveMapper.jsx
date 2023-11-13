@@ -3,7 +3,7 @@ import { Button, message } from 'antd'
 import L from 'leaflet'
 import 'leaflet-draw/dist/leaflet.draw.css'
 import React, { useEffect, useRef } from 'react'
-import { FeatureGroup, MapContainer, Marker, Polygon, Popup, TileLayer, useMap } from 'react-leaflet'
+import { FeatureGroup, MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
 import { EditControl } from 'react-leaflet-draw'
 import * as XLSX from 'xlsx'
 import './InteractiveMapper.css'
@@ -64,6 +64,35 @@ const InteractiveMapper = ({ mapPoints, setSelectedPoints, selectedPoints, shape
     return acc
   }, {})
 
+  const ShapefileLayer = ({ data }) => {
+    const map = useMap()
+
+    useEffect(() => {
+      if (!data) return
+
+      const shapefileLayer = L.featureGroup().addTo(map)
+
+      L.geoJson(data, {
+        onEachFeature: function popUp(f, l) {
+          const out = []
+          if (f.properties) {
+            Object.keys(f.properties).forEach((key) => {
+              out.push(`${key}: ${f.properties[key]}`)
+            })
+            l.bindPopup(out.join('<br />'))
+          }
+        },
+      }).addTo(shapefileLayer)
+
+      map.fitBounds(shapefileLayer.getBounds())
+
+      return () => {
+        map.removeLayer(shapefileLayer)
+      }
+    }, [data, map])
+
+    return null
+  }
 
   return (
     <div className="interactive-mapper-container">
@@ -98,10 +127,8 @@ const InteractiveMapper = ({ mapPoints, setSelectedPoints, selectedPoints, shape
               )
             })
           ))}
-          {shapes.map((shape, index) => (
-            <Polygon key={index} positions={shape.geometry.coordinates} />
-          ))}
         </FeatureGroup>
+        {shapes && <ShapefileLayer data={shapes} />}
       </MapContainer>
       {selectedPoints.length > 0 && (
         <Button onClick={exportToExcel}>

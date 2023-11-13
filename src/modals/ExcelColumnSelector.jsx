@@ -1,16 +1,24 @@
-import { Alert, Button, Checkbox, Modal, Radio, Select, message } from 'antd'
+import { Alert, Button, Checkbox, Modal, Radio, Select, Switch, message } from 'antd'
 import React, { useEffect, useState } from 'react'
 import * as XLSX from 'xlsx'
+import './ExcelColumnSelector.css'
 
 function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints }) {
   const [excelData, setExcelData] = useState(null)
-  const [selectedColumns, setSelectedColumns] = useState([])
   const [actionType, setActionType] = useState(null)
   const [error, setError] = useState(false)
 
   const [latitudeColumn, setLatitudeColumn] = useState(null)
   const [longitudeColumn, setLongitudeColumn] = useState(null)
   const [nameColumn, setNameColumn] = useState(null)
+
+  const [selectedColumns, setSelectedColumns] = useState([])
+  const [sortColumn, setSortColumn] = useState(null)
+  const [sortOrder, setSortOrder] = useState('ascend')
+  const [cleanDataOptions, setCleanDataOptions] = useState({
+    trimWhitespace: false,
+    toUpperCase: false,
+  })
 
   useEffect(() => {
     if (!droppedFile) {
@@ -69,15 +77,38 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints }) {
     setActionType(e.target.value)
   }
 
+  const handleSortColumnChange = (value) => {
+    setSortColumn(value)
+  }
+
+  const handleSortOrderChange = (value) => {
+    setSortOrder(value)
+  }
+
+  const handleDataCleaningSwitch = (checked, option) => {
+    setCleanDataOptions((prevOptions) => ({
+      ...prevOptions,
+      [option]: checked,
+    }))
+  }
+
   const handleConfirm = () => {
     if (actionType === 'format') {
-      const newExcelData = reformatData(excelData, selectedColumns)
+      let newData = applyDataCleaning(excelData.data, cleanDataOptions)
+
+      // Then apply sorting if a column is selected
+      if (sortColumn) {
+        newData = applySorting(newData, sortColumn, sortOrder)
+      }
+
+      // Now reformat the data with the selected columns
+      const newExcelData = reformatData({ ...excelData, data: newData }, selectedColumns)
       generateAndDownloadNewExcelFile(newExcelData)
     } else if (actionType === 'map') {
       if (latitudeColumn && longitudeColumn && nameColumn && excelData?.data) {
-        const latitudeKey = latitudeColumn.match(/\(([^)]+)\)/)[1] // Extract the column letter
-        const longitudeKey = longitudeColumn.match(/\(([^)]+)\)/)[1] // Extract the column letter
-        const nameKey = nameColumn.match(/\(([^)]+)\)/)[1] // Extract the column letter
+        const latitudeKey = latitudeColumn.match(/\(([^)]+)\)/)[1]
+        const longitudeKey = longitudeColumn.match(/\(([^)]+)\)/)[1]
+        const nameKey = nameColumn.match(/\(([^)]+)\)/)[1]
 
         const mapData = excelData.data[latitudeKey].map((_, idx) => ({
           lat: excelData.data[latitudeKey][idx],
@@ -86,13 +117,12 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints }) {
         }))
         setMapPoints(mapData)
       } else {
-        // Error handling: required columns not selected
         message.error('Please select all required columns.', 5)
         setError(true)
         return
       }
     }
-    onCancel() // Close the modal
+    onCancel()
   }
 
   const reformatData = (excelData, selected) => {
@@ -102,7 +132,7 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints }) {
     for (const col of selected) {
       const matches = col.match(/\(([^)]+)\)/)
       if (matches) {
-        const letters = matches[1] // Get the letters
+        const letters = matches[1]
         newData[col] = data[letters]
       }
     }
@@ -145,7 +175,7 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints }) {
           placeholder={`Select ${placeholder} Column`}
           style={{ width: 200, marginBottom: 10, borderColor: error ? 'red' : undefined }}
           onChange={(value) => {
-            setError(false) // Reset error on new selection
+            setError(false)
             if (index === 0) setLatitudeColumn(value)
             if (index === 1) setLongitudeColumn(value)
             if (index === 2) setNameColumn(value)
@@ -160,11 +190,114 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints }) {
     </div>
   )
 
+  const applyDataCleaning = (data, options) => {
+    const newData = { ...data }
+    for (const col in newData) {
+      if (newData.hasOwnProperty(col)) {
+        newData[col] = newData[col].map((value) => {
+          // Ensure value is a string before trying to apply string functions
+          let stringValue = value
+          if (value !== null && value !== undefined) {
+            stringValue = value.toString()
+          }
+          if (options.trimWhitespace && typeof stringValue === 'string') {
+            stringValue = stringValue.trim()
+          }
+          if (options.toUpperCase && typeof stringValue === 'string') {
+            stringValue = stringValue.toUpperCase()
+          }
+          return stringValue
+        })
+      }
+    }
+    return newData
+  }
+
+
+  const applySorting = (data, column, order) => {
+    const columnObject = excelData.columns.find((col) => col.name === column)
+    if (!columnObject) {
+      console.error(`Column ${column} not found.`)
+      return data
+    }
+
+    const columnData = data[columnObject.letter].slice(1)
+    const sortedIndices = columnData
+        .map((value, index) => ({ index, value }))
+        .sort((a, b) => {
+          if (a.value === undefined || b.value === undefined) {
+            return 0
+          }
+          if (order === 'ascend') return a.value.toString().localeCompare(b.value.toString())
+          return b.value.toString().localeCompare(a.value.toString())
+        })
+        .map((pair) => pair.index)
+
+    const sortedData = {}
+    Object.keys(data).forEach((key) => {
+      sortedData[key] = [data[key][0]]
+      sortedIndices.forEach((index) => {
+        sortedData[key].push(data[key][index + 1])
+      })
+    })
+
+    return sortedData
+  }
+
+
+  const renderDataCleaningOptions = () => (
+    <div style={{ marginBottom: 20 }}>
+      <h3>Data Cleaning Options:</h3>
+      <div>
+        <Switch
+          checkedChildren="Trim"
+          unCheckedChildren="No Trim"
+          onChange={(checked) => handleDataCleaningSwitch(checked, 'trimWhitespace')}
+        />
+        <span style={{ marginLeft: 8 }}>Trim Whitespace</span>
+      </div>
+      <div>
+        <Switch
+          checkedChildren="Upper"
+          unCheckedChildren="No Upper"
+          onChange={(checked) => handleDataCleaningSwitch(checked, 'toUpperCase')}
+        />
+        <span style={{ marginLeft: 8 }}>Convert Text to Uppercase</span>
+      </div>
+    </div>
+  )
+
+  const renderSortingOptions = () => (
+    <div style={{ marginBottom: 20 }}>
+      <h3>Sorting Options:</h3>
+      <Select
+        placeholder="Select Column to Sort"
+        style={{ width: 200, marginRight: 10 }}
+        onChange={handleSortColumnChange}
+      >
+        {excelData.columns.map((column) => (
+          <Select.Option key={column} value={column}>
+            {column}
+          </Select.Option>
+        ))}
+      </Select>
+      <Select
+        defaultValue="ascend"
+        style={{ width: 120 }}
+        onChange={handleSortOrderChange}
+      >
+        <Select.Option value="ascend">Ascending</Select.Option>
+        <Select.Option value="descend">Descending</Select.Option>
+      </Select>
+    </div>
+  )
+
   return (
     <Modal
       open={visible}
       title="Excel Data Options"
       onCancel={onCancel}
+      className="excel-column-selector-modal"
       footer={[
         <Button key="cancel" onClick={onCancel}>
         Cancel
@@ -175,7 +308,7 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints }) {
       ]}
     >
       <Radio.Group onChange={handleActionChange} value={actionType}>
-        <Radio value="format">Format Excel Document</Radio>
+        <Radio value="format">Data Cleaning</Radio>
         <Radio value="map">Display on Map</Radio>
       </Radio.Group>
       {excelData && actionType === 'format' && (
@@ -206,6 +339,8 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints }) {
           )}
         </>
       )}
+      {actionType === 'format' && renderDataCleaningOptions()}
+      {actionType === 'format' && renderSortingOptions()}
     </Modal>
   )
 }
