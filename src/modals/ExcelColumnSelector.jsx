@@ -73,18 +73,6 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints }) {
     setSelectedColumns(updatedSelection)
   }
 
-  const handleActionChange = (e) => {
-    setActionType(e.target.value)
-  }
-
-  const handleSortColumnChange = (value) => {
-    setSortColumn(value)
-  }
-
-  const handleSortOrderChange = (value) => {
-    setSortOrder(value)
-  }
-
   const handleDataCleaningSwitch = (checked, option) => {
     setCleanDataOptions((prevOptions) => ({
       ...prevOptions,
@@ -96,12 +84,10 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints }) {
     if (actionType === 'format') {
       let newData = applyDataCleaning(excelData.data, cleanDataOptions)
 
-      // Then apply sorting if a column is selected
       if (sortColumn) {
         newData = applySorting(newData, sortColumn, sortOrder)
       }
 
-      // Now reformat the data with the selected columns
       const newExcelData = reformatData({ ...excelData, data: newData }, selectedColumns)
       generateAndDownloadNewExcelFile(newExcelData)
     } else if (actionType === 'map') {
@@ -149,26 +135,29 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints }) {
       return
     }
 
-    const { sheetName, data } = newData
-    const workbook = XLSX.utils.book_new()
-    const worksheet = XLSX.utils.aoa_to_sheet([])
-    const columns = Object.keys(data)
-    XLSX.utils.sheet_add_aoa(worksheet, [columns], { origin: 'A1' })
+    try {
+      const { sheetName, data } = newData
+      const workbook = XLSX.utils.book_new()
+      const worksheet = XLSX.utils.aoa_to_sheet([])
+      const columns = Object.keys(data)
+      XLSX.utils.sheet_add_aoa(worksheet, [columns], { origin: 'A1' })
 
-    const columnData = Object.values(data)
-    const maxRows = Math.max(...columnData.map((col) => col.length))
-    for (let rowIdx = 0; rowIdx < maxRows; rowIdx++) {
-      const rowData = columns.map((col) => data[col][rowIdx])
-      XLSX.utils.sheet_add_aoa(worksheet,
-          [rowData], { origin: `A${rowIdx + 2}` })
+      const columnData = Object.values(data)
+      const maxRows = Math.max(...columnData.map((col) => col.length))
+      for (let rowIdx = 0; rowIdx < maxRows; rowIdx++) {
+        const rowData = columns.map((col) => data[col][rowIdx] || '')
+        XLSX.utils.sheet_add_aoa(worksheet, [rowData], { origin: `A${rowIdx + 2}` })
+      }
+
+      XLSX.utils.book_append_sheet(workbook, worksheet, sheetName)
+      XLSX.writeFile(workbook, `${sheetName}_filtered.xlsx`)
+    } catch (error) {
+      console.error('Error generating file:', error)
     }
-
-    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName)
-    XLSX.writeFile(workbook, `${sheetName}_filtered.xlsx`)
   }
 
   const renderMapColumnSelectors = () => (
-    <div>
+    <div style={{ marginTop: '1rem' }}>
       {['Latitude', 'Longitude', 'Marker Name'].map((placeholder, index) => (
         <Select
           key={placeholder}
@@ -197,9 +186,6 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints }) {
         newData[col] = newData[col].map((value) => {
           // Ensure value is a string before trying to apply string functions
           let stringValue = value
-          if (value !== null && value !== undefined) {
-            stringValue = value.toString()
-          }
           if (options.trimWhitespace && typeof stringValue === 'string') {
             stringValue = stringValue.trim()
           }
@@ -213,84 +199,58 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints }) {
     return newData
   }
 
-
   const applySorting = (data, column, order) => {
-    const columnObject = excelData.columns.find((col) => col.name === column)
-    if (!columnObject) {
-      console.error(`Column ${column} not found.`)
+    const columnLetter = column.match(/\(([^)]+)\)/)[1]
+
+    if (!data[columnLetter]) {
+      console.error(`Column ${columnLetter} not found.`)
       return data
     }
 
-    const columnData = data[columnObject.letter].slice(1)
+    const columnData = data[columnLetter].slice(0)
+
     const sortedIndices = columnData
         .map((value, index) => ({ index, value }))
         .sort((a, b) => {
           if (a.value === undefined || b.value === undefined) {
             return 0
           }
-          if (order === 'ascend') return a.value.toString().localeCompare(b.value.toString())
+          if (order === 'ascend') {
+            return a.value.toString().localeCompare(b.value.toString())
+          }
           return b.value.toString().localeCompare(a.value.toString())
         })
         .map((pair) => pair.index)
 
     const sortedData = {}
     Object.keys(data).forEach((key) => {
-      sortedData[key] = [data[key][0]]
+      sortedData[key] = []
       sortedIndices.forEach((index) => {
-        sortedData[key].push(data[key][index + 1])
+        sortedData[key].push(data[key][index])
       })
     })
 
     return sortedData
   }
 
-
-  const renderDataCleaningOptions = () => (
-    <div style={{ marginBottom: 20 }}>
-      <h3>Data Cleaning Options:</h3>
-      <div>
-        <Switch
-          checkedChildren="Trim"
-          unCheckedChildren="No Trim"
-          onChange={(checked) => handleDataCleaningSwitch(checked, 'trimWhitespace')}
-        />
-        <span style={{ marginLeft: 8 }}>Trim Whitespace</span>
-      </div>
-      <div>
-        <Switch
-          checkedChildren="Upper"
-          unCheckedChildren="No Upper"
-          onChange={(checked) => handleDataCleaningSwitch(checked, 'toUpperCase')}
-        />
-        <span style={{ marginLeft: 8 }}>Convert Text to Uppercase</span>
-      </div>
-    </div>
-  )
-
-  const renderSortingOptions = () => (
-    <div style={{ marginBottom: 20 }}>
-      <h3>Sorting Options:</h3>
-      <Select
-        placeholder="Select Column to Sort"
-        style={{ width: 200, marginRight: 10 }}
-        onChange={handleSortColumnChange}
-      >
-        {excelData.columns.map((column) => (
-          <Select.Option key={column} value={column}>
-            {column}
-          </Select.Option>
-        ))}
-      </Select>
-      <Select
-        defaultValue="ascend"
-        style={{ width: 120 }}
-        onChange={handleSortOrderChange}
-      >
-        <Select.Option value="ascend">Ascending</Select.Option>
-        <Select.Option value="descend">Descending</Select.Option>
-      </Select>
-    </div>
-  )
+  useEffect(() => {
+    // Only reset states if the modal is not visible and no file generation is in progress
+    if (!visible) {
+      setExcelData(null)
+      setActionType(null)
+      setError(false)
+      setLatitudeColumn(null)
+      setLongitudeColumn(null)
+      setNameColumn(null)
+      setSelectedColumns([])
+      setSortColumn(null)
+      setSortOrder('ascend')
+      setCleanDataOptions({
+        trimWhitespace: false,
+        toUpperCase: false,
+      })
+    }
+  }, [visible])
 
   return (
     <Modal
@@ -307,23 +267,66 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints }) {
         </Button>,
       ]}
     >
-      <Radio.Group onChange={handleActionChange} value={actionType}>
+      <Radio.Group onChange={(e) => setActionType(e.target.value)} value={actionType}>
         <Radio value="format">Data Cleaning</Radio>
         <Radio value="map">Display on Map</Radio>
       </Radio.Group>
       {excelData && actionType === 'format' && (
-        <div>
-          <h3>Select Columns:</h3>
-          {excelData.columns.map((column) => (
-            <Checkbox
-              key={column}
-              onChange={() => handleCheckboxChange(column)}
-              checked={selectedColumns.includes(column)}
+        <>
+          <div>
+            <h3>Select Columns:</h3>
+            {excelData.columns.map((column) => (
+              <Checkbox
+                key={column}
+                onChange={() => handleCheckboxChange(column)}
+                checked={selectedColumns.includes(column)}
+              >
+                {column}
+              </Checkbox>
+            ))}
+          </div>
+          <div style={{ marginBottom: 20 }}>
+            <h3>Data Cleaning Options:</h3>
+            <div>
+              <Switch
+                checkedChildren="Trim"
+                unCheckedChildren="No Trim"
+                onChange={(checked) => handleDataCleaningSwitch(checked, 'trimWhitespace')}
+              />
+              <span style={{ marginLeft: 8 }}>Trim Whitespace</span>
+            </div>
+            <div>
+              <Switch
+                checkedChildren="Upper"
+                unCheckedChildren="No Upper"
+                onChange={(checked) => handleDataCleaningSwitch(checked, 'toUpperCase')}
+              />
+              <span style={{ marginLeft: 8 }}>Convert Text to Uppercase</span>
+            </div>
+          </div>
+          <div style={{ marginBottom: 20 }}>
+            <h3>Sorting Options:</h3>
+            <Select
+              placeholder="Select Column to Sort"
+              style={{ width: 200, marginRight: 10 }}
+              onChange={(value) => setSortColumn(value)}
             >
-              {column}
-            </Checkbox>
-          ))}
-        </div>
+              {excelData.columns.map((column) => (
+                <Select.Option key={column} value={column}>
+                  {column}
+                </Select.Option>
+              ))}
+            </Select>
+            <Select
+              defaultValue="ascend"
+              style={{ width: 120 }}
+              onChange={(value) => setSortOrder(value)}
+            >
+              <Select.Option value="ascend">Ascending</Select.Option>
+              <Select.Option value="descend">Descending</Select.Option>
+            </Select>
+          </div>
+        </>
       )}
       {excelData && actionType === 'map' && (
         <>
@@ -334,13 +337,11 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints }) {
               description="Large datasets may result in slow performance."
               type="warning"
               showIcon
-              style={{ marginTop: '20px' }}
+              style={{ marginTop: '1rem' }}
             />
           )}
         </>
       )}
-      {actionType === 'format' && renderDataCleaningOptions()}
-      {actionType === 'format' && renderSortingOptions()}
     </Modal>
   )
 }

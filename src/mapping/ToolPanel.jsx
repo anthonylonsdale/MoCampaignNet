@@ -1,9 +1,10 @@
-import { InboxOutlined } from '@ant-design/icons'
+import { DeleteOutlined, GlobalOutlined, InboxOutlined } from '@ant-design/icons'
 import { Collapse, Select, Switch, Upload, message } from 'antd'
 import React, { useState } from 'react'
 import ExcelColumnSelector from '../modals/ExcelColumnSelector.jsx'
 import './ToolPanel.css'
 import { extractShapes } from './utils/ExtractShapes.jsx'
+
 
 const { Panel } = Collapse
 const { Dragger } = Upload
@@ -22,20 +23,43 @@ const handleVisualizationChange = (value) => {
 const ToolPanel = ({ setMapPoints, setShapes }) => {
   const [excelModalVisible, setExcelModalVisible] = useState(false)
   const [droppedFile, setDroppedFile] = useState(null)
+  const [fileList, setFileList] = useState([])
+  const [shapefileList, setShapefileList] = useState([])
 
-  const genExtra = () => (
-    <InboxOutlined
-      onClick={(event) => {
-        event.stopPropagation()
-      }}
-    />
-  )
+  const genExtra = (iconType) => {
+    let IconComponent = InboxOutlined
+    if (iconType === 'globe') {
+      IconComponent = GlobalOutlined
+    }
+    return (
+      <IconComponent
+        onClick={(event) => {
+          event.stopPropagation()
+        }}
+      />
+    )
+  }
+
+  const handleFileClick = (file) => {
+    setDroppedFile(file)
+    setExcelModalVisible(true)
+  }
+
+  const removeFile = (fileName, listType) => {
+    if (listType === 'fileList') {
+      const newFileList = fileList.filter((file) => file.name !== fileName)
+      setFileList(newFileList)
+    } else if (listType === 'shapefileList') {
+      const newShapefileList = shapefileList.filter((file) => file.name !== fileName)
+      setShapefileList(newShapefileList)
+    }
+  }
 
   return (
-    <>
+    <div className="tool-panel">
       <h3>DATA ENTRY</h3>
       <Collapse expandIconPosition="right">
-        <Panel header="Excel Data Import" key="1" extra={genExtra()}>
+        <Panel header="Excel Data Import" key="1" extra={genExtra('inbox')}>
           <div className="upload-container">
             <Dragger
               beforeUpload={(file) => {
@@ -43,11 +67,16 @@ const ToolPanel = ({ setMapPoints, setShapes }) => {
                   message.error('File is not in Excel format', 3)
                   return Upload.LIST_IGNORE
                 }
-                setDroppedFile(file)
-                setExcelModalVisible(true)
+                if (fileList.find((f) => f.name === file.name)) {
+                  message.error('This file has already been uploaded.', 3)
+                  return Upload.LIST_IGNORE
+                }
+                const newFileList = [...fileList, file]
+                setFileList(newFileList)
                 return false
               }}
               multiple={false}
+              showUploadList={false}
             >
               <p className="ant-upload-drag-icon">
                 <InboxOutlined />
@@ -56,10 +85,55 @@ const ToolPanel = ({ setMapPoints, setShapes }) => {
               <p className="upload-text">or</p>
               <p className="upload-text">Click to Browse Files</p>
             </Dragger>
+            <div className="file-list">
+              {fileList.map((file, index) => (
+                <div key={index} className="file-item">
+                  <span onClick={() => handleFileClick(file)}>
+                    {file.name}
+                  </span>
+                  <DeleteOutlined onClick={() => removeFile(fileName, 'fileList')} className="file-delete-icon" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </Panel>
+
+        <Panel header="Shapefile Import" key="2" extra={genExtra('globe')}>
+          <div className="upload-container">
+            <Dragger
+              beforeUpload={async (file) => {
+                if (!/\.(zip)$/i.test(file.name)) {
+                  message.error('Uploaded File is not a ZIP archive', 3)
+                  return Upload.LIST_IGNORE
+                }
+                const shapesData = await extractShapes([file])
+                setShapes(shapesData)
+                setShapefileList([...shapefileList, file])
+                return false
+              }}
+              multiple={false}
+              showUploadList={false}
+            >
+              <p className="ant-upload-drag-icon">
+                <GlobalOutlined />
+              </p>
+              <p className="upload-text">Drag in Shapefile</p>
+              <p className="upload-text">or</p>
+              <p className="upload-text">Click to Browse Files</p>
+            </Dragger>
+            <div className="file-list">
+              {shapefileList.map((file, index) => (
+                <div key={index} className="file-item">
+                  <span>
+                    {file.name}
+                  </span>
+                  <DeleteOutlined onClick={() => removeFile(file.name, 'shapefileList')} className="file-delete-icon" />
+                </div>
+              ))}
+            </div>
           </div>
         </Panel>
       </Collapse>
-
 
       <h3>VISUALIZE</h3>
       <ul>
@@ -79,21 +153,6 @@ const ToolPanel = ({ setMapPoints, setShapes }) => {
             <Select.Option value="density">Density</Select.Option>
           </Select>
         </li>
-        <li>
-          <span className="tool-icon">🗺️</span>
-          <Upload accept=".zip" multiple={false}
-            beforeUpload={async (file) => {
-              if (!/\.(zip)$/i.test(file.name)) {
-                message.error('Uploaded File is not a ZIP archive', 3)
-                return Upload.LIST_IGNORE
-              }
-              const shapesData = await extractShapes([file])
-              setShapes(shapesData)
-              return false
-            }} >
-            Upload Shapefile
-          </Upload>
-        </li>
       </ul>
       <ExcelColumnSelector
         visible={excelModalVisible}
@@ -101,7 +160,7 @@ const ToolPanel = ({ setMapPoints, setShapes }) => {
         droppedFile={droppedFile}
         setMapPoints={setMapPoints}
       />
-    </>
+    </div>
   )
 }
 

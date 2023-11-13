@@ -12,17 +12,13 @@ const MappingContainer = () => {
     <>
       <div className="interactive-mapper-title">Data Analysis and Visualization Platform</div>
       <div className="interactive-mapper-container">
-        <div className="tool-panel">
-          <ToolPanel setMapPoints={setMapPoints} setShapes={setShapes} />
-        </div>
-        <div className="interactive-mapper">
-          <InteractiveMapper
-            mapPoints={mapPoints}
-            setSelectedPoints={setSelectedPoints}
-            selectedPoints={selectedPoints}
-            shapes={shapes}
-          />
-        </div>
+        <ToolPanel setMapPoints={setMapPoints} setShapes={setShapes} />
+        <InteractiveMapper
+          mapPoints={mapPoints}
+          setSelectedPoints={setSelectedPoints}
+          selectedPoints={selectedPoints}
+          shapes={shapes}
+        />
       </div>
     </>
   )
