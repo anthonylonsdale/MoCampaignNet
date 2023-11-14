@@ -5,7 +5,7 @@ import * as XLSX from 'xlsx'
 import ExcelColumnSelector from '../modals/ExcelColumnSelector.jsx'
 import './ToolPanel.css'
 import { extractShapes } from './utils/ExtractShapes.jsx'
-
+import PartyAffiliationModal from './utils/PartyAffiliationModal.jsx'
 
 const { Panel } = Collapse
 const { Dragger } = Upload
@@ -23,9 +23,11 @@ const handleVisualizationChange = (value) => {
 
 const ToolPanel = ({ setMapPoints, setShapes, selectedPoints }) => {
   const [excelModalVisible, setExcelModalVisible] = useState(false)
+  const [partyModalVisible, setPartyModalVisible] = useState(false)
   const [droppedFile, setDroppedFile] = useState(null)
   const [fileList, setFileList] = useState([])
   const [shapefileList, setShapefileList] = useState([])
+  const [currentMapFile, setCurrentMapFile] = useState(null)
 
   const genExtra = (iconType) => {
     let IconComponent = InboxOutlined
@@ -63,23 +65,21 @@ const ToolPanel = ({ setMapPoints, setShapes, selectedPoints }) => {
     XLSX.writeFile(wb, 'selectedPoints.xlsx')
   }
 
-
   return (
     <div className="tool-panel">
       <div className="section-container">
-        <h3>DATA ENTRY</h3>
+        <h3>EXPORT</h3>
         <div className="export-content">
           <span>{selectedPoints.length} points have been selected.</span>
           <Button type="primary" onClick={() => exportToExcel(selectedPoints)}>
-      Export Now
+            Export Now
           </Button>
         </div>
       </div>
 
-
       <div className="section-container">
         <h3>DATA ENTRY</h3>
-        <Collapse accordion expandIconPosition="right">
+        <Collapse expandIconPosition="right">
           <Panel header="Excel Data Import" key="1" extra={genExtra('inbox')}>
             <div className="upload-container">
               <Dragger
@@ -166,7 +166,7 @@ const ToolPanel = ({ setMapPoints, setShapes, selectedPoints }) => {
       <div className="section-container">
         <h3>VISUALIZE</h3>
         <ul>
-          <li>
+          <li onClick={() => setPartyModalVisible(true)}>
             <span className="tool-icon">🔴</span>
           Dots on Political Party
           </li>
@@ -185,11 +185,19 @@ const ToolPanel = ({ setMapPoints, setShapes, selectedPoints }) => {
         </ul>
       </div>
 
+      <PartyAffiliationModal
+        visible={partyModalVisible}
+        onCancel={() => setPartyModalVisible(false)}
+        mapData={currentMapFile}
+        setMapPoints={setMapPoints}
+      />
+
       <ExcelColumnSelector
         visible={excelModalVisible}
         onCancel={() => setExcelModalVisible(false)}
         droppedFile={droppedFile}
         setMapPoints={setMapPoints}
+        setCurrentMapFile={setCurrentMapFile}
       />
     </div>
   )

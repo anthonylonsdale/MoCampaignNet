@@ -7,10 +7,11 @@ import { FeatureGroup, MapContainer, Marker, Popup, TileLayer, useMap } from 're
 import { EditControl } from 'react-leaflet-draw'
 import './InteractiveMapper.css'
 
-const createCustomIcon = () => {
+const createCustomIcon = (color) => {
+  const markerColor = color || 'black'
   return L.divIcon({
     className: 'custom-icon',
-    html: `<div style="width: 8px; height: 8px; background-color: black;"></div>`,
+    html: `<div style="width: 8px; height: 8px; background-color: ${markerColor};"></div>`,
   })
 }
 
@@ -71,7 +72,6 @@ const InteractiveMapper = ({ mapPoints, setSelectedPoints, shapes }) => {
     mapPointsRef.current = mapPoints
   }, [mapPoints])
 
-
   const onCreated = (e) => {
     const layer = e.layer
     const drawnPolygon = layer.toGeoJSON()
@@ -82,20 +82,9 @@ const InteractiveMapper = ({ mapPoints, setSelectedPoints, shapes }) => {
       return turf.booleanPointInPolygon(pointToCheck, drawnPolygon)
     })
 
-    console.log('Selected Points:', pointsSelected)
     setSelectedPoints(pointsSelected)
     message.info(`${pointsSelected.length} points have been selected.`)
   }
-
-
-  const groupedPoints = mapPoints.reduce((acc, point) => {
-    const key = `${point.lat}-${point.lng}`
-    if (!acc[key]) {
-      acc[key] = []
-    }
-    acc[key].push(point)
-    return acc
-  }, {})
 
   return (
     <div className="interactive-mapper-container">
@@ -121,15 +110,16 @@ const InteractiveMapper = ({ mapPoints, setSelectedPoints, shapes }) => {
               remove: true,
             }}
           />
-          {Object.values(groupedPoints).map((points, idx) => (
-            points.map((point, index) => {
-              return (
-                <Marker key={`${idx}-${index}`} position={[point.lat, point.lng]} icon={createCustomIcon()}>
-                  <Popup>({point.lat}, {point.lng})</Popup>
-                </Marker>
-              )
-            })
+          {mapPoints.map((point, index) => (
+            <Marker
+              key={index}
+              position={[point.lat, point.lng]}
+              icon={createCustomIcon(point.color)} // Use the color from point data
+            >
+              <Popup>{point.name}</Popup>
+            </Marker>
           ))}
+
         </FeatureGroup>
         {shapes && <ShapefileLayer data={shapes} featureGroupRef={featureGroupRef} />}
       </MapContainer>
