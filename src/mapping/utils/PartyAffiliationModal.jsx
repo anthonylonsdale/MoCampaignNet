@@ -1,5 +1,7 @@
+import { DownOutlined, UpOutlined } from '@ant-design/icons'
 import { Button, List, Modal, Select, message } from 'antd'
 import React, { useEffect, useState } from 'react'
+import './PartyAffiliation.css'
 
 const assignPartyColor = (party) => {
   switch (party) {
@@ -7,15 +9,16 @@ const assignPartyColor = (party) => {
       return 'red'
     case 'Democrat':
       return 'blue'
+    case null:
+      return 'black'
     default:
-      return 'grey'
+      return 'grey' // Non-empty strings get 'grey', empty or undefined get 'black'
   }
 }
 
-
-const PartyAffiliationModal = ({ visible, onCancel, mapData, setMapPoints }) => {
+const PartyAffiliationModal = ({ visible, onCancel, mapData, setMapPoints, mapPoints, partyCounts, setPartyCounts }) => {
   const [selectedColumn, setSelectedColumn] = useState(null)
-  const [partyCounts, setPartyCounts] = useState([])
+  const [sortDirection, setSortDirection] = useState('descend')
 
   useEffect(() => {
     if (!selectedColumn || !mapData) {
@@ -33,57 +36,59 @@ const PartyAffiliationModal = ({ visible, onCancel, mapData, setMapPoints }) => 
 
     const columnData = mapData.data[columnLetter]
     const counts = columnData.reduce((acc, party) => {
-      if (party) {
-        acc[party] = (acc[party] || 0) + 1
-      }
+      const partyKey = party === null || party === undefined ? 'No Data' : party
+      acc[partyKey] = (acc[partyKey] || 0) + 1
       return acc
     }, {})
 
-    setPartyCounts(Object.entries(counts).map(([party, count]) => ({ party, count })))
+    const totalCount = Object.values(counts).reduce((sum, count) => sum + count, 0)
+
+    setPartyCounts(Object.entries(counts).map(([party, count]) => ({
+      party,
+      count,
+      percentage: (count / totalCount) * 100,
+    })))
   }, [selectedColumn, mapData])
 
   const onConfirmSelection = () => {
-    // Extract the selected column's letter from the state
     const selectedColumnLetter = selectedColumn.match(/\(([^)]+)\)/)[1]
 
-    // Validate that the selected column exists in the data
     if (!mapData.data[selectedColumnLetter]) {
       message.error('No data available for the selected column.')
       onCancel()
       return
     }
 
-    // Assuming mapData.data['K'] and mapData.data['L'] are arrays with latitude and longitude values.
-    const latColumn = 'K' // Replace with actual latitude column letter
-    const lngColumn = 'L' // Replace with actual longitude column letter
-
-    // Validate that the latitude and longitude arrays exist and have the correct lengths
-    if (!Array.isArray(mapData.data[latColumn]) || !Array.isArray(mapData.data[lngColumn]) || mapData.data[latColumn].length !== mapData.data[selectedColumnLetter].length) {
-      message.error('Latitude and longitude data are not properly aligned with party data.')
-      onCancel()
-      return
-    }
-
-    // Create a new array of map points with colors based on party affiliation
-    const updatedMapPoints = mapData.data[latColumn].map((lat, index) => {
-      const lng = mapData.data[lngColumn][index]
+    const updatedMapPoints = mapPoints.map((point, index) => {
       const party = mapData.data[selectedColumnLetter][index]
+      const color = assignPartyColor(party)
+
       return {
-        lat,
-        lng,
-        name: lat + ', ' + lng, // or any other identifier you use for the name
-        color: assignPartyColor(party),
+        ...point,
+        color: color,
       }
     })
 
-    console.log(updatedMapPoints)
-
-    // Update the map points state with the new array
     setMapPoints(updatedMapPoints)
     message.success('Map points updated with party colors.')
-    onCancel() // Close the modal
+    onCancel()
   }
 
+  const onSortChange = () => {
+    setSortDirection(sortDirection === 'ascend' ? 'descend' : 'ascend')
+  }
+
+  const getSortedPartyCounts = () => {
+    return [...partyCounts].sort((a, b) => {
+      if (sortDirection === 'ascend') {
+        return a.count - b.count
+      } else {
+        return b.count - a.count
+      }
+    })
+  }
+
+  console.log(partyCounts)
 
   return (
     <Modal
@@ -101,7 +106,7 @@ const PartyAffiliationModal = ({ visible, onCancel, mapData, setMapPoints }) => 
     >
       <Select
         showSearch
-        style={{ width: '100%' }}
+        style={{ width: '100%', marginBottom: '1rem' }}
         placeholder="Select a column"
         optionFilterProp="children"
         onChange={setSelectedColumn}
@@ -116,9 +121,19 @@ const PartyAffiliationModal = ({ visible, onCancel, mapData, setMapPoints }) => 
         ))}
       </Select>
       <List
-        header={<div>Party Counts</div>}
+        header={
+          <div className="sort-header">
+            <div className="party-counts-header">
+              Party Counts
+            </div>
+            <div className="sort-indicators" onClick={onSortChange}>
+              <UpOutlined className={sortDirection === 'ascend' ? 'active' : ''} />
+              <DownOutlined className={sortDirection === 'descend' ? 'active' : ''} />
+            </div>
+          </div>
+        }
         bordered
-        dataSource={partyCounts}
+        dataSource={getSortedPartyCounts()}
         renderItem={(item) => (
           <List.Item>
             {item.party}: {item.count}

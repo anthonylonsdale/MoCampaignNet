@@ -68,6 +68,7 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
         const nameKey = nameColumn.match(/\(([^)]+)\)/)[1]
 
         const mapData = excelData.data[latitudeKey].map((_, idx) => ({
+          id: idx,
           lat: excelData.data[latitudeKey][idx],
           lng: excelData.data[longitudeKey][idx],
           name: excelData.data[nameKey][idx],

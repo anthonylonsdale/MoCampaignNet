@@ -15,6 +15,13 @@ const createCustomIcon = (color) => {
   })
 }
 
+const partyColorMapping = {
+  'Republican': 'red',
+  'No Data': 'black',
+  'Independent': 'grey',
+  'Democrat': 'blue',
+}
+
 const SetViewToBounds = ({ points }) => {
   const map = useMap()
   if (points.length > 0) {
@@ -64,13 +71,16 @@ const ShapefileLayer = ({ data, featureGroupRef }) => {
   return null
 }
 
-const InteractiveMapper = ({ mapPoints, setSelectedPoints, shapes }) => {
+const InteractiveMapper = ({ mapPoints, setSelectedPoints, shapes, selectedParties }) => {
   const mapPointsRef = useRef(mapPoints)
   const featureGroupRef = useRef()
 
   useEffect(() => {
     mapPointsRef.current = mapPoints
   }, [mapPoints])
+
+  console.log(selectedParties)
+  console.log(mapPoints)
 
   const onCreated = (e) => {
     const layer = e.layer
@@ -110,16 +120,23 @@ const InteractiveMapper = ({ mapPoints, setSelectedPoints, shapes }) => {
               remove: true,
             }}
           />
-          {mapPoints.map((point, index) => (
-            <Marker
-              key={index}
-              position={[point.lat, point.lng]}
-              icon={createCustomIcon(point.color)} // Use the color from point data
-            >
-              <Popup>{point.name}</Popup>
-            </Marker>
-          ))}
-
+          {mapPoints
+              .filter((point) => {
+                // Get the party name that corresponds to this point's color
+                const party = Object.keys(partyColorMapping).find((party) => partyColorMapping[party] === point.color)
+                // Check if this party is in the selectedParties set
+                return selectedParties.size === 0 || selectedParties.has(party)
+              })
+              .map((point, index) => (
+                <Marker
+                  key={index}
+                  position={[point.lat, point.lng]}
+                  icon={createCustomIcon(point.color)} // Use the color from point data
+                >
+                  <Popup>{point.name}</Popup>
+                </Marker>
+              ))
+          }
         </FeatureGroup>
         {shapes && <ShapefileLayer data={shapes} featureGroupRef={featureGroupRef} />}
       </MapContainer>

@@ -11,7 +11,9 @@ export const readExcelFile = (droppedFile) => {
       const sheet = workbook.Sheets[sheetName]
       const dataDict = {}
       const columns = []
+      let maxRowNumber = 1
 
+      // Loop over each cell in the sheet
       for (const cell in sheet) {
         if (sheet.hasOwnProperty(cell)) {
           const match = /^([A-Z]+)(\d+)$/.exec(cell)
@@ -20,24 +22,42 @@ export const readExcelFile = (droppedFile) => {
             const columnName = match[1]
             const rowNumber = parseInt(match[2], 10)
 
+            // Header row
             if (rowNumber === 1) {
               columns.push(`${sheet[cell].v} (${columnName})`)
               dataDict[columnName] = []
             } else {
+              // Update maxRowNumber if this rowNumber is higher
+              maxRowNumber = Math.max(maxRowNumber, rowNumber)
+
               if (!dataDict[columnName]) {
                 dataDict[columnName] = []
               }
-              dataDict[columnName].push(sheet[cell].v)
+
+              // Store the cell value
+              dataDict[columnName][rowNumber - 2] = sheet[cell].v
             }
           }
         }
       }
+
+      // Ensure all columns have the same length by filling missing values with null
+      Object.keys(dataDict).forEach((column) => {
+        for (let i = 0; i < maxRowNumber - 1; i++) {
+          if (dataDict[column][i] === undefined) {
+            dataDict[column][i] = null // or some other placeholder value
+          }
+        }
+      })
+
       resolve({ sheetName, columns, data: dataDict })
     }
+
     reader.onerror = reject
     reader.readAsArrayBuffer(droppedFile)
   })
 }
+
 
 export const applyDataCleaning = (data, options) => {
   const newData = { ...data }

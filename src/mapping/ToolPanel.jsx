@@ -1,5 +1,5 @@
-import { DeleteOutlined, GlobalOutlined, InboxOutlined } from '@ant-design/icons'
-import { Button, Collapse, Select, Switch, Upload, message } from 'antd'
+import { DeleteOutlined, DownOutlined, GlobalOutlined, InboxOutlined, UpOutlined } from '@ant-design/icons'
+import { Button, Checkbox, Collapse, List, Select, Switch, Upload, message } from 'antd'
 import React, { useState } from 'react'
 import * as XLSX from 'xlsx'
 import ExcelColumnSelector from '../modals/ExcelColumnSelector.jsx'
@@ -9,6 +9,7 @@ import PartyAffiliationModal from './utils/PartyAffiliationModal.jsx'
 
 const { Panel } = Collapse
 const { Dragger } = Upload
+const { Option } = Select
 
 // Sample handler functions
 const handleToggleLayer = (checked) => {
@@ -21,13 +22,36 @@ const handleVisualizationChange = (value) => {
   // Update visualization based on the selected option
 }
 
-const ToolPanel = ({ setMapPoints, setShapes, selectedPoints }) => {
+const ToolPanel = ({
+  setMapPoints,
+  setShapes,
+  selectedPoints,
+  mapPoints,
+  showPoliticalDots,
+  setShowPoliticalDots,
+  partyCounts,
+  setPartyCounts,
+  setSelectedParties,
+  selectedParties,
+}) => {
   const [excelModalVisible, setExcelModalVisible] = useState(false)
   const [partyModalVisible, setPartyModalVisible] = useState(false)
   const [droppedFile, setDroppedFile] = useState(null)
   const [fileList, setFileList] = useState([])
   const [shapefileList, setShapefileList] = useState([])
   const [currentMapFile, setCurrentMapFile] = useState(null)
+
+  const togglePartySelection = (party, isChecked) => {
+    setSelectedParties((prevSelectedParties) => {
+      const newSelectedParties = new Set(prevSelectedParties)
+      if (isChecked) {
+        newSelectedParties.add(party)
+      } else {
+        newSelectedParties.delete(party)
+      }
+      return newSelectedParties
+    })
+  }
 
   const genExtra = (iconType) => {
     let IconComponent = InboxOutlined
@@ -46,6 +70,18 @@ const ToolPanel = ({ setMapPoints, setShapes, selectedPoints }) => {
   const handleFileClick = (file) => {
     setDroppedFile(file)
     setExcelModalVisible(true)
+  }
+
+  const handlePoliticalDotsSwitch = (checked) => {
+    if (!currentMapFile) {
+      message.error('No data set!')
+      return
+    }
+
+    setShowPoliticalDots(checked)
+    if (checked && mapPoints.every((point) => point.color === undefined || point.color === null)) {
+      setPartyModalVisible(true)
+    }
   }
 
   const removeFile = (fileName, listType) => {
@@ -165,24 +201,51 @@ const ToolPanel = ({ setMapPoints, setShapes, selectedPoints }) => {
 
       <div className="section-container">
         <h3>VISUALIZE</h3>
-        <ul>
-          <li onClick={() => setPartyModalVisible(true)}>
-            <span className="tool-icon">🔴</span>
-          Dots on Political Party
-          </li>
-          <li>
-            <span className="tool-icon">🔵</span>
-            <Switch onChange={handleToggleLayer} /> Areas are Hidden
-          </li>
-          <li>
-            <span className="tool-icon">🌐</span>
-            <Select defaultValue="heatmap" style={{ width: 120 }} onChange={handleVisualizationChange}>
-              <Select.Option value="heatmap">Heatmap</Select.Option>
-              <Select.Option value="clusters">Clusters</Select.Option>
-              <Select.Option value="density">Density</Select.Option>
+        <Collapse
+          bordered={false}
+          defaultActiveKey={['1']}
+          expandIcon={({ isActive }) => isActive ? <UpOutlined /> : <DownOutlined />}
+          className="party-breakdown-panel"
+        >
+          <Panel
+            header={<span className="tool-icon">🔴 Show Political Parties</span>}
+            key="1"
+            extra={<Switch checked={showPoliticalDots} onChange={handlePoliticalDotsSwitch} />}
+          >
+            <List
+              dataSource={partyCounts}
+              renderItem={(item) => (
+                <List.Item key={item.party}>
+                  <Checkbox
+                    checked={selectedParties.has(item.party)}
+                    onChange={(e) => togglePartySelection(item.party, e.target.checked)}
+                  />
+                  <div className="party-data-indicator" style={{ backgroundColor: item.color }}></div>
+                  <div className="party-data-name">{item.party}</div>
+                  <div className="party-data-count">{item.count.toLocaleString()}</div>
+                  <div className="party-data-percentage">{item.percentage.toFixed(2)}%</div>
+                </List.Item>
+              )}
+            />
+          </Panel>
+          <Panel
+            header={<span className="tool-icon">🔵 Areas are Hidden</span>}
+            key="2"
+            extra={<Switch onChange={handleToggleLayer} />}
+          >
+            {/* Content for Areas are Hidden */}
+          </Panel>
+          <Panel
+            header={<span className="tool-icon">🌐 Visualization Type</span>}
+            key="3"
+          >
+            <Select defaultValue="heatmap" style={{ width: '100%' }} onChange={handleVisualizationChange}>
+              <Option value="heatmap">Heatmap</Option>
+              <Option value="clusters">Clusters</Option>
+              <Option value="density">Density</Option>
             </Select>
-          </li>
-        </ul>
+          </Panel>
+        </Collapse>
       </div>
 
       <PartyAffiliationModal
@@ -190,6 +253,9 @@ const ToolPanel = ({ setMapPoints, setShapes, selectedPoints }) => {
         onCancel={() => setPartyModalVisible(false)}
         mapData={currentMapFile}
         setMapPoints={setMapPoints}
+        mapPoints={mapPoints}
+        partyCounts={partyCounts}
+        setPartyCounts={setPartyCounts}
       />
 
       <ExcelColumnSelector

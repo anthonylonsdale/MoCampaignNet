@@ -1,0 +1,24 @@
+.sort-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .sort-indicators {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px; /* Adjust the space between icons */
+  }
+  
+  /* Style for inactive arrows */
+  .sort-indicators .anticon {
+    color: rgba(0, 0, 0, 0.45); /* Default color for icons */
+  }
+  
+  /* Style for active arrow */
+  .sort-indicators .anticon.active {
+    color: #1890ff; /* Highlight color for the active icon */
+  }
+  

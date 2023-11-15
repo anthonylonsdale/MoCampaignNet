@@ -121,3 +121,70 @@
 .section-container {
   margin-top: 20px;
 }
+
+.party-data-container.modern {
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+  color: #333;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  background: white;
+  margin-top: 20px;
+}
+
+.party-data-header {
+  padding: 10px 15px;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.party-data-header h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.party-data-content {
+  padding: 15px;
+}
+
+.party-data-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-top: 1px solid #eaeaea;
+  transition: background-color 0.3s;
+}
+
+.party-data-row:hover {
+  background-color: #f9f9f9;
+}
+
+.party-data-row:first-child {
+  border-top: none;
+}
+
+.party-data-indicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.party-data-name {
+  flex-grow: 1;
+}
+
+.party-data-stats {
+  display: flex;
+  align-items: center;
+}
+
+.party-data-count {
+  margin-right: 10px;
+}
+
+.party-data-percentage {
+  color: #555;
+}
