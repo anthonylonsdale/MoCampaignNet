@@ -72,6 +72,7 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
           lat: excelData.data[latitudeKey][idx],
           lng: excelData.data[longitudeKey][idx],
           name: excelData.data[nameKey][idx],
+          color: 'black',
         }))
         setMapPoints(mapData)
         setCurrentMapFile(excelData)
@@ -86,7 +87,6 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
 
 
   useEffect(() => {
-    // Only reset states if the modal is not visible and no file generation is in progress
     if (!visible) {
       setExcelData(null)
       setActionType(null)

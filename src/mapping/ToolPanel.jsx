@@ -1,5 +1,5 @@
 import { DeleteOutlined, DownOutlined, GlobalOutlined, InboxOutlined, UpOutlined } from '@ant-design/icons'
-import { Button, Checkbox, Collapse, List, Select, Switch, Upload, message } from 'antd'
+import { Alert, Button, Checkbox, Collapse, List, Select, Switch, Upload, message } from 'antd'
 import React, { useState } from 'react'
 import * as XLSX from 'xlsx'
 import ExcelColumnSelector from '../modals/ExcelColumnSelector.jsx'
@@ -10,17 +10,6 @@ import PartyAffiliationModal from './utils/PartyAffiliationModal.jsx'
 const { Panel } = Collapse
 const { Dragger } = Upload
 const { Option } = Select
-
-// Sample handler functions
-const handleToggleLayer = (checked) => {
-  console.log('Layer visibility toggled:', checked)
-  // Add your layer toggle logic here
-}
-
-const handleVisualizationChange = (value) => {
-  console.log('Visualization option selected:', value)
-  // Update visualization based on the selected option
-}
 
 const ToolPanel = ({
   setMapPoints,
@@ -33,6 +22,9 @@ const ToolPanel = ({
   setPartyCounts,
   setSelectedParties,
   selectedParties,
+  setIsShapefileVisible,
+  isShapefileVisible,
+  setVisualizationType,
 }) => {
   const [excelModalVisible, setExcelModalVisible] = useState(false)
   const [partyModalVisible, setPartyModalVisible] = useState(false)
@@ -79,7 +71,7 @@ const ToolPanel = ({
     }
 
     setShowPoliticalDots(checked)
-    if (checked && mapPoints.every((point) => point.color === undefined || point.color === null)) {
+    if (checked && mapPoints.every((point) => point.color === undefined || point.color === null || point.color === 'black')) {
       setPartyModalVisible(true)
     }
   }
@@ -107,7 +99,7 @@ const ToolPanel = ({
         <h3>EXPORT</h3>
         <div className="export-content">
           <span>{selectedPoints.length} points have been selected.</span>
-          <Button type="primary" onClick={() => exportToExcel(selectedPoints)}>
+          <Button type="primary" onClick={() => exportToExcel(selectedPoints)} disabled={selectedPoints.length === 0}>
             Export Now
           </Button>
         </div>
@@ -203,7 +195,6 @@ const ToolPanel = ({
         <h3>VISUALIZE</h3>
         <Collapse
           bordered={false}
-          defaultActiveKey={['1']}
           expandIcon={({ isActive }) => isActive ? <UpOutlined /> : <DownOutlined />}
           className="party-breakdown-panel"
         >
@@ -220,7 +211,7 @@ const ToolPanel = ({
                     checked={selectedParties.has(item.party)}
                     onChange={(e) => togglePartySelection(item.party, e.target.checked)}
                   />
-                  <div className="party-data-indicator" style={{ backgroundColor: item.color }}></div>
+                  <div className="party-data-indicator">{item.color}</div>
                   <div className="party-data-name">{item.party}</div>
                   <div className="party-data-count">{item.count.toLocaleString()}</div>
                   <div className="party-data-percentage">{item.percentage.toFixed(2)}%</div>
@@ -229,20 +220,24 @@ const ToolPanel = ({
             />
           </Panel>
           <Panel
-            header={<span className="tool-icon">🔵 Areas are Hidden</span>}
+            header={<span className="tool-icon">🔵 Shapefile Areas Visible</span>}
             key="2"
-            extra={<Switch onChange={handleToggleLayer} />}
+            extra={<Switch checked={isShapefileVisible} onChange={(e) => setIsShapefileVisible(e)} />}
           >
-            {/* Content for Areas are Hidden */}
+            <Alert
+              message="Click on a shapefile in the 'Data Entry' panel to change what is shown on the map."
+              type="info"
+              showIcon
+            />
           </Panel>
           <Panel
             header={<span className="tool-icon">🌐 Visualization Type</span>}
             key="3"
           >
-            <Select defaultValue="heatmap" style={{ width: '100%' }} onChange={handleVisualizationChange}>
-              <Option value="heatmap">Heatmap</Option>
+            <Select defaultValue="points" style={{ width: '100%' }} onChange={(e) => setVisualizationType(e)}>
+              <Option value="points">Points</Option>
               <Option value="clusters">Clusters</Option>
-              <Option value="density">Density</Option>
+              <Option value="heatmap">Heatmap</Option>
             </Select>
           </Panel>
         </Collapse>
@@ -256,6 +251,7 @@ const ToolPanel = ({
         mapPoints={mapPoints}
         partyCounts={partyCounts}
         setPartyCounts={setPartyCounts}
+        selectedParties={selectedParties}
       />
 
       <ExcelColumnSelector

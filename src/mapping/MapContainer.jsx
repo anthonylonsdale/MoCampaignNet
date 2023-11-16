@@ -11,6 +11,15 @@ const MappingContainer = () => {
 
   const [partyCounts, setPartyCounts] = useState([])
   const [selectedParties, setSelectedParties] = useState(new Set())
+  const [isShapefileVisible, setIsShapefileVisible] = useState(true)
+  const [visualizationType, setVisualizationType] = useState('points')
+
+  const clearAllData = () => {
+    setMapPoints([])
+    setSelectedPoints([])
+    setShapes(null)
+    setSelectedParties(new Set())
+  }
 
   return (
     <>
@@ -27,12 +36,18 @@ const MappingContainer = () => {
           setPartyCounts={setPartyCounts}
           setSelectedParties={setSelectedParties}
           selectedParties={selectedParties}
+          setIsShapefileVisible={setIsShapefileVisible}
+          isShapefileVisible={isShapefileVisible}
+          setVisualizationType={setVisualizationType}
         />
         <InteractiveMapper
           mapPoints={mapPoints}
           setSelectedPoints={setSelectedPoints}
           shapes={shapes}
           selectedParties={selectedParties}
+          isShapefileVisible={isShapefileVisible}
+          clearAllData={clearAllData}
+          visualizationType={visualizationType}
         />
       </div>
     </>

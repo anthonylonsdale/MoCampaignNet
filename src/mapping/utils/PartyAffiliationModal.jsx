@@ -16,39 +16,57 @@ const assignPartyColor = (party) => {
   }
 }
 
-const PartyAffiliationModal = ({ visible, onCancel, mapData, setMapPoints, mapPoints, partyCounts, setPartyCounts }) => {
+const PartyAffiliationModal = ({ visible, onCancel, mapData, setMapPoints, mapPoints, partyCounts, setPartyCounts, selectedParties }) => {
   const [selectedColumn, setSelectedColumn] = useState(null)
   const [sortDirection, setSortDirection] = useState('descend')
 
   useEffect(() => {
+    // Initially, set all parties as selected when the component mounts or when mapData changes
+    if (mapData && selectedColumn && selectedParties.size === 0) {
+      const allParties = new Set(mapData.data[selectedColumn.match(/\(([^)]+)\)/)[1]])
+      selectedParties = allParties // Assuming selectedParties is a state, you should use a setState function instead
+    }
+
+    const newPartyCounts = calculatePartyCounts(mapData, selectedColumn, selectedParties)
+    console.log(newPartyCounts)
+    setPartyCounts(newPartyCounts)
+  }, [selectedColumn, mapData, selectedParties])
+
+  const calculatePartyCounts = (mapData, selectedColumn, selectedParties) => {
     if (!selectedColumn || !mapData) {
-      setPartyCounts([])
-      return
+      return []
     }
 
     const columnLetter = selectedColumn.match(/\(([^)]+)\)/)[1]
     const columnIndex = mapData.columns.indexOf(selectedColumn)
 
     if (columnIndex === -1) {
-      message.error('Selected column does not exist in data.')
-      return
+      console.error('Selected column does not exist in data.')
+      return []
+    }
+
+    const initialCounts = {
+      'Republican': 0,
+      'Democrat': 0,
+      'Independent': 0,
+      'No Data': 0,
     }
 
     const columnData = mapData.data[columnLetter]
-    const counts = columnData.reduce((acc, party) => {
-      const partyKey = party === null || party === undefined ? 'No Data' : party
-      acc[partyKey] = (acc[partyKey] || 0) + 1
-      return acc
-    }, {})
+    columnData.forEach((party) => {
+      if (selectedParties.has(party) || party === null || party === undefined) {
+        const partyKey = party === null || party === undefined ? 'No Data' : party
+        initialCounts[partyKey] = (initialCounts[partyKey] || 0) + 1
+      }
+    })
 
-    const totalCount = Object.values(counts).reduce((sum, count) => sum + count, 0)
-
-    setPartyCounts(Object.entries(counts).map(([party, count]) => ({
+    const totalCount = Object.values(initialCounts).reduce((sum, count) => sum + count, 0)
+    return Object.entries(initialCounts).map(([party, count]) => ({
       party,
       count,
       percentage: (count / totalCount) * 100,
-    })))
-  }, [selectedColumn, mapData])
+    }))
+  }
 
   const onConfirmSelection = () => {
     const selectedColumnLetter = selectedColumn.match(/\(([^)]+)\)/)[1]
@@ -87,8 +105,6 @@ const PartyAffiliationModal = ({ visible, onCancel, mapData, setMapPoints, mapPo
       }
     })
   }
-
-  console.log(partyCounts)
 
   return (
     <Modal

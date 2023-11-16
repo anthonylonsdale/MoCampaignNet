@@ -2,8 +2,11 @@ import * as turf from '@turf/turf'
 import { message } from 'antd'
 import L from 'leaflet'
 import 'leaflet-draw/dist/leaflet.draw.css'
+import 'leaflet.heat'
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
+import 'leaflet.markercluster/dist/leaflet.markercluster'
 import React, { useEffect, useRef } from 'react'
-import { FeatureGroup, MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
+import { FeatureGroup, MapContainer, TileLayer, useMap } from 'react-leaflet'
 import { EditControl } from 'react-leaflet-draw'
 import './InteractiveMapper.css'
 
@@ -33,7 +36,6 @@ const SetViewToBounds = ({ points }) => {
 
 const ShapefileLayer = ({ data, featureGroupRef }) => {
   const map = useMap()
-
   useEffect(() => {
     if (!data) return
 
@@ -51,36 +53,27 @@ const ShapefileLayer = ({ data, featureGroupRef }) => {
       },
     }).addTo(shapefileLayer)
 
-    if (featureGroupRef && featureGroupRef.current) {
-      featureGroupRef.current.addLayer(shapefileLayer)
-    } else {
-      shapefileLayer.addTo(map)
-    }
+    featureGroupRef.current.addLayer(shapefileLayer)
 
     map.fitBounds(shapefileLayer.getBounds())
 
     return () => {
-      if (featureGroupRef && featureGroupRef.current) {
-        featureGroupRef.current.removeLayer(shapefileLayer)
-      } else {
-        map.removeLayer(shapefileLayer)
-      }
+      featureGroupRef.current.removeLayer(shapefileLayer)
     }
   }, [data, map, featureGroupRef])
 
   return null
 }
 
-const InteractiveMapper = ({ mapPoints, setSelectedPoints, shapes, selectedParties }) => {
+const InteractiveMapper = ({ mapPoints, setSelectedPoints, shapes, selectedParties, isShapefileVisible, clearAllData, visualizationType }) => {
   const mapPointsRef = useRef(mapPoints)
   const featureGroupRef = useRef()
+  const shapefileGroupRef = useRef(null)
+
 
   useEffect(() => {
     mapPointsRef.current = mapPoints
   }, [mapPoints])
-
-  console.log(selectedParties)
-  console.log(mapPoints)
 
   const onCreated = (e) => {
     const layer = e.layer
@@ -96,6 +89,59 @@ const InteractiveMapper = ({ mapPoints, setSelectedPoints, shapes, selectedParti
     message.info(`${pointsSelected.length} points have been selected.`)
   }
 
+  const onDeleted = (e) => {
+    const { layers: { _layers } } = e
+    Object.values(_layers).forEach((layer) => {
+      if (layer instanceof L.Polygon || layer instanceof L.Rectangle || layer instanceof L.Circle) {
+        if (featureGroupRef.current) {
+          featureGroupRef.current.removeLayer(layer)
+        }
+      }
+    })
+    if (featureGroupRef.current && Object.keys(_layers).length === featureGroupRef.current.getLayers().length) {
+      clearAllData()
+    }
+  }
+
+  useEffect(() => {
+    if (featureGroupRef.current) {
+      featureGroupRef.current.clearLayers()
+    }
+
+    if (visualizationType === 'clusters') {
+      const markerClusterGroup = L.markerClusterGroup()
+      mapPoints.forEach((point) => {
+        const marker = L.marker([point.lat, point.lng], {
+          icon: createCustomIcon(point.color),
+        }).bindPopup(point.name)
+        markerClusterGroup.addLayer(marker)
+      })
+      featureGroupRef.current.addLayer(markerClusterGroup)
+    } else if (visualizationType === 'heatmap') {
+      const heatMapPoints = mapPoints.map((point) => [point.lat, point.lng, 1])
+      const heatLayer = L.heatLayer(heatMapPoints, { radius: 25, blur: 15 })
+      featureGroupRef.current.addLayer(heatLayer)
+    } else {
+      const filteredPoints = mapPoints.filter((point) => {
+        const party = Object.keys(partyColorMapping).find((p) => partyColorMapping[p] === point.color)
+        return selectedParties.size === 0 || selectedParties.has(party)
+      })
+
+      filteredPoints.forEach((point) => {
+        const marker = L.marker([point.lat, point.lng], {
+          icon: createCustomIcon(point.color),
+        }).bindPopup(point.name)
+        featureGroupRef.current.addLayer(marker)
+      })
+    }
+  }, [visualizationType, mapPoints, selectedParties])
+
+  console.log(featureGroupRef.current?.getLayers())
+  console.log(selectedParties)
+  console.log(mapPoints)
+  console.log(isShapefileVisible)
+  console.log(shapes)
+
   return (
     <div className="interactive-mapper-container">
       <MapContainer center={[38.573936, -92.603760]} zoom={13}>
@@ -103,7 +149,6 @@ const InteractiveMapper = ({ mapPoints, setSelectedPoints, shapes, selectedParti
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        <SetViewToBounds points={mapPoints} />
         <FeatureGroup ref={featureGroupRef}>
           <EditControl
             position="topright"
@@ -119,26 +164,13 @@ const InteractiveMapper = ({ mapPoints, setSelectedPoints, shapes, selectedParti
               edit: true,
               remove: true,
             }}
+            onDeleted={onDeleted}
           />
-          {mapPoints
-              .filter((point) => {
-                // Get the party name that corresponds to this point's color
-                const party = Object.keys(partyColorMapping).find((party) => partyColorMapping[party] === point.color)
-                // Check if this party is in the selectedParties set
-                return selectedParties.size === 0 || selectedParties.has(party)
-              })
-              .map((point, index) => (
-                <Marker
-                  key={index}
-                  position={[point.lat, point.lng]}
-                  icon={createCustomIcon(point.color)} // Use the color from point data
-                >
-                  <Popup>{point.name}</Popup>
-                </Marker>
-              ))
-          }
         </FeatureGroup>
-        {shapes && <ShapefileLayer data={shapes} featureGroupRef={featureGroupRef} />}
+        <FeatureGroup ref={shapefileGroupRef}>
+          {isShapefileVisible && shapes && <ShapefileLayer data={shapes} featureGroupRef={shapefileGroupRef} />}
+        </FeatureGroup>
+        <SetViewToBounds points={mapPoints} />
       </MapContainer>
     </div>
   )
