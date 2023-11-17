@@ -19,7 +19,7 @@
 
 .header-title {
   font-size: 24px;
-  color: #1890ff;
+  color: #0052cc;
   font-weight: bold;
   text-transform: uppercase;
   margin-left: 48px;
@@ -39,7 +39,7 @@
 }
 
 .site-layout-background .custom-menu .ant-menu-item:hover {
-  background-color: #1890ff;
+  background-color: #0052cc;
 }
 
 .site-layout-background .custom-menu .ant-menu-item:hover a {

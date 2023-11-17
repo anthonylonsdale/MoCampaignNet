@@ -67,6 +67,15 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
         const longitudeKey = longitudeColumn.match(/\(([^)]+)\)/)[1]
         const nameKey = nameColumn.match(/\(([^)]+)\)/)[1]
 
+        const latitudes = excelData.data[latitudeKey]
+        const longitudes = excelData.data[longitudeKey]
+
+        const validationMessage = validateLatLngData(latitudes, longitudes)
+        if (validationMessage) {
+          message.error(validationMessage, 5)
+          return
+        }
+
         const mapData = excelData.data[latitudeKey].map((_, idx) => ({
           id: idx,
           lat: excelData.data[latitudeKey][idx],
@@ -85,6 +94,24 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
     onCancel()
   }
 
+  const validateLatLngData = (latitudes, longitudes) => {
+    const latPattern = /^-?([1-8]?[0-9](\.\d+)?|90(\.0+)?)$/
+    const lngPattern = /^-?((1[0-7][0-9]|[1-9]?[0-9])(\.\d+)?|180(\.0+)?)$/
+
+    for (const lat of latitudes) {
+      if (!latPattern.test(lat.toString())) {
+        return `Invalid latitude value: ${lat}`
+      }
+    }
+
+    for (const lng of longitudes) {
+      if (!lngPattern.test(lng.toString())) {
+        return `Invalid longitude value: ${lng}`
+      }
+    }
+
+    return ''
+  }
 
   useEffect(() => {
     if (!visible) {
@@ -126,7 +153,7 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
       {excelData && actionType === 'format' && (
         <>
           <div>
-            <h3>Select Columns:</h3>
+            <h3>Select Columns to Keep:</h3>
             <Input
               type="text"
               placeholder="Search columns..."
@@ -137,13 +164,19 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
             <div className="column-container">
               {excelData.columns
                   .filter((column) => column.toLowerCase().includes(searchQuery))
-                  .map((column) => (
+                  .map((column, index) => (
                     <div key={column} className="checkbox-label">
+                      <span className="column-prefix">
+                        {index < 26 ? String.fromCharCode(65 + index) : (
+                          String.fromCharCode(64 + Math.floor(index / 26)) +
+                          String.fromCharCode(65 + (index % 26))
+                        )}
+                      </span>
                       <Checkbox
                         onChange={() => handleCheckboxChange(column)}
                         checked={selectedColumns.includes(column)}
                       >
-                        <span>{column}</span>
+                        <span className="column-name">{column.replace(/\s+\([A-Z]\)$/, '')}</span>
                       </Checkbox>
                     </div>
                   ))}
@@ -170,38 +203,34 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
           </div>
           <div style={{ marginBottom: 20 }}>
             <h3>Sorting Options:</h3>
+            <Switch
+              checkedChildren="Ascending"
+              unCheckedChildren="Descending"
+              onChange={(value) => setSortOrder(value)}
+            />
             <Select
               placeholder="Select Column to Sort"
               style={{ width: 200, marginRight: 10 }}
               onChange={(value) => setSortColumn(value)}
             >
-              {excelData.columns.map((column) => (
+              {selectedColumns.map((column) => (
                 <Select.Option key={column} value={column}>
                   {column}
                 </Select.Option>
               ))}
-            </Select>
-            <Select
-              defaultValue="ascend"
-              style={{ width: 120 }}
-              onChange={(value) => setSortOrder(value)}
-            >
-              <Select.Option value="ascend">Ascending</Select.Option>
-              <Select.Option value="descend">Descending</Select.Option>
             </Select>
           </div>
         </>
       )}
       {excelData && actionType === 'map' && (
         <>
-          <div style={{ marginTop: '1rem' }}>
+          <div className="select-group">
             {['Latitude', 'Longitude', 'Marker Name'].map((placeholder, index) => (
               <Select
                 key={placeholder}
+                className={`select-column ${error && 'error-select'}`}
                 placeholder={`Select ${placeholder} Column`}
-                style={{ width: 200, marginBottom: 10, borderColor: error ? 'red' : undefined }}
                 onChange={(value) => {
-                  setError(false)
                   if (index === 0) setLatitudeColumn(value)
                   if (index === 1) setLongitudeColumn(value)
                   if (index === 2) setNameColumn(value)
@@ -214,17 +243,31 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
               </Select>
             ))}
           </div>
+          <Alert
+            className="alert-warning"
+            message="Note"
+            description={
+              <>
+                Ensure your data is geocoded (has latitude and longitude data).
+                <br />
+                Contact <a href="mailto:alonsdale@bernoullitechnologies.net">alonsdale@bernoullitechnologies.net</a> if you need this for your data.
+              </>
+            }
+            type="info"
+            showIcon
+          />
           {Object.keys(excelData.data).some((key) => excelData.data[key].length > 10000) && (
             <Alert
+              className="alert-warning"
               message="Warning"
               description="Large datasets may result in slow performance."
               type="warning"
               showIcon
-              style={{ marginTop: '1rem' }}
             />
           )}
         </>
       )}
+
     </Modal>
   )
 }
