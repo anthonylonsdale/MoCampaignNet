@@ -1,0 +1,52 @@
+.field-categorizer-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.pool, .droppable-area {
+    padding: .5rem;
+    border-radius: 5px;
+    background-color: #e8e8e8;
+    min-height: 100px;
+    margin-bottom: 1rem;
+}
+
+.field-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-content: flex-start;
+}
+  
+.draggable-bubble {
+    padding: 6px 12px;
+    background-color: #f0f0f0;
+    border: 1px solid #d9d9d9;
+    border-radius: 20px;
+    cursor: pointer; 
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+  
+.assign-buttons-container {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+}
+  
+.assign-button {
+    margin: 0 5px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+  
+.assign-button:hover {
+    background-color: #0056b3;
+}

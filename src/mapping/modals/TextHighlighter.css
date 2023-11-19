@@ -1,0 +1,46 @@
+.text-container {
+    padding: 16px;
+    border: 1px solid #ccc;
+    margin-bottom: 8px;
+    user-select: text;
+    cursor: text;
+    font-size: 18px;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .highlight {
+    padding: 2px 4px;
+    border-radius: 4px;
+    color: white;
+    margin: 0 2px;
+  }
+  
+  .year { background-color: #007bff; }
+  .type { background-color: #28a745; }
+  .party { background-color: #dc3545; }
+  .office { background-color: #ffc107; }
+  .candidate { background-color: #17a2b8; }
+  
+  .category-container {
+    margin-bottom: 8px;
+  }
+  
+  .category-tag {
+    display: inline-block;
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .category-tag.active {
+    background-color: #e9ecef;
+  }
+  
+  .category-tag:hover {
+    background-color: #f8f9fa;
+  }
+  

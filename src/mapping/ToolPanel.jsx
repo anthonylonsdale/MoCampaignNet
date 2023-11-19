@@ -4,12 +4,22 @@ import React, { useState } from 'react'
 import * as XLSX from 'xlsx'
 import ExcelColumnSelector from '../modals/ExcelColumnSelector.jsx'
 import './ToolPanel.css'
+import PrecinctDataModal from './modals/PrecinctDataModal.jsx'
+import ElectoralResults from './utils/ElectoralResults.jsx'
 import { extractShapes } from './utils/ExtractShapes.jsx'
 import PartyAffiliationModal from './utils/PartyAffiliationModal.jsx'
+
 
 const { Panel } = Collapse
 const { Dragger } = Upload
 const { Option } = Select
+
+const partyEmojiMapping = {
+  'Republican': '🔴', // Red circle emoji
+  'Democrat': '🔵', // Blue circle emoji
+  'Independent': '🔘', // White circle emoji for Independent or another suitable emoji
+  'No Data': '⚫', // Black circle emoji for no data
+}
 
 const ToolPanel = ({
   setMapPoints,
@@ -31,7 +41,13 @@ const ToolPanel = ({
   const [droppedFile, setDroppedFile] = useState(null)
   const [fileList, setFileList] = useState([])
   const [shapefileList, setShapefileList] = useState([])
+  const [precinctList, setPrecinctList] = useState([])
   const [currentMapFile, setCurrentMapFile] = useState(null)
+
+  const [isPrecinctModalVisible, setIsPrecinctModalVisible] = useState(false)
+  const [precinctData, setPrecinctData] = useState(null)
+  const [electoralFieldMapping, setElectoralFieldMapping] = useState(null)
+  const [electoralFields, setElectoralFields] = useState(null)
 
   const togglePartySelection = (party, isChecked) => {
     setSelectedParties((prevSelectedParties) => {
@@ -83,6 +99,9 @@ const ToolPanel = ({
     } else if (listType === 'shapefileList') {
       const newShapefileList = shapefileList.filter((file) => file.name !== fileName)
       setShapefileList(newShapefileList)
+    } else if (listType === 'precinctList') {
+      const newPrecinctList = precinctList.filter((file) => file.name !== fileName)
+      setPrecinctList(newPrecinctList)
     }
   }
 
@@ -97,6 +116,7 @@ const ToolPanel = ({
     <div className="tool-panel">
       <div className="section-container">
         <h3>EXPORT</h3>
+        <span className="map-point-count">{mapPoints.length} points are on the map.</span>
         <div className="export-content">
           <span>{selectedPoints.length} points have been selected.</span>
           <Button type="primary" onClick={() => exportToExcel(selectedPoints)} disabled={selectedPoints.length === 0}>
@@ -188,7 +208,54 @@ const ToolPanel = ({
               </div>
             </div>
           </Panel>
+          <Panel header="Precinct Data Import" key="3">
+            <div className="upload-container">
+              <Dragger
+                accept=".zip"
+                beforeUpload={async (file) => {
+                  if (!/\.(zip)$/i.test(file.name)) {
+                    message.error('Uploaded File is not a ZIP archive', 3)
+                    return Upload.LIST_IGNORE
+                  }
+                  const shapesData = await extractShapes([file])
+                  setShapes(shapesData)
+                  setPrecinctList([...precinctList, file])
+
+                  setPrecinctData(shapesData)
+                  setIsPrecinctModalVisible(true)
+                  return false
+                }}
+                multiple={false}
+                showUploadList={false}
+              >
+                <p className="ant-upload-drag-icon">
+                  <GlobalOutlined />
+                </p>
+                <p className="upload-text">Drag in Precinct Results</p>
+                <p className="upload-text">or</p>
+                <p className="upload-text">Click to Browse Files</p>
+              </Dragger>
+              <div className="file-list">
+                {precinctList.map((file, index) => (
+                  <div key={index} className="file-item">
+                    <span onClick={async () => {
+                      const shapesData = await extractShapes([file])
+                      setShapes(shapesData)
+                    }}>
+                      {file.name}
+                    </span>
+                    <DeleteOutlined onClick={() => removeFile(file.name, 'precinctList')} className="file-delete-icon" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Panel>
         </Collapse>
+      </div>
+
+      <div className="section-container">
+        <h3>ELECTORAL RESULTS</h3>
+        <ElectoralResults electoralFields={electoralFields} mapping={electoralFieldMapping} precinctData={precinctData} />
       </div>
 
       <div className="section-container">
@@ -210,8 +277,9 @@ const ToolPanel = ({
                   <Checkbox
                     checked={selectedParties.has(item.party)}
                     onChange={(e) => togglePartySelection(item.party, e.target.checked)}
+                    style={{ marginRight: '.5rem' }}
                   />
-                  <div className="party-data-indicator">{item.color}</div>
+                  <span>{partyEmojiMapping[item.party]}</span>
                   <div className="party-data-name">{item.party}</div>
                   <div className="party-data-count">{item.count.toLocaleString()}</div>
                   <div className="party-data-percentage">{item.percentage.toFixed(2)}%</div>
@@ -240,6 +308,16 @@ const ToolPanel = ({
               <Option value="heatmap">Heatmap</Option>
             </Select>
           </Panel>
+          <Panel
+            header={<span className="tool-icon">🌟 Feature Insights (Placeholder)</span>}
+            key="4"
+          >
+            <div className="feature-insights-content">
+              <p>Top Insight: The number of independent voters has increased by 10% since the last period, indicating a shift in voter sentiment.</p>
+              <p>Trend to Watch: Urban areas are showing a 5% higher growth rate in data points collected compared to rural areas.</p>
+              <p>Anomaly Alert: An unexpected cluster of data points has been detected in the northwestern region, suggesting a potential data entry error or a significant new development.</p>
+            </div>
+          </Panel>
         </Collapse>
       </div>
 
@@ -260,6 +338,15 @@ const ToolPanel = ({
         droppedFile={droppedFile}
         setMapPoints={setMapPoints}
         setCurrentMapFile={setCurrentMapFile}
+      />
+
+      <PrecinctDataModal
+        visible={isPrecinctModalVisible}
+        precinctData={precinctData}
+        onConfirm={() => setIsPrecinctModalVisible(false)}
+        onCancel={() => setIsPrecinctModalVisible(false)}
+        setElectoralDataFields={setElectoralFields}
+        setElectoralFieldMapping={setElectoralFieldMapping}
       />
     </div>
   )

@@ -1,3 +1,5 @@
+@import "leaflet.fullscreen/Control.FullScreen.css";
+
 .interactive-mapper-container {
     display: flex;
     height: 600px; /* Adjust the height as needed */

@@ -9,47 +9,32 @@ export const readExcelFile = (droppedFile) => {
       const workbook = XLSX.read(data, { type: 'array' })
       const sheetName = workbook.SheetNames[0]
       const sheet = workbook.Sheets[sheetName]
+      const range = XLSX.utils.decode_range(sheet['!ref'])
       const dataDict = {}
       const columns = []
-      let maxRowNumber = 1
 
-      // Loop over each cell in the sheet
-      for (const cell in sheet) {
-        if (sheet.hasOwnProperty(cell)) {
-          const match = /^([A-Z]+)(\d+)$/.exec(cell)
+      for (let R = range.s.r; R <= range.e.r; ++R) {
+        for (let C = range.s.c; C <= range.e.c; ++C) {
+          const cellRef = XLSX.utils.encode_cell({ c: C, r: R })
+          const cell = sheet[cellRef]
+          const columnName = XLSX.utils.encode_col(C)
 
-          if (match) {
-            const columnName = match[1]
-            const rowNumber = parseInt(match[2], 10)
-
-            // Header row
-            if (rowNumber === 1) {
-              columns.push(`${sheet[cell].v} (${columnName})`)
-              dataDict[columnName] = []
-            } else {
-              // Update maxRowNumber if this rowNumber is higher
-              maxRowNumber = Math.max(maxRowNumber, rowNumber)
-
-              if (!dataDict[columnName]) {
-                dataDict[columnName] = []
-              }
-
-              // Store the cell value
-              dataDict[columnName][rowNumber - 2] = sheet[cell].v
-            }
+          if (R === 0 && cell) {
+            columns.push(`${cell.v} (${columnName})`)
+            dataDict[columnName] = []
+          } else if (cell) {
+            dataDict[columnName][R - 1] = cell.v
           }
         }
       }
 
-      // Ensure all columns have the same length by filling missing values with null
       Object.keys(dataDict).forEach((column) => {
-        for (let i = 0; i < maxRowNumber - 1; i++) {
+        for (let i = 0; i < range.e.r; i++) {
           if (dataDict[column][i] === undefined) {
-            dataDict[column][i] = null // or some other placeholder value
+            dataDict[column][i] = null
           }
         }
       })
-
       resolve({ sheetName, columns, data: dataDict })
     }
 
@@ -60,24 +45,24 @@ export const readExcelFile = (droppedFile) => {
 
 
 export const applyDataCleaning = (data, options) => {
-  const newData = { ...data }
-  for (const col in newData) {
-    if (newData.hasOwnProperty(col)) {
-      newData[col] = newData[col].map((value) => {
-        // Ensure value is a string before trying to apply string functions
-        let stringValue = value
-        if (options.trimWhitespace && typeof stringValue === 'string') {
-          stringValue = stringValue.trim()
+  const newData = {}
+
+  Object.keys(data).forEach((col) => {
+    newData[col] = data[col].map((value) => {
+      if (typeof value === 'string') {
+        if (options.trimWhitespace) {
+          value = value.trim()
         }
-        if (options.toUpperCase && typeof stringValue === 'string') {
-          stringValue = stringValue.toUpperCase()
+        if (options.toUpperCase) {
+          value = value.toUpperCase()
         }
-        return stringValue
-      })
-    }
-  }
+      }
+      return value
+    })
+  })
   return newData
 }
+
 
 export const applySorting = (data, column, order) => {
   const columnLetter = column.match(/\(([^)]+)\)/)[1]
@@ -87,31 +72,27 @@ export const applySorting = (data, column, order) => {
     return data
   }
 
-  const columnData = data[columnLetter].slice(0)
+  const sortFn = (a, b) => {
+    if (order === 'ascend') {
+      return (a || '').toString().localeCompare((b || '').toString())
+    } else {
+      return (b || '').toString().localeCompare((a || '').toString())
+    }
+  }
 
-  const sortedIndices = columnData
-      .map((value, index) => ({ index, value }))
-      .sort((a, b) => {
-        if (a.value === undefined || b.value === undefined) {
-          return 0
-        }
-        if (order === 'ascend') {
-          return a.value.toString().localeCompare(b.value.toString())
-        }
-        return b.value.toString().localeCompare(a.value.toString())
-      })
-      .map((pair) => pair.index)
+  const sortedIndices = data[columnLetter].map((_, index) => index)
+      .sort((a, b) => sortFn(data[columnLetter][a], data[columnLetter][b]))
 
-  const sortedData = {}
-  Object.keys(data).forEach((key) => {
-    sortedData[key] = []
-    sortedIndices.forEach((index) => {
-      sortedData[key].push(data[key][index])
-    })
-  })
+  const sortedData = Object.fromEntries(
+      Object.keys(data).map((key) => [
+        key,
+        sortedIndices.map((index) => data[key][index]),
+      ]),
+  )
 
   return sortedData
 }
+
 
 export const generateAndDownloadNewExcelFile = (newData) => {
   if (!newData || Object.keys(newData).length === 0) {
@@ -122,13 +103,15 @@ export const generateAndDownloadNewExcelFile = (newData) => {
     const { sheetName, data } = newData
     const workbook = XLSX.utils.book_new()
     const worksheet = XLSX.utils.aoa_to_sheet([])
-    const columns = Object.keys(data)
-    XLSX.utils.sheet_add_aoa(worksheet, [columns], { origin: 'A1' })
 
-    const columnData = Object.values(data)
-    const maxRows = Math.max(...columnData.map((col) => col.length))
-    for (let rowIdx = 0; rowIdx < maxRows; rowIdx++) {
-      const rowData = columns.map((col) => data[col][rowIdx] || '')
+    const originalColumnNames = Object.keys(data)
+    const headerRow = originalColumnNames.map((colName) => colName.replace(/\s+\([A-Z]\)$/, ''))
+
+    XLSX.utils.sheet_add_aoa(worksheet, [headerRow], { origin: 'A1' })
+    const numRows = data[originalColumnNames[0]].length
+
+    for (let rowIdx = 0; rowIdx < numRows; rowIdx++) {
+      const rowData = originalColumnNames.map((colName) => data[colName][rowIdx] || '')
       XLSX.utils.sheet_add_aoa(worksheet, [rowData], { origin: `A${rowIdx + 2}` })
     }
 
@@ -139,17 +122,15 @@ export const generateAndDownloadNewExcelFile = (newData) => {
   }
 }
 
+
 export const reformatData = (excelData, selected) => {
   const { data } = excelData
   const newData = {}
 
-  for (const col of selected) {
-    const matches = col.match(/\(([^)]+)\)/)
-    if (matches) {
-      const letters = matches[1]
-      newData[col] = data[letters]
-    }
-  }
+  selected.forEach((col) => {
+    const letter = col.match(/\(([^)]+)\)/)[1]
+    newData[col] = data[letter]
+  })
 
   return {
     sheetName: excelData.sheetName,

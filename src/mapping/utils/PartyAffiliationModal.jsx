@@ -9,64 +9,82 @@ const assignPartyColor = (party) => {
       return 'red'
     case 'Democrat':
       return 'blue'
-    case null:
+    case 'Independent':
+      return 'grey'
+    case 'No Data':
       return 'black'
     default:
-      return 'grey' // Non-empty strings get 'grey', empty or undefined get 'black'
+      return 'black'
   }
 }
 
-const PartyAffiliationModal = ({ visible, onCancel, mapData, setMapPoints, mapPoints, partyCounts, setPartyCounts, selectedParties }) => {
+const PartyAffiliationModal = ({
+  visible,
+  onCancel,
+  mapData,
+  setMapPoints,
+  mapPoints,
+  partyCounts,
+  setPartyCounts,
+}) => {
   const [selectedColumn, setSelectedColumn] = useState(null)
   const [sortDirection, setSortDirection] = useState('descend')
+  const [partyMappings, setPartyMappings] = useState({})
 
   useEffect(() => {
-    // Initially, set all parties as selected when the component mounts or when mapData changes
-    if (mapData && selectedColumn && selectedParties.size === 0) {
-      const allParties = new Set(mapData.data[selectedColumn.match(/\(([^)]+)\)/)[1]])
-      selectedParties = allParties // Assuming selectedParties is a state, you should use a setState function instead
+    console.log(mapData)
+    if (mapData && selectedColumn) {
+      const columnLetter = selectedColumn.match(/\(([^)]+)\)/)[1]
+      const uniqueValues = new Set(mapData.data[columnLetter])
+      const mappings = {}
+      uniqueValues.forEach((value) => {
+        mappings[value] = 'No Data'
+      })
+      console.log(mappings)
+      setPartyMappings(mappings)
     }
+  }, [selectedColumn, mapData])
 
-    const newPartyCounts = calculatePartyCounts(mapData, selectedColumn, selectedParties)
+  useEffect(() => {
+    const newPartyCounts = calculatePartyCounts()
     console.log(newPartyCounts)
     setPartyCounts(newPartyCounts)
-  }, [selectedColumn, mapData, selectedParties])
+  }, [partyMappings])
 
-  const calculatePartyCounts = (mapData, selectedColumn, selectedParties) => {
-    if (!selectedColumn || !mapData) {
+  const calculatePartyCounts = () => {
+    if (!selectedColumn || !mapData || !partyMappings) {
       return []
     }
 
     const columnLetter = selectedColumn.match(/\(([^)]+)\)/)[1]
-    const columnIndex = mapData.columns.indexOf(selectedColumn)
-
-    if (columnIndex === -1) {
-      console.error('Selected column does not exist in data.')
-      return []
-    }
-
-    const initialCounts = {
+    const partyCountStructure = {
       'Republican': 0,
       'Democrat': 0,
       'Independent': 0,
       'No Data': 0,
     }
 
-    const columnData = mapData.data[columnLetter]
-    columnData.forEach((party) => {
-      if (selectedParties.has(party) || party === null || party === undefined) {
-        const partyKey = party === null || party === undefined ? 'No Data' : party
-        initialCounts[partyKey] = (initialCounts[partyKey] || 0) + 1
+    const counts = { ...partyCountStructure }
+
+    mapData.data[columnLetter].forEach((rawValue) => {
+      // Use the mapping to increase the count for the corresponding party
+      const party = partyMappings[rawValue]
+      if (party && counts.hasOwnProperty(party)) {
+        counts[party]++
+      } else {
+        // If the value is not mapped, count it as 'No Data'
+        counts['No Data']++
       }
     })
 
-    const totalCount = Object.values(initialCounts).reduce((sum, count) => sum + count, 0)
-    return Object.entries(initialCounts).map(([party, count]) => ({
-      party,
-      count,
-      percentage: (count / totalCount) * 100,
+    // Convert the counts to an array suitable for the dataSource of the List component
+    return Object.keys(partyCountStructure).map((party) => ({
+      party: party,
+      count: counts[party],
+      percentage: (counts[party] / Object.values(counts).reduce((a, b) => a + b, 0)) * 100,
     }))
   }
+
 
   const onConfirmSelection = () => {
     const selectedColumnLetter = selectedColumn.match(/\(([^)]+)\)/)[1]
@@ -78,8 +96,9 @@ const PartyAffiliationModal = ({ visible, onCancel, mapData, setMapPoints, mapPo
     }
 
     const updatedMapPoints = mapPoints.map((point, index) => {
-      const party = mapData.data[selectedColumnLetter][index]
-      const color = assignPartyColor(party)
+      const rawValue = mapData.data[selectedColumnLetter][index]
+      const mappedParty = partyMappings[rawValue] || 'No Data'
+      const color = assignPartyColor(mappedParty)
 
       return {
         ...point,
@@ -136,6 +155,21 @@ const PartyAffiliationModal = ({ visible, onCancel, mapData, setMapPoints, mapPo
           </Select.Option>
         ))}
       </Select>
+      {selectedColumn && Object.keys(partyMappings).length > 0 && (
+        <div>
+          {Object.keys(partyMappings).map((value) => (
+            <div key={value}>
+              <span>{value} maps to:</span>
+              <Select defaultValue={partyMappings[value]} style={{ width: 120 }} onChange={(party) => setPartyMappings({ ...partyMappings, [value]: party })}>
+                <Select.Option value="Republican">Republican</Select.Option>
+                <Select.Option value="Democrat">Democrat</Select.Option>
+                <Select.Option value="Independent">Independent</Select.Option>
+                <Select.Option value="No Data">No Data</Select.Option>
+              </Select>
+            </div>
+          ))}
+        </div>
+      )}
       <List
         header={
           <div className="sort-header">

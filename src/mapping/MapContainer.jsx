@@ -19,6 +19,8 @@ const MappingContainer = () => {
     setSelectedPoints([])
     setShapes(null)
     setSelectedParties(new Set())
+    setPartyCounts([])
+    setShowPoliticalDots(false)
   }
 
   return (
@@ -44,6 +46,7 @@ const MappingContainer = () => {
           mapPoints={mapPoints}
           setSelectedPoints={setSelectedPoints}
           shapes={shapes}
+          showPoliticalDots={showPoliticalDots}
           selectedParties={selectedParties}
           isShapefileVisible={isShapefileVisible}
           clearAllData={clearAllData}

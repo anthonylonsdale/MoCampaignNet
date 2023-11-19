@@ -2,6 +2,8 @@ import * as turf from '@turf/turf'
 import { message } from 'antd'
 import L from 'leaflet'
 import 'leaflet-draw/dist/leaflet.draw.css'
+import 'leaflet.fullscreen'
+import 'leaflet.fullscreen/Control.FullScreen.css'
 import 'leaflet.heat'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import 'leaflet.markercluster/dist/leaflet.markercluster'
@@ -65,7 +67,16 @@ const ShapefileLayer = ({ data, featureGroupRef }) => {
   return null
 }
 
-const InteractiveMapper = ({ mapPoints, setSelectedPoints, shapes, selectedParties, isShapefileVisible, clearAllData, visualizationType }) => {
+const InteractiveMapper = ({
+  mapPoints,
+  setSelectedPoints,
+  shapes,
+  selectedParties,
+  isShapefileVisible,
+  clearAllData,
+  visualizationType,
+  showPoliticalDots,
+}) => {
   const mapPointsRef = useRef(mapPoints)
   const featureGroupRef = useRef()
   const shapefileGroupRef = useRef(null)
@@ -108,12 +119,28 @@ const InteractiveMapper = ({ mapPoints, setSelectedPoints, shapes, selectedParti
       featureGroupRef.current.clearLayers()
     }
 
+    const addMarkers = (points, color) => {
+      const markersLayerGroup = L.layerGroup()
+      points.forEach((point) => {
+        const marker = L.marker([point.lat, point.lng], {
+          icon: createCustomIcon(color ? color : point.color),
+        }).bindTooltip(point.name, {
+          permanent: false,
+          interactive: true,
+          direction: 'top',
+        })
+        markersLayerGroup.addLayer(marker)
+      })
+      featureGroupRef?.current?.addLayer(markersLayerGroup)
+    }
+
     if (visualizationType === 'clusters') {
       const markerClusterGroup = L.markerClusterGroup()
       mapPoints.forEach((point) => {
         const marker = L.marker([point.lat, point.lng], {
           icon: createCustomIcon(point.color),
-        }).bindPopup(point.name)
+        })
+        marker.bindTooltip(point.name, { permanent: false, interactive: true, direction: 'top' })
         markerClusterGroup.addLayer(marker)
       })
       featureGroupRef.current.addLayer(markerClusterGroup)
@@ -127,24 +154,17 @@ const InteractiveMapper = ({ mapPoints, setSelectedPoints, shapes, selectedParti
         return selectedParties.size === 0 || selectedParties.has(party)
       })
 
-      filteredPoints.forEach((point) => {
-        const marker = L.marker([point.lat, point.lng], {
-          icon: createCustomIcon(point.color),
-        }).bindPopup(point.name)
-        featureGroupRef.current.addLayer(marker)
-      })
+      if (showPoliticalDots === true) {
+        addMarkers(filteredPoints)
+      } else if (showPoliticalDots === false) {
+        addMarkers(filteredPoints, 'black')
+      }
     }
-  }, [visualizationType, mapPoints, selectedParties])
-
-  console.log(featureGroupRef.current?.getLayers())
-  console.log(selectedParties)
-  console.log(mapPoints)
-  console.log(isShapefileVisible)
-  console.log(shapes)
+  }, [visualizationType, mapPoints, selectedParties, showPoliticalDots])
 
   return (
     <div className="interactive-mapper-container">
-      <MapContainer center={[38.573936, -92.603760]} zoom={13}>
+      <MapContainer center={[38.573936, -92.603760]} zoom={13} fullscreenControl={true}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -159,6 +179,7 @@ const InteractiveMapper = ({ mapPoints, setSelectedPoints, shapes, selectedParti
               circle: true,
               polyline: false,
               marker: false,
+              circlemarker: false,
             }}
             edit={{
               edit: true,

@@ -1,4 +1,4 @@
-import { Alert, Button, Checkbox, Input, Modal, Radio, Select, Switch, message } from 'antd'
+import { Alert, Button, Checkbox, Input, Modal, Radio, Select, Slider, Switch, message } from 'antd'
 import React, { useEffect, useState } from 'react'
 import './ExcelColumnSelector.css'
 import { applyDataCleaning, applySorting, generateAndDownloadNewExcelFile, readExcelFile, reformatData } from './utils/ExcelFileProcessor.jsx'
@@ -21,6 +21,9 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
     trimWhitespace: false,
     toUpperCase: false,
   })
+  const [sliderValue, setSliderValue] = useState(0)
+  const [maxRows, setMaxRows] = useState(0)
+  const [selectAll, setSelectAll] = useState(true)
 
   useEffect(() => {
     if (!droppedFile) {
@@ -29,7 +32,10 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
 
     readExcelFile(droppedFile)
         .then((excelData) => {
+          console.log(excelData)
           setExcelData(excelData)
+          setMaxRows(excelData.data['A'].length)
+          setSliderValue(excelData.data['A'].length)
         })
         .catch((error) => {
           console.error('Error reading file:', error)
@@ -51,6 +57,11 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
     }))
   }
 
+  const toggleSelectAll = () => {
+    setSelectAll(!selectAll) // Toggle the selectAll state
+    setSelectedColumns(selectAll ? [] : [...excelData.columns]) // Select all or deselect all columns
+  }
+
   const handleConfirm = () => {
     if (actionType === 'format') {
       let newData = applyDataCleaning(excelData.data, cleanDataOptions)
@@ -60,6 +71,12 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
       }
 
       const newExcelData = reformatData({ ...excelData, data: newData }, selectedColumns)
+
+      if (sliderValue < maxRows) {
+        Object.keys(newExcelData.data).forEach((key) => {
+          newExcelData.data[key].length = sliderValue
+        })
+      }
       generateAndDownloadNewExcelFile(newExcelData)
     } else if (actionType === 'map') {
       if (latitudeColumn && longitudeColumn && nameColumn && excelData?.data) {
@@ -114,6 +131,14 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
   }
 
   useEffect(() => {
+    if (excelData && selectedColumns.length === excelData.columns.length) {
+      setSelectAll(true)
+    } else if (selectedColumns.length === 0) {
+      setSelectAll(false)
+    }
+  }, [selectedColumns, excelData?.columns])
+
+  useEffect(() => {
     if (!visible) {
       setExcelData(null)
       setActionType(null)
@@ -161,6 +186,14 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
               onChange={(e) => setSearchQuery(e.target.value.toLowerCase())}
               style={{ marginBottom: '10px', padding: '5px', width: '100%' }}
             />
+            <div className="select-all-container" style={{ marginBottom: '10px' }}>
+              <Button
+                type={selectAll ? 'primary' : 'default'} // Style based on whether all are selected or not
+                onClick={toggleSelectAll}
+              >
+                {selectAll ? 'Deselect All' : 'Select All'}
+              </Button>
+            </div>
             <div className="column-container">
               {excelData.columns
                   .filter((column) => column.toLowerCase().includes(searchQuery))
@@ -219,6 +252,19 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
                 </Select.Option>
               ))}
             </Select>
+          </div>
+          <div style={{ marginBottom: 20 }}>
+            <h3>Number of Rows to Keep:</h3>
+            <Slider
+              min={1}
+              max={maxRows}
+              value={sliderValue}
+              onChange={setSliderValue}
+              marks={{
+                1: '1',
+                [maxRows]: maxRows,
+              }}
+            />
           </div>
         </>
       )}
