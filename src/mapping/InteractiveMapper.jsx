@@ -36,6 +36,30 @@ const SetViewToBounds = ({ points }) => {
   return null
 }
 
+const PrecinctLayer = ({ data, featureGroupRef }) => {
+  const map = useMap()
+  useEffect(() => {
+    if (!data) return
+
+    const precinctLayer = L.geoJson(data, {
+      style: () => ({
+        weight: 1,
+        color: '#000000',
+        fillOpacity: 0,
+      }),
+    })
+
+    featureGroupRef.current.addLayer(precinctLayer)
+    map.fitBounds(precinctLayer.getBounds())
+
+    return () => {
+      featureGroupRef.current.removeLayer(precinctLayer)
+    }
+  }, [data, featureGroupRef, map])
+
+  return null
+}
+
 const ShapefileLayer = ({ data, featureGroupRef }) => {
   const map = useMap()
   useEffect(() => {
@@ -56,14 +80,12 @@ const ShapefileLayer = ({ data, featureGroupRef }) => {
     }).addTo(shapefileLayer)
 
     featureGroupRef.current.addLayer(shapefileLayer)
-
     map.fitBounds(shapefileLayer.getBounds())
 
     return () => {
       featureGroupRef.current.removeLayer(shapefileLayer)
     }
   }, [data, map, featureGroupRef])
-
   return null
 }
 
@@ -76,11 +98,12 @@ const InteractiveMapper = ({
   clearAllData,
   visualizationType,
   showPoliticalDots,
+  precinctShapes,
 }) => {
   const mapPointsRef = useRef(mapPoints)
   const featureGroupRef = useRef()
   const shapefileGroupRef = useRef(null)
-
+  const precinctGroupRef = useRef(null)
 
   useEffect(() => {
     mapPointsRef.current = mapPoints
@@ -187,6 +210,9 @@ const InteractiveMapper = ({
             }}
             onDeleted={onDeleted}
           />
+        </FeatureGroup>
+        <FeatureGroup ref={precinctGroupRef}>
+          {precinctShapes && <PrecinctLayer data={precinctShapes} featureGroupRef={precinctGroupRef} />}
         </FeatureGroup>
         <FeatureGroup ref={shapefileGroupRef}>
           {isShapefileVisible && shapes && <ShapefileLayer data={shapes} featureGroupRef={shapefileGroupRef} />}

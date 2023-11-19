@@ -7,6 +7,7 @@ const MappingContainer = () => {
   const [mapPoints, setMapPoints] = useState([])
   const [selectedPoints, setSelectedPoints] = useState([])
   const [shapes, setShapes] = useState(null)
+  const [precinctShapes, setPrecinctShapes] = useState(null)
   const [showPoliticalDots, setShowPoliticalDots] = useState(false)
 
   const [partyCounts, setPartyCounts] = useState([])
@@ -41,6 +42,7 @@ const MappingContainer = () => {
           setIsShapefileVisible={setIsShapefileVisible}
           isShapefileVisible={isShapefileVisible}
           setVisualizationType={setVisualizationType}
+          setPrecinctShapes={setPrecinctShapes}
         />
         <InteractiveMapper
           mapPoints={mapPoints}
@@ -51,6 +53,7 @@ const MappingContainer = () => {
           isShapefileVisible={isShapefileVisible}
           clearAllData={clearAllData}
           visualizationType={visualizationType}
+          precinctShapes={precinctShapes}
         />
       </div>
     </>

@@ -35,16 +35,17 @@ const ToolPanel = ({
   setIsShapefileVisible,
   isShapefileVisible,
   setVisualizationType,
+  setPrecinctShapes,
 }) => {
   const [excelModalVisible, setExcelModalVisible] = useState(false)
   const [partyModalVisible, setPartyModalVisible] = useState(false)
   const [droppedFile, setDroppedFile] = useState(null)
   const [fileList, setFileList] = useState([])
   const [shapefileList, setShapefileList] = useState([])
-  const [precinctList, setPrecinctList] = useState([])
   const [currentMapFile, setCurrentMapFile] = useState(null)
 
   const [isPrecinctModalVisible, setIsPrecinctModalVisible] = useState(false)
+  const [precinctList, setPrecinctList] = useState([])
   const [precinctData, setPrecinctData] = useState(null)
   const [electoralFieldMapping, setElectoralFieldMapping] = useState(null)
   const [electoralFields, setElectoralFields] = useState(null)
@@ -218,7 +219,7 @@ const ToolPanel = ({
                     return Upload.LIST_IGNORE
                   }
                   const shapesData = await extractShapes([file])
-                  setShapes(shapesData)
+                  setPrecinctShapes(shapesData)
                   setPrecinctList([...precinctList, file])
 
                   setPrecinctData(shapesData)
@@ -240,7 +241,7 @@ const ToolPanel = ({
                   <div key={index} className="file-item">
                     <span onClick={async () => {
                       const shapesData = await extractShapes([file])
-                      setShapes(shapesData)
+                      setPrecinctShapes(shapesData)
                     }}>
                       {file.name}
                     </span>

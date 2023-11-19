@@ -1,4 +1,4 @@
-import { Collapse } from 'antd'
+import { Collapse, List } from 'antd'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import React, { useEffect, useState } from 'react'
@@ -27,7 +27,6 @@ const ElectoralResults = ({ electoralFields, mapping, precinctData }) => {
       elections[electionCode].push(candidateCode)
     })
 
-    // Tally votes for each candidate in each election
     precinctData.forEach(({ properties }) => {
       Object.entries(properties).forEach(([key, votes]) => {
         const electionCode = key.substring(mapping[2].start, mapping[2].end)
@@ -44,18 +43,23 @@ const ElectoralResults = ({ electoralFields, mapping, precinctData }) => {
       })
     })
 
-    // Convert results to an array suitable for the pie chart
     const formattedResults = Object.keys(results).map((election) => {
+      const totalVotes = Object.values(results[election]).reduce((a, b) => a + b, 0)
       const data = Object.keys(results[election]).map((candidate) => {
-        return [candidate, results[election][candidate]]
+        const votes = results[election][candidate]
+        const percentage = ((votes / totalVotes) * 100).toFixed(2)
+        return {
+          name: candidate,
+          y: votes,
+          percentage: percentage,
+        }
       })
-      return { election, data }
+      return { election, data, totalVotes }
     })
 
     setElectoralResults(formattedResults)
   }
 
-  // Highcharts options
   const getChartOptions = (data) => ({
     chart: {
       type: 'pie',
@@ -77,6 +81,17 @@ const ElectoralResults = ({ electoralFields, mapping, precinctData }) => {
           <HighchartsReact
             highcharts={Highcharts}
             options={getChartOptions(data)}
+          />
+          <List
+            size="small"
+            header={<div><strong>Candidates and Vote Share</strong></div>}
+            bordered
+            dataSource={data}
+            renderItem={(item) => (
+              <List.Item>
+                {item.name} - {item.percentage}% ({item.y.toLocaleString()} votes)
+              </List.Item>
+            )}
           />
         </Panel>
       ))}
