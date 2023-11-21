@@ -32,7 +32,6 @@ const PartyAffiliationModal = ({
   const [partyMappings, setPartyMappings] = useState({})
 
   useEffect(() => {
-    console.log(mapData)
     if (mapData && selectedColumn) {
       const columnLetter = selectedColumn.match(/\(([^)]+)\)/)[1]
       const uniqueValues = new Set(mapData.data[columnLetter])
@@ -40,14 +39,12 @@ const PartyAffiliationModal = ({
       uniqueValues.forEach((value) => {
         mappings[value] = 'No Data'
       })
-      console.log(mappings)
       setPartyMappings(mappings)
     }
   }, [selectedColumn, mapData])
 
   useEffect(() => {
     const newPartyCounts = calculatePartyCounts()
-    console.log(newPartyCounts)
     setPartyCounts(newPartyCounts)
   }, [partyMappings])
 

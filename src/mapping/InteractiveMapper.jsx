@@ -1,16 +1,17 @@
 import * as turf from '@turf/turf'
-import { message } from 'antd'
+import { message, Modal } from 'antd'
 import L from 'leaflet'
 import 'leaflet-draw/dist/leaflet.draw.css'
 import 'leaflet.fullscreen'
 import 'leaflet.fullscreen/Control.FullScreen.css'
 import 'leaflet.heat'
-import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import 'leaflet.markercluster/dist/leaflet.markercluster'
-import React, { useEffect, useRef } from 'react'
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
+import React, { useEffect, useRef, useState } from 'react'
 import { FeatureGroup, MapContainer, TileLayer, useMap } from 'react-leaflet'
 import { EditControl } from 'react-leaflet-draw'
 import './InteractiveMapper.css'
+import { calcPartisanAdvantage } from './utils/calculateElectionMargins.jsx'
 
 const createCustomIcon = (color) => {
   const markerColor = color || 'black'
@@ -43,7 +44,7 @@ const PrecinctLayer = ({ data, featureGroupRef }) => {
 
     const precinctLayer = L.geoJson(data, {
       style: () => ({
-        weight: 1,
+        weight: .5,
         color: '#000000',
         fillOpacity: 0,
       }),
@@ -53,39 +54,107 @@ const PrecinctLayer = ({ data, featureGroupRef }) => {
     map.fitBounds(precinctLayer.getBounds())
 
     return () => {
-      featureGroupRef.current.removeLayer(precinctLayer)
+      try {
+        featureGroupRef.current.removeLayer(precinctLayer)
+      } catch {}
     }
   }, [data, featureGroupRef, map])
 
   return null
 }
 
-const ShapefileLayer = ({ data, featureGroupRef }) => {
+function createPopupContent(districtResults, districtId) {
+  const electionResults = districtResults[districtId]
+  const container = document.createElement('div')
+  container.className = 'election-popup'
+
+  Object.keys(electionResults).forEach((electionCode) => {
+    const candidates = electionResults[electionCode]
+    const totalDistrictVotes = Object.values(candidates).reduce((sum, { totalVotes }) => sum + totalVotes, 0)
+    const electionDiv = document.createElement('div')
+    electionDiv.className = 'election-info'
+    electionDiv.innerHTML = `<h4>Election ${electionCode}</h4>`
+
+    const list = document.createElement('ul')
+    Object.entries(candidates).forEach(([partyCode, { totalVotes, candidate }]) => {
+      const votePercentage = ((totalVotes / totalDistrictVotes) * 100).toFixed(2) // Fixed to two decimal places
+      const listItem = document.createElement('li')
+      listItem.innerHTML = `
+        <span class="candidate-name">${candidate}</span> 
+        (<span class="party-code">${partyCode}</span>): 
+        <span class="candidate-votes">${totalVotes.toLocaleString()}</span> votes 
+        - <span class="candidate-percentage">${votePercentage}%</span>`
+
+      list.appendChild(listItem)
+    })
+
+    electionDiv.appendChild(list)
+
+    container.appendChild(electionDiv)
+  })
+
+  return container
+}
+
+const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields }) => {
   const map = useMap()
+
   useEffect(() => {
     if (!data) return
 
     const shapefileLayer = L.featureGroup()
 
-    L.geoJson(data, {
-      onEachFeature: function tooltip(f, l) {
-        const out = []
-        if (f.properties) {
-          Object.keys(f.properties).forEach((key) => {
-            out.push(`${key}: ${f.properties[key]}`)
-          })
-          l.bindTooltip(out.join('<br />'))
-        }
-      },
-    }).addTo(shapefileLayer)
+    if (data && precinctShapes && fields && mapping) {
+      const { districtMargins, districtTooltips, districtResults } = calcPartisanAdvantage(data, precinctShapes, fields, mapping)
+
+      L.geoJson(data, {
+        style: (feature) => {
+          const districtId = feature.properties.ID
+          return {
+            color: districtMargins[districtId],
+            weight: 1,
+            opacity: 1,
+            fillColor: districtMargins[districtId],
+            fillOpacity: 0.5,
+          }
+        },
+        onEachFeature: (feature, layer) => {
+          const districtId = feature.properties.ID
+          if (districtTooltips[districtId]) {
+            layer.bindTooltip(districtTooltips[districtId], {
+              sticky: true,
+              className: 'custom-tooltip',
+            })
+            layer.on('click', () => {
+              const popupContent = createPopupContent(districtResults, districtId)
+              layer.bindPopup(popupContent).openPopup()
+            })
+          }
+        },
+      }).addTo(shapefileLayer)
+    } else {
+      L.geoJson(data, {
+        onEachFeature: function tooltip(f, l) {
+          const out = []
+          if (f.properties) {
+            Object.keys(f.properties).forEach((key) => {
+              out.push(`${key}: ${f.properties[key]}`)
+            })
+            l.bindTooltip(out.join('<br />'))
+          }
+        },
+      }).addTo(shapefileLayer)
+    }
 
     featureGroupRef.current.addLayer(shapefileLayer)
     map.fitBounds(shapefileLayer.getBounds())
 
     return () => {
-      featureGroupRef.current.removeLayer(shapefileLayer)
+      try {
+        featureGroupRef.current.removeLayer(shapefileLayer)
+      } catch {}
     }
-  }, [data, map, featureGroupRef])
+  }, [data, map, featureGroupRef, precinctShapes, mapping, fields])
   return null
 }
 
@@ -99,11 +168,39 @@ const InteractiveMapper = ({
   visualizationType,
   showPoliticalDots,
   precinctShapes,
+  electoralFieldMapping,
+  electoralFields,
 }) => {
   const mapPointsRef = useRef(mapPoints)
   const featureGroupRef = useRef()
   const shapefileGroupRef = useRef(null)
   const precinctGroupRef = useRef(null)
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [modalCompleted, setModalCompleted] = useState(false)
+  const [filteredShapes, setFilteredShapes] = useState([])
+
+  useEffect(() => {
+    if (precinctShapes && shapes && shapes.length > 0) {
+      setIsModalOpen(true)
+    }
+  }, [shapes])
+
+  const handleModalSubmit = () => {
+    setIsModalOpen(false)
+    setModalCompleted(true)
+  }
+
+  const handleShapeSelection = (shape, isSelected) => {
+    setFilteredShapes((prevFilteredShapes) => {
+      if (isSelected) {
+        return [...prevFilteredShapes, shape]
+      } else {
+        return prevFilteredShapes.filter((s) => s.properties.ID !== shape.properties.ID)
+      }
+    })
+    console.log(filteredShapes)
+  }
 
   useEffect(() => {
     mapPointsRef.current = mapPoints
@@ -186,40 +283,61 @@ const InteractiveMapper = ({
   }, [visualizationType, mapPoints, selectedParties, showPoliticalDots])
 
   return (
-    <div className="interactive-mapper-container">
-      <MapContainer center={[38.573936, -92.603760]} zoom={13} fullscreenControl={true}>
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
-        <FeatureGroup ref={featureGroupRef}>
-          <EditControl
-            position="topright"
-            onCreated={onCreated}
-            draw={{
-              rectangle: true,
-              polygon: true,
-              circle: true,
-              polyline: false,
-              marker: false,
-              circlemarker: false,
-            }}
-            edit={{
-              edit: true,
-              remove: true,
-            }}
-            onDeleted={onDeleted}
+    <>
+      <div className="interactive-mapper-container">
+        <MapContainer center={[38.573936, -92.603760]} zoom={13} fullscreenControl={true}>
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
-        </FeatureGroup>
-        <FeatureGroup ref={precinctGroupRef}>
-          {precinctShapes && <PrecinctLayer data={precinctShapes} featureGroupRef={precinctGroupRef} />}
-        </FeatureGroup>
-        <FeatureGroup ref={shapefileGroupRef}>
-          {isShapefileVisible && shapes && <ShapefileLayer data={shapes} featureGroupRef={shapefileGroupRef} />}
-        </FeatureGroup>
-        <SetViewToBounds points={mapPoints} />
-      </MapContainer>
-    </div>
+          <FeatureGroup ref={featureGroupRef}>
+            <EditControl
+              position="topright"
+              onCreated={onCreated}
+              draw={{
+                rectangle: true,
+                polygon: true,
+                circle: true,
+                polyline: false,
+                marker: false,
+                circlemarker: false,
+              }}
+              edit={{
+                edit: true,
+                remove: true,
+              }}
+              onDeleted={onDeleted}
+            />
+          </FeatureGroup>
+          <FeatureGroup ref={precinctGroupRef}>
+            {precinctShapes && <PrecinctLayer data={precinctShapes} featureGroupRef={precinctGroupRef}/>}
+          </FeatureGroup>
+          <FeatureGroup ref={shapefileGroupRef}>
+            {isShapefileVisible && filteredShapes && modalCompleted && <ShapefileLayer data={filteredShapes} featureGroupRef={shapefileGroupRef} precinctShapes={precinctShapes} mapping={electoralFieldMapping} fields={electoralFields} />}
+          </FeatureGroup>
+          <SetViewToBounds points={mapPoints} />
+        </MapContainer>
+      </div>
+
+      <Modal
+        title="Select Shapes"
+        open={isModalOpen}
+        onOk={handleModalSubmit}
+        onCancel={() => setIsModalOpen(false)}
+      >
+        {precinctShapes && shapes && shapes.map((shape) => (
+          <div key={shape.properties.ID}>
+            <label>
+              <input
+                type="checkbox"
+                onChange={(e) => handleShapeSelection(shape, e.target.checked)}
+              />
+              {` District ${shape.properties.ID}`}
+            </label>
+          </div>
+        ))}
+      </Modal>
+    </>
   )
 }
 

@@ -6,8 +6,8 @@ import ToolPanel from './ToolPanel.jsx'
 const MappingContainer = () => {
   const [mapPoints, setMapPoints] = useState([])
   const [selectedPoints, setSelectedPoints] = useState([])
-  const [shapes, setShapes] = useState(null)
-  const [precinctShapes, setPrecinctShapes] = useState(null)
+  const [shapes, setShapes] = useState(undefined)
+  const [precinctShapes, setPrecinctShapes] = useState(undefined)
   const [showPoliticalDots, setShowPoliticalDots] = useState(false)
 
   const [partyCounts, setPartyCounts] = useState([])
@@ -15,10 +15,13 @@ const MappingContainer = () => {
   const [isShapefileVisible, setIsShapefileVisible] = useState(true)
   const [visualizationType, setVisualizationType] = useState('points')
 
+  const [electoralFieldMapping, setElectoralFieldMapping] = useState(undefined)
+  const [electoralFields, setElectoralFields] = useState(undefined)
+
   const clearAllData = () => {
     setMapPoints([])
     setSelectedPoints([])
-    setShapes(null)
+    setShapes(undefined)
     setSelectedParties(new Set())
     setPartyCounts([])
     setShowPoliticalDots(false)
@@ -43,6 +46,10 @@ const MappingContainer = () => {
           isShapefileVisible={isShapefileVisible}
           setVisualizationType={setVisualizationType}
           setPrecinctShapes={setPrecinctShapes}
+          electoralFieldMapping={electoralFieldMapping}
+          setElectoralFieldMapping={setElectoralFieldMapping}
+          electoralFields={electoralFields}
+          setElectoralFields={setElectoralFields}
         />
         <InteractiveMapper
           mapPoints={mapPoints}
@@ -54,6 +61,8 @@ const MappingContainer = () => {
           clearAllData={clearAllData}
           visualizationType={visualizationType}
           precinctShapes={precinctShapes}
+          electoralFieldMapping={electoralFieldMapping}
+          electoralFields={electoralFields}
         />
       </div>
     </>

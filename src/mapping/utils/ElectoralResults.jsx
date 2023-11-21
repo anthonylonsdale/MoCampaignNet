@@ -5,6 +5,20 @@ import React, { useEffect, useState } from 'react'
 
 const { Panel } = Collapse
 
+const getChartOptions = (data) => ({
+  chart: {
+    type: 'pie',
+  },
+  title: {
+    text: 'Vote Share',
+  },
+  series: [{
+    name: 'Votes',
+    colorByPoint: true,
+    data: data,
+  }],
+})
+
 const ElectoralResults = ({ electoralFields, mapping, precinctData }) => {
   const [electoralResults, setElectoralResults] = useState([])
 
@@ -59,20 +73,6 @@ const ElectoralResults = ({ electoralFields, mapping, precinctData }) => {
 
     setElectoralResults(formattedResults)
   }
-
-  const getChartOptions = (data) => ({
-    chart: {
-      type: 'pie',
-    },
-    title: {
-      text: 'Vote Share',
-    },
-    series: [{
-      name: 'Votes',
-      colorByPoint: true,
-      data: data,
-    }],
-  })
 
   return (
     <Collapse>

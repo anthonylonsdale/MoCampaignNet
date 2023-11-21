@@ -10,3 +10,17 @@
 .leaflet-container {
     flex: 1;
 }
+
+.custom-tooltip + .leaflet-tooltip-left:before,
+.custom-tooltip + .leaflet-tooltip-right:before,
+.custom-tooltip + .leaflet-tooltip-top:before,
+.custom-tooltip + .leaflet-tooltip-bottom:before {
+  border: none; /* Remove the default "pointy" part of the tooltip */
+}
+
+.custom-tooltip {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
+  padding: 10px;
+}

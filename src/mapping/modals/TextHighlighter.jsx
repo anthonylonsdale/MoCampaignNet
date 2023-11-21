@@ -94,7 +94,7 @@ const TextHighlighter = ({ text, onHighlightsChange }) => {
           </span>
         ))}
       </div>
-      <div className="text-container" onMouseUp={onMouseUp} ref={textRef}>
+      <div className="renderedtext" onMouseUp={onMouseUp} ref={textRef}>
         {renderTextWithHighlights()}
       </div>
       <Button onClick={resetHighlights}>Reset Highlights</Button>

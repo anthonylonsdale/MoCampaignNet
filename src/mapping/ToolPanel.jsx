@@ -36,6 +36,10 @@ const ToolPanel = ({
   isShapefileVisible,
   setVisualizationType,
   setPrecinctShapes,
+  electoralFieldMapping,
+  setElectoralFieldMapping,
+  electoralFields,
+  setElectoralFields,
 }) => {
   const [excelModalVisible, setExcelModalVisible] = useState(false)
   const [partyModalVisible, setPartyModalVisible] = useState(false)
@@ -47,8 +51,6 @@ const ToolPanel = ({
   const [isPrecinctModalVisible, setIsPrecinctModalVisible] = useState(false)
   const [precinctList, setPrecinctList] = useState([])
   const [precinctData, setPrecinctData] = useState(null)
-  const [electoralFieldMapping, setElectoralFieldMapping] = useState(null)
-  const [electoralFields, setElectoralFields] = useState(null)
 
   const togglePartySelection = (party, isChecked) => {
     setSelectedParties((prevSelectedParties) => {
