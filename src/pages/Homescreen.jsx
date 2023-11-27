@@ -163,9 +163,9 @@ function Homescreen() {
                     <MessageOutlined className="icon-style" />
                     <Title level={3}>Mass Text Campaigns</Title>
                     <div className="custom-list">
-                      <div className="custom-list-item">Personalized SMS campaigns with high open rates</div>
-                      <div className="custom-list-item">Image and video MMS capabilities for engaging content</div>
-                      <div className="custom-list-item">Opt-in and compliance management</div>
+                      <div className="custom-list-item">Personalized political messaging campaigns with high deliverability rates</div>
+                      <div className="custom-list-item">Image / Video MMS capabilities for engaging and impactful content</div>
+                      <div className="custom-list-item">Opt-in and compliance management guaranteed</div>
                     </div>
                   </Card>
                 </Col>
@@ -200,9 +200,9 @@ function Homescreen() {
                     <LineChartOutlined className="icon-style" />
                     <Title level={3}>Walkbook Building and Voter Analytics</Title>
                     <div className="custom-list">
-                      <div className="custom-list-item">Custom walkbook creation for effective canvassing</div>
-                      <div className="custom-list-item">Data-driven voter analytics for informed strategy decisions</div>
-                      <div className="custom-list-item">Integration with existing campaign tools</div>
+                      <div className="custom-list-item">Customized and deliberate walkbook creation for effective canvassing</div>
+                      <div className="custom-list-item">Data-driven voter analytics for informed campaign decisions</div>
+                      <div className="custom-list-item">Reliable voter data with modelled behavior analytics, party affiliation and voting records with 85%+ confidence</div>
                     </div>
                   </Card>
                 </Col>
@@ -215,7 +215,7 @@ function Homescreen() {
                     <Title level={3}>Website and Digital Presence Building</Title>
                     <div className="custom-list">
                       <div className="custom-list-item">Responsive web design for all devices</div>
-                      <div className="custom-list-item">SEO optimization for increased visibility</div>
+                      <div className="custom-list-item">Search Engine Optimization for increased visibility</div>
                       <div className="custom-list-item">Integrated fundraising and volunteer sign-up capabilities</div>
                     </div>
                   </Card>

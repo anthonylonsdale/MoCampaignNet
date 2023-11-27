@@ -309,12 +309,15 @@ const InteractiveMapper = ({
               onDeleted={onDeleted}
             />
           </FeatureGroup>
+
           <FeatureGroup ref={precinctGroupRef}>
             {precinctShapes && <PrecinctLayer data={precinctShapes} featureGroupRef={precinctGroupRef}/>}
           </FeatureGroup>
+
           <FeatureGroup ref={shapefileGroupRef}>
             {isShapefileVisible && filteredShapes && modalCompleted && <ShapefileLayer data={filteredShapes} featureGroupRef={shapefileGroupRef} precinctShapes={precinctShapes} mapping={electoralFieldMapping} fields={electoralFields} />}
           </FeatureGroup>
+
           <SetViewToBounds points={mapPoints} />
         </MapContainer>
       </div>

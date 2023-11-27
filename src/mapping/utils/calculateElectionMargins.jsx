@@ -14,7 +14,12 @@ export const calcPartisanAdvantage = (shapefileShapes, precinctShapes, electoral
 
     precinctShapes.forEach((precinctFeature) => {
       try {
-        if (turf.intersect(districtFeature.geometry, precinctFeature.geometry)) {
+        const intersection = turf.intersect(districtFeature.geometry, precinctFeature.geometry)
+        if (intersection) {
+          const intersectionArea = turf.area(intersection)
+          const precinctArea = turf.area(precinctFeature.geometry)
+          const areaRatio = intersectionArea / precinctArea
+
           const properties = precinctFeature.properties
 
           electoralFields.forEach((field) => {
@@ -23,6 +28,7 @@ export const calcPartisanAdvantage = (shapefileShapes, precinctShapes, electoral
             const partyCode = field.content.substring(mapping[3].start, mapping[3].end) // Extracting party code
 
             const votes = properties[field.content]
+            const proportionalVotes = Math.round(votes * areaRatio) // Multiply votes by area ratio and round
 
             if (!districtResults[districtId]) {
               districtResults[districtId] = {}
@@ -34,7 +40,7 @@ export const calcPartisanAdvantage = (shapefileShapes, precinctShapes, electoral
               districtResults[districtId][electionCode][partyCode] = { totalVotes: 0, candidate: candidateCode }
             }
 
-            districtResults[districtId][electionCode][partyCode].totalVotes += votes
+            districtResults[districtId][electionCode][partyCode].totalVotes += proportionalVotes
           })
         }
       } catch (error) {
@@ -69,19 +75,35 @@ export const calcPartisanAdvantage = (shapefileShapes, precinctShapes, electoral
 
 function createTooltipContent(districtResults, districtId) {
   let content = `<h4>District ${districtId}</h4>`
+  let previousRaceTotalVotes = 0 // Initialize with zero for the first race
 
-  Object.keys(districtResults[districtId]).forEach((electionCode) => {
+  Object.keys(districtResults[districtId]).forEach((electionCode, index) => {
     const election = districtResults[districtId][electionCode]
     const totalDistrictVotes = Object.values(election).reduce((sum, { totalVotes }) => sum + totalVotes, 0)
+    const sortedCandidates = Object.entries(election).sort((a, b) => b[1].totalVotes - a[1].totalVotes)
 
-    content += `<div><strong>Election ${electionCode}</strong></div>`
-    content += `<div style="display: flex; height: 20px; background-color: lightgray;">`
+    let dropoff = 0
+    if (index > 0) { // Skip dropoff calculation for the first race
+      dropoff = previousRaceTotalVotes - totalDistrictVotes
+    }
+    previousRaceTotalVotes = totalDistrictVotes // Update for the next race
 
-    Object.entries(election).forEach(([partyCode, { totalVotes: partyVotes }]) => {
+    const dropoffFormatted = dropoff >= 0 ? `<span style="color: green;">+${dropoff.toLocaleString()}</span>` :
+                                               `<span style="color: red;">-${Math.abs(dropoff).toLocaleString()}</span>`
+
+    content += `<div><strong>Election ${electionCode}</strong> ${index > 0 ? dropoffFormatted : ''}</div>`
+    content += `<div style="display: flex; flex-direction: column; margin-bottom: 10px; width: 100%;">`
+
+    sortedCandidates.forEach(([partyCode, { totalVotes: partyVotes }]) => {
       const votePercentage = (partyVotes / totalDistrictVotes) * 100
-      const color = partyCode === 'R' ? 'Red' : partyCode === 'D' ? 'Blue' : 'Grey'
-      content += `<div style="width: ${votePercentage}%; background-color: ${color};"></div>`
+      const color = partyCode === 'R' ? '#ff4c4c' : partyCode === 'D' ? '#4c6eff' : '#cccccc'
+
+      content += `<div style="display: flex; align-items: center; margin-bottom: 4px; width: 100%;">`
+      content += `<div style="flex-grow: 1; height: 20px; background-color: ${color}; width: ${votePercentage}%;"></div>`
+      content += `<div style="width: 50px; text-align: right; padding-left: 5px;">${partyVotes.toLocaleString()}</div>`
+      content += `</div>`
     })
+
     content += `</div>`
   })
 

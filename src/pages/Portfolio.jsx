@@ -1,19 +1,22 @@
-import { Button, Layout, Modal, Typography } from 'antd'
-import React, { useState } from 'react'
-import { Document, Page, pdfjs } from 'react-pdf'
+// import { Button, Layout, Modal, Typography } from 'antd'
+// import React, { useState } from 'react'
+// import { Document, Page, pdfjs } from 'react-pdf'
+import { Layout, Typography } from 'antd'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import CustomHeader from '../components/CustomHeader.jsx'
 import AppFooter from '../components/Footer.jsx'
-import file from '../docs/Anthony Lonsdale Resume 23.pdf'
+// import file from '../docs/Anthony Lonsdale Resume 23.pdf'
 import './Portfolio.css'
 import PyCharmCodeDisplay from './PortfolioComponents/PythonCode.jsx'
 import ReactCodeDisplay from './PortfolioComponents/ReactCode.jsx'
 
 const { Title, Text } = Typography
-pdfjs.GlobalWorkerOptions.workerSrc =
-`//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
+// pdfjs.GlobalWorkerOptions.workerSrc =
+// `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
 
 function Portfolio() {
+  /*
   const [isModalVisible, setIsModalVisible] = useState(false)
 
   const showModal = () => {
@@ -23,6 +26,7 @@ function Portfolio() {
   const handleCancel = () => {
     setIsModalVisible(false)
   }
+  */
 
   return (
     <>
@@ -57,6 +61,7 @@ function Portfolio() {
             </Link>
           </div>
         </div>
+        {/*
         <Modal
           title="Resume PDF"
           open={isModalVisible}
@@ -75,6 +80,7 @@ function Portfolio() {
         <div className='flex-container'>
           <Text style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer', fontWeight: '800' }} onClick={showModal}>Resume</Text>
         </div>
+        */}
       </Layout>
       <AppFooter />
     </>

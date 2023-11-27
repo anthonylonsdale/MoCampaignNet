@@ -1,14 +1,11 @@
-import {
-  MailOutlined,
-  PhoneOutlined,
-} from '@ant-design/icons'
+import { MailOutlined, PhoneOutlined } from '@ant-design/icons'
 import { Image, Layout, Typography } from 'antd'
 import React from 'react'
 import logo from '../images/logo.png'
 import styles from './Footer.module.css'
 
 const { Footer } = Layout
-const { Title } = Typography
+const { Text } = Typography
 
 function AppFooter() {
   return (
@@ -17,29 +14,20 @@ function AppFooter() {
         <Image
           src={logo}
           alt="Logo"
-          style={{ width: '10rem' }}
+          width={160} // Set your desired size
           preview={false}
         />
         <div className={styles.buttonLikeText}>
-          &copy; {new Date().getFullYear()} Bernoulli Technologies.
-          All rights reserved.
+          &copy; {new Date().getFullYear()} Bernoulli Technologies. All rights reserved.
         </div>
         <div className={styles.contactInfo}>
           <div className={styles.contactItem}>
             <MailOutlined className={styles.icon} />
-            <div>
-              <Title level={5} className={styles.footerText}>
-                alonsdale@bernoullitechnologies.net
-              </Title>
-            </div>
+            <Text className={styles.footerText}>alonsdale@bernoullitechnologies.net</Text>
           </div>
           <div className={styles.contactItem}>
             <PhoneOutlined className={styles.icon} />
-            <div>
-              <Title level={5} className={styles.footerText}>
-                (816) 872-7762
-              </Title>
-            </div>
+            <Text className={styles.footerText}>(816) 872-7762</Text>
           </div>
         </div>
       </div>
