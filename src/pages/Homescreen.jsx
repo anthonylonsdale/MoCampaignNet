@@ -80,9 +80,9 @@ function Homescreen() {
             </div>
             <div className="layout-container">
               <div className="maps-container">
-                <HtmlDisplay className="map-item" fileName={'city_council_districts_map'} />
-                <HtmlDisplay className="map-item" fileName={'state_legislative_districts_map'} />
-                <HtmlDisplay className="map-item" fileName={'school_board_districts_map'} />
+                <HtmlDisplay className="map-item" fileName={'StateHouseMap'} />
+                <HtmlDisplay className="map-item" fileName={'SchoolBoardMap'} />
+                <HtmlDisplay className="map-item" fileName={'KCCouncilMap'} />
               </div>
               <div className="carousel-container">
                 <Carousel autoplay>
