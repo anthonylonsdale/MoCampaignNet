@@ -262,11 +262,22 @@
   overflow: hidden;
 }
 
-.tall-image {
-  width: auto; /* Adjust as needed */
-  height: 300px; /* Adjust as needed, approximately twice the width */
-  margin-bottom: 10px; /* Spacing between images */
+.maps-container {
+  display: flex;
+  justify-content: space-between; /* Adjust spacing between maps */
+  margin-bottom: 20px; /* Space below the map container */
 }
+
+.map-item {
+  flex: 1; /* Distributes space evenly */
+  margin-right: 10px; /* Space between maps, adjust as necessary */
+  height: 300px; /* Fixed height for all maps */
+}
+
+.map-item:last-child {
+  margin-right: 0; /* Removes margin from the last map */
+}
+
 
 .carousel-image {
   display: block;
