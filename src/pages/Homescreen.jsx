@@ -12,6 +12,7 @@ import {
 import React, { useRef } from 'react'
 import CustomHeader from '../components/CustomHeader.jsx'
 import AppFooter from '../components/Footer.jsx'
+import HtmlDisplay from '../components/HtmlDisplay.jsx'
 import DotToLineTextAnimation from '../components/styles/DotToLineTextAnimation.jsx'
 import TypingEffect from '../components/styles/TypingEffect.jsx'
 import logo2 from '../images/JCRPlogo.jpg'
@@ -77,57 +78,62 @@ function Homescreen() {
                 />
               </div>
             </div>
-            <div className="carousel-container">
-              <Carousel autoplay>
-                <div className="carousel-item">
-                  <img className="carousel-image" src={clonsdale} />
-                  <div className="overlay">
-                    <div className="text">Chris Lonsdale (MO R-38)</div>
+            <div className="layout-container">
+
+              <HtmlDisplay fileName={'city_council_districts_map'} />
+
+              <div className="carousel-container">
+                <Carousel autoplay>
+                  <div className="carousel-item">
+                    <img className="carousel-image" src={clonsdale} />
+                    <div className="overlay">
+                      <div className="text">Chris Lonsdale (MO R-38)</div>
+                    </div>
                   </div>
-                </div>
-                <div className="carousel-item">
-                  <img className="carousel-image" src={billallen} />
-                  <div className="overlay">
-                    <div className="text">Bill Allen (MO R-17)</div>
+                  <div className="carousel-item">
+                    <img className="carousel-image" src={billallen} />
+                    <div className="overlay">
+                      <div className="text">Bill Allen (MO R-17)</div>
+                    </div>
                   </div>
-                </div>
-                <div className="carousel-item">
-                  <img className="carousel-image" src={jennbauer} />
-                  <div className="overlay">
-                    <div className="text">Jenn Bauer (Liberty Public Schools SB)</div>
+                  <div className="carousel-item">
+                    <img className="carousel-image" src={jennbauer} />
+                    <div className="overlay">
+                      <div className="text">Jenn Bauer (Liberty Public Schools SB)</div>
+                    </div>
                   </div>
-                </div>
-                <div className="carousel-item">
-                  <img className="carousel-image" src={jayjohnson} />
-                  <div className="overlay">
-                    <div className="text">Jay Johnson (Clay Co Eastern Commissioner)</div>
+                  <div className="carousel-item">
+                    <img className="carousel-image" src={jayjohnson} />
+                    <div className="overlay">
+                      <div className="text">Jay Johnson (Clay Co Eastern Commissioner)</div>
+                    </div>
                   </div>
-                </div>
-                <div className="carousel-item">
-                  <img className="carousel-image" src={debbieflorido} />
-                  <div className="overlay">
-                    <div className="text">Debbie Florido (Clay Co Health Board)</div>
+                  <div className="carousel-item">
+                    <img className="carousel-image" src={debbieflorido} />
+                    <div className="overlay">
+                      <div className="text">Debbie Florido (Clay Co Health Board)</div>
+                    </div>
                   </div>
-                </div>
-                <div className="carousel-item">
-                  <img className="carousel-image" src={josiahtown} />
-                  <div className="overlay">
-                    <div className="text">Josiah Town (Henry Co Health Board)</div>
+                  <div className="carousel-item">
+                    <img className="carousel-image" src={josiahtown} />
+                    <div className="overlay">
+                      <div className="text">Josiah Town (Henry Co Health Board)</div>
+                    </div>
                   </div>
-                </div>
-                <div className="carousel-item">
-                  <img className="carousel-image" src={lancepollard} />
-                  <div className="overlay">
-                    <div className="text">Lance Pollard (Grain Valley School Board)</div>
+                  <div className="carousel-item">
+                    <img className="carousel-image" src={lancepollard} />
+                    <div className="overlay">
+                      <div className="text">Lance Pollard (Grain Valley School Board)</div>
+                    </div>
                   </div>
-                </div>
-                <div className="carousel-item">
-                  <img className="carousel-image" src={nathanwillett} />
-                  <div className="overlay">
-                    <div className="text">KC Councilman Nathan Willett</div>
+                  <div className="carousel-item">
+                    <img className="carousel-image" src={nathanwillett} />
+                    <div className="overlay">
+                      <div className="text">KC Councilman Nathan Willett</div>
+                    </div>
                   </div>
-                </div>
-              </Carousel>
+                </Carousel>
+              </div>
             </div>
             <Divider />
             <div className="center-container">
