@@ -33,6 +33,7 @@
     "leaflet.heat": "^0.2.0",
     "mongoose": "^7.5.3",
     "querystring-es3": "^0.2.1",
+    "rbush": "^3.0.1",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-bootstrap": "^2.8.0",

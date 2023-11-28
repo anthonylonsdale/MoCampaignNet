@@ -1,16 +1,17 @@
 import * as turf from '@turf/turf'
-import { message, Modal } from 'antd'
+import { message } from 'antd'
 import L from 'leaflet'
 import 'leaflet-draw/dist/leaflet.draw.css'
 import 'leaflet.fullscreen'
 import 'leaflet.fullscreen/Control.FullScreen.css'
 import 'leaflet.heat'
-import 'leaflet.markercluster/dist/leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
+import 'leaflet.markercluster/dist/leaflet.markercluster'
 import React, { useEffect, useRef, useState } from 'react'
 import { FeatureGroup, MapContainer, TileLayer, useMap } from 'react-leaflet'
 import { EditControl } from 'react-leaflet-draw'
 import './InteractiveMapper.css'
+import ShapeSelectorModal from './modals/ShapeSelectorModal.jsx'
 import { calcPartisanAdvantage } from './utils/calculateElectionMargins.jsx'
 
 const createCustomIcon = (color) => {
@@ -44,8 +45,8 @@ const PrecinctLayer = ({ data, featureGroupRef }) => {
 
     const precinctLayer = L.geoJson(data, {
       style: () => ({
-        weight: .5,
-        color: '#000000',
+        weight: .25,
+        color: 'black',
         fillOpacity: 0,
       }),
     })
@@ -68,6 +69,10 @@ function createPopupContent(districtResults, districtId) {
   const container = document.createElement('div')
   container.className = 'election-popup'
 
+  // Set a specific height and enable scrolling
+  container.style.maxHeight = '300px' // Set the height as needed
+  container.style.overflowY = 'auto' // Enable vertical scrolling
+
   Object.keys(electionResults).forEach((electionCode) => {
     const candidates = electionResults[electionCode]
     const totalDistrictVotes = Object.values(candidates).reduce((sum, { totalVotes }) => sum + totalVotes, 0)
@@ -80,16 +85,15 @@ function createPopupContent(districtResults, districtId) {
       const votePercentage = ((totalVotes / totalDistrictVotes) * 100).toFixed(2) // Fixed to two decimal places
       const listItem = document.createElement('li')
       listItem.innerHTML = `
-        <span class="candidate-name">${candidate}</span> 
-        (<span class="party-code">${partyCode}</span>): 
-        <span class="candidate-votes">${totalVotes.toLocaleString()}</span> votes 
+        <span class="candidate-name">${candidate}</span>
+        (<span class="party-code">${partyCode}</span>):
+        <span class="candidate-votes">${totalVotes.toLocaleString()}</span> votes
         - <span class="candidate-percentage">${votePercentage}%</span>`
 
       list.appendChild(listItem)
     })
 
     electionDiv.appendChild(list)
-
     container.appendChild(electionDiv)
   })
 
@@ -105,14 +109,16 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
     const shapefileLayer = L.featureGroup()
 
     if (data && precinctShapes && fields && mapping) {
-      const { districtMargins, districtTooltips, districtResults } = calcPartisanAdvantage(data, precinctShapes, fields, mapping)
+      const { districtMargins, districtResults } = calcPartisanAdvantage(data, precinctShapes, fields, mapping)
+
+      console.log(precinctShapes)
 
       L.geoJson(data, {
         style: (feature) => {
           const districtId = feature.properties.ID
           return {
-            color: districtMargins[districtId],
-            weight: 1,
+            color: 'black',
+            weight: 2,
             opacity: 1,
             fillColor: districtMargins[districtId],
             fillOpacity: 0.5,
@@ -120,16 +126,10 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
         },
         onEachFeature: (feature, layer) => {
           const districtId = feature.properties.ID
-          if (districtTooltips[districtId]) {
-            layer.bindTooltip(districtTooltips[districtId], {
-              sticky: true,
-              className: 'custom-tooltip',
-            })
-            layer.on('click', () => {
-              const popupContent = createPopupContent(districtResults, districtId)
-              layer.bindPopup(popupContent).openPopup()
-            })
-          }
+          layer.on('click', () => {
+            const popupContent = createPopupContent(districtResults, districtId)
+            layer.bindPopup(popupContent).openPopup()
+          })
         },
       }).addTo(shapefileLayer)
     } else {
@@ -185,22 +185,6 @@ const InteractiveMapper = ({
       setIsModalOpen(true)
     }
   }, [shapes])
-
-  const handleModalSubmit = () => {
-    setIsModalOpen(false)
-    setModalCompleted(true)
-  }
-
-  const handleShapeSelection = (shape, isSelected) => {
-    setFilteredShapes((prevFilteredShapes) => {
-      if (isSelected) {
-        return [...prevFilteredShapes, shape]
-      } else {
-        return prevFilteredShapes.filter((s) => s.properties.ID !== shape.properties.ID)
-      }
-    })
-    console.log(filteredShapes)
-  }
 
   useEffect(() => {
     mapPointsRef.current = mapPoints
@@ -315,31 +299,28 @@ const InteractiveMapper = ({
           </FeatureGroup>
 
           <FeatureGroup ref={shapefileGroupRef}>
-            {isShapefileVisible && filteredShapes && modalCompleted && <ShapefileLayer data={filteredShapes} featureGroupRef={shapefileGroupRef} precinctShapes={precinctShapes} mapping={electoralFieldMapping} fields={electoralFields} />}
+            {isShapefileVisible && filteredShapes && modalCompleted &&
+            <ShapefileLayer
+              data={filteredShapes}
+              featureGroupRef={shapefileGroupRef}
+              precinctShapes={precinctShapes}
+              mapping={electoralFieldMapping}
+              fields={electoralFields}
+            />
+            }
           </FeatureGroup>
 
           <SetViewToBounds points={mapPoints} />
         </MapContainer>
       </div>
 
-      <Modal
-        title="Select Shapes"
-        open={isModalOpen}
-        onOk={handleModalSubmit}
-        onCancel={() => setIsModalOpen(false)}
-      >
-        {precinctShapes && shapes && shapes.map((shape) => (
-          <div key={shape.properties.ID}>
-            <label>
-              <input
-                type="checkbox"
-                onChange={(e) => handleShapeSelection(shape, e.target.checked)}
-              />
-              {` District ${shape.properties.ID}`}
-            </label>
-          </div>
-        ))}
-      </Modal>
+      <ShapeSelectorModal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        shapes={shapes}
+        setFilteredShapes={setFilteredShapes}
+        setModalCompleted={setModalCompleted}
+      />
     </>
   )
 }

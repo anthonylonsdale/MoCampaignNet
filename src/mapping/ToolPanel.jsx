@@ -1,4 +1,4 @@
-import { DeleteOutlined, DownOutlined, GlobalOutlined, InboxOutlined, SafetyCertificateOutlined, UpOutlined } from '@ant-design/icons'
+import { DatabaseOutlined, DeleteOutlined, DownOutlined, GlobalOutlined, InboxOutlined, UpOutlined } from '@ant-design/icons'
 import { Alert, Button, Checkbox, Collapse, List, Select, Switch, Upload, message } from 'antd'
 import React, { useState } from 'react'
 import * as XLSX from 'xlsx'
@@ -70,8 +70,8 @@ const ToolPanel = ({
       IconComponent = GlobalOutlined
     } else if (iconType === 'inbox') {
       IconComponent = InboxOutlined
-    } else if (iconType === 'precinct') {
-      IconComponent = SafetyCertificateOutlined
+    } else if (iconType === 'data') {
+      IconComponent = DatabaseOutlined
     }
 
     return (
@@ -216,7 +216,7 @@ const ToolPanel = ({
               </div>
             </div>
           </Panel>
-          <Panel header="Precinct Data Import" key="3">
+          <Panel header="Precinct Data Import" key="3" extra={genExtra('data')}>
             <div className="upload-container">
               <Dragger
                 accept=".zip"
@@ -237,7 +237,7 @@ const ToolPanel = ({
                 showUploadList={false}
               >
                 <p className="ant-upload-drag-icon">
-                  <SafetyCertificateOutlined />
+                  <DatabaseOutlined />
                 </p>
                 <p className="upload-text">Drag in Precinct Results</p>
                 <p className="upload-text">or</p>
