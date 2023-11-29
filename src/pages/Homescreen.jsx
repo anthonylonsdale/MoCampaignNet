@@ -37,7 +37,7 @@ import walkbooks from '../images/walkbook_gen.JPG'
 import './Homescreen.css'
 
 const { Content } = Layout
-const { Title } = Typography
+const { Title, Text } = Typography
 
 function Homescreen() {
   const partnershipRef = useRef()
@@ -62,9 +62,7 @@ function Homescreen() {
             <Divider />
             <div className="center-container">
               <div className="flex-container">
-                <Title level={2} style={{ marginBlockStart: '36px' }}>
-                  Specializing in&nbsp;
-                </Title>
+                <Text className="header-title-2">Specializing in&nbsp;</Text>
                 <TypingEffect
                   phrases={[
                     'Innovative Political Strategies',
@@ -80,9 +78,21 @@ function Homescreen() {
             </div>
             <div className="layout-container">
               <div className="maps-container">
-                <HtmlDisplay className="map-item" fileName={'StateHouseMap'} />
-                <HtmlDisplay className="map-item" fileName={'SchoolBoardMap'} />
-                <HtmlDisplay className="map-item" fileName={'KCCouncilMap'} />
+                <div className="map-item">
+                  <h2>&nbsp;</h2>
+                  <h2>MO State House</h2>
+                  <HtmlDisplay fileName={'StateHouseMap'} />
+                </div>
+                <div className="map-item">
+                  <h2>Some of our involvement:</h2>
+                  <h2>MO School Boards</h2>
+                  <HtmlDisplay fileName={'SchoolBoardMap'} />
+                </div>
+                <div className="map-item">
+                  <h2>&nbsp;</h2>
+                  <h2>KC Council</h2>
+                  <HtmlDisplay fileName={'KCCouncilMap'} />
+                </div>
               </div>
               <div className="carousel-container">
                 <Carousel autoplay>
@@ -138,10 +148,23 @@ function Homescreen() {
               </div>
             </div>
             <Divider />
+            <div className="statistics-container">
+              <div className="statistic-item" style={{ transform: 'translateY(-100px)' }}>
+                <div className="statistic-number">500K</div>
+                <div className="statistic-caption">TEXT MESSAGES SENT SINCE 2020</div>
+              </div>
+              <div className="statistic-item" style={{ transform: 'translateY(-50px)' }}>
+                <div className="statistic-number">10,000&apos;S</div>
+                <div className="statistic-caption">EMAILS, VOICEMAILS, VOTERS ENGAGED</div>
+              </div>
+              <div className="statistic-item">
+                <div className="statistic-number">25+</div>
+                <div className="statistic-caption">CAMPAIGNS POWERED BY BERNOULLI TECHNOLOGIES</div>
+              </div>
+            </div>
+            <Divider />
             <div className="center-container">
-              <Title level={3}>
-                What We Offer
-              </Title>
+              <div className="statistic-number">What We Offer</div>
             </div>
             <div style={{ backgroundColor: 'grey' }}>
               <Row gutter={[16, 16]} className="offer-section">

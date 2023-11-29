@@ -66,7 +66,8 @@
 .flex-container {
   display: flex;
   margin-top: 2rem;
-  align-items: center;
+  display: inline-flex; /* Align items inline and allow flex properties */
+  align-items: baseline; /* Align items along the baseline */
   justify-content: flex-start;
 }
 
@@ -220,11 +221,20 @@
 }
 
 .center-container {
+  text-align: center;
   display: flex;
   align-items: center;
   justify-content: space-evenly;
+  margin-bottom: 2rem;
 }
 
+.header-title-2 {
+  font-size: 3rem;
+  color: #0050b3;
+  font-weight: bold;
+  text-transform: uppercase;
+  align-items: center;
+}
 
 .record-container {
   display: flex;
@@ -271,7 +281,11 @@
 .map-item {
   flex: 1; /* Distributes space evenly */
   margin-right: 10px; /* Space between maps, adjust as necessary */
-  height: 300px; /* Fixed height for all maps */
+}
+
+.maps-container .map-item h2 {
+  text-align: center;
+  font-size: 20px;
 }
 
 .map-item:last-child {
@@ -348,4 +362,45 @@
 
 .campaign-image {
   max-width: 100%;
+}
+
+.statistics-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end; /* Align items to the bottom */
+  background: #FFFFFF;
+  padding: 20px;
+  text-align: center;
+  height: 250px;
+}
+
+.statistic-item {
+  display: flex;
+  flex-direction: column;
+  /* Remove transforms if you want to adjust spacing using margin-top instead */
+}
+
+.statistic-number {
+  font-size: 48px; /* Large font size for the number */
+  font-weight: bold; /* Bold font weight for the number */
+  color: #333; /* Dark color for the number */
+}
+
+.statistic-caption {
+  font-size: 14px; /* Smaller font size for the caption */
+  font-weight: 700; /* Normal font weight for the caption */
+  color: #4a90e2; /* A guess at a bluish color */
+  font-family: Arial, sans-serif; /* Arial font, with sans-serif as a fallback */
+  margin-top: 5px; /* Space between the number and the caption */
+}
+
+@media (max-width: 768px) {
+  .statistics-container {
+    flex-direction: column;
+  }
+
+  .statistic-item {
+    margin-bottom: 20px;
+    transform: none; /* Remove transform on smaller screens for a standard column layout */
+  }
 }

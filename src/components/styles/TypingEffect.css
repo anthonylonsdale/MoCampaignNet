@@ -1,3 +1,10 @@
+.typing-effect {
+  font-size: 3rem;
+  color: #0052cc;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
 .typing-effect::after {
     content: '|';
     animation: blink 1s infinite;

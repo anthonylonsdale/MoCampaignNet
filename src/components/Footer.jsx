@@ -22,6 +22,9 @@ function AppFooter() {
         </div>
         <div className={styles.contactInfo}>
           <div className={styles.contactItem}>
+            <Text className={styles.footerText}>Contact:</Text>
+          </div>
+          <div className={styles.contactItem}>
             <MailOutlined className={styles.icon} />
             <Text className={styles.footerText}>alonsdale@bernoullitechnologies.net</Text>
           </div>

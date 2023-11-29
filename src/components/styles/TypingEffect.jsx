@@ -3,7 +3,7 @@ import './TypingEffect.css'
 
 import { Typography } from 'antd'
 
-const { Title } = Typography
+const { Text } = Typography
 
 
 const TypingEffect = ({ phrases, typingSpeed, untypeSpeed, pauseDuration }) => {
@@ -42,13 +42,12 @@ const TypingEffect = ({ phrases, typingSpeed, untypeSpeed, pauseDuration }) => {
 
     type()
 
-    // Cleanup timeouts on component unmount
     return () => {
       timeoutIds.current.forEach(clearTimeout)
     }
   }, [currentPhraseIndex, typingSpeed, pauseDuration, phrases])
 
-  return <Title level={2} className="typing-effect">{displayedText}</Title>
+  return <Text className="typing-effect">{displayedText}</Text>
 }
 
 export default TypingEffect
