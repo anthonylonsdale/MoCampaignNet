@@ -25,3 +25,24 @@
   box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
   padding: 10px;
 }
+
+.remove-layers-control {
+  margin-bottom: 40px; /* Adjust the margin to place it under the layer control */
+  margin-right: 10px; /* Adjust as needed */
+}
+
+.remove-layers-button {
+  background-color: #f8f9fa;
+  color: #495057;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.remove-layers-button:hover {
+  background-color: #e2e6ea;
+  color: #212529;
+}

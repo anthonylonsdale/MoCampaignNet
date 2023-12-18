@@ -1,6 +1,6 @@
 import { DatabaseOutlined, DeleteOutlined, DownOutlined, GlobalOutlined, InboxOutlined, UpOutlined } from '@ant-design/icons'
 import { Alert, Button, Checkbox, Collapse, List, Select, Switch, Upload, message } from 'antd'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import * as XLSX from 'xlsx'
 import ExcelColumnSelector from '../modals/ExcelColumnSelector.jsx'
 import './ToolPanel.css'
@@ -51,6 +51,45 @@ const ToolPanel = ({
   const [isPrecinctModalVisible, setIsPrecinctModalVisible] = useState(false)
   const [precinctList, setPrecinctList] = useState([])
   const [precinctData, setPrecinctData] = useState(null)
+
+  const [panelWidth, setPanelWidth] = useState(350)
+  const [isDragging, setIsDragging] = useState(false)
+  const panelRef = useRef(null)
+
+  const onMouseDown = (e) => {
+    setIsDragging(true)
+    e.preventDefault()
+  }
+
+  // Mouse move event to handle dragging
+  const onMouseMove = (e) => {
+    if (isDragging && panelRef.current) {
+      // Calculate the new width based on the mouse position
+      const newWidth = e.clientX - panelRef.current.getBoundingClientRect().left
+
+      // Set the width within the defined constraints
+      if (newWidth >= 200 && newWidth <= 500) {
+        setPanelWidth(newWidth)
+      }
+    }
+  }
+
+  const onMouseUp = () => {
+    setIsDragging(false)
+  }
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', onMouseMove)
+      window.addEventListener('mouseup', onMouseUp)
+    }
+
+    // Clean up the event listeners when the component unmounts or when dragging stops
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove)
+      window.removeEventListener('mouseup', onMouseUp)
+    }
+  }, [isDragging])
 
   const togglePartySelection = (party, isChecked) => {
     setSelectedParties((prevSelectedParties) => {
@@ -121,7 +160,22 @@ const ToolPanel = ({
   }
 
   return (
-    <div className="tool-panel">
+    <div
+      className="tool-panel"
+      ref={panelRef}
+      style={{ width: `${panelWidth}px` }}
+    >
+      <div
+        onMouseDown={onMouseDown}
+        style={{
+          width: '10px',
+          cursor: 'ew-resize',
+          height: '100%',
+          position: 'absolute',
+          right: '0',
+          top: '0',
+        }}
+      />
       <div className="section-container">
         <h3>EXPORT</h3>
         <span className="map-point-count">{mapPoints.length} points are on the map.</span>

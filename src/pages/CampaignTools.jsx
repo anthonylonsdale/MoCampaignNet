@@ -1,9 +1,11 @@
 import { Button, Layout, Tabs, Typography } from 'antd'
-import { GoogleAuthProvider, getAuth, signInWithPopup, signOut } from 'firebase/auth'
+import { GoogleAuthProvider, getAuth, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth'
+import { doc, getDoc } from 'firebase/firestore'
 import 'leaflet/dist/leaflet.css'
 import React, { useEffect, useState } from 'react'
 import AccountSettingsModal from '../auth/AccountSettingsModal.jsx'
 import Auth from '../auth/auth.jsx'
+import { db } from '../auth/firebase.jsx'
 import CustomHeader from '../components/CustomHeader.jsx'
 import AppFooter from '../components/Footer.jsx'
 import HtmlDisplay from '../components/HtmlDisplay.jsx'
@@ -19,6 +21,7 @@ const { TabPane } = Tabs
 function CampaignTools() {
   const [user, setUser] = useState(null)
   const [modalVisible, setModalVisible] = useState(false)
+  const [isAdministrator, setIsAdministrator] = useState(false)
 
   const auth = getAuth()
 
@@ -42,9 +45,19 @@ function CampaignTools() {
   }
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
-      setUser(currentUser)
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser)
+
+        const userDoc = doc(db, 'users', currentUser.email)
+        const docSnap = await getDoc(userDoc)
+
+        if (docSnap.exists()) {
+          setIsAdministrator(docSnap.data().isAdministrator)
+        }
+      }
     })
+
     return () => unsubscribe()
   }, [auth])
 
@@ -59,7 +72,7 @@ function CampaignTools() {
         },
       })
       const result = await response.json()
-      console.log(result)
+
       alert(`Message sent! ID: ${result.result}`)
     } catch (error) {
       console.error('Error:', error)
@@ -94,7 +107,7 @@ function CampaignTools() {
         />
         <CustomHeader />
         <Layout>
-          <Sidebar />
+          <Sidebar isAdministrator={isAdministrator} />
           <Content className="content">
             {user ? (
           <>

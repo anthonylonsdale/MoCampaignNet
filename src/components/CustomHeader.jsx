@@ -4,7 +4,7 @@ import {
   UserOutlined,
 } from '@ant-design/icons'
 import { Image, Layout, Menu } from 'antd'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import logo from '../images/logoblank.png'
 import './CustomHeader.css'
@@ -12,8 +12,39 @@ import './CustomHeader.css'
 const { Header } = Layout
 
 function CustomHeader() {
+  const [visible, setVisible] = useState(true)
+  let lastScrollTop = 0
+
+  const handleScroll = () => {
+    const currentScrollPos = window.scrollY
+    // Determine whether to slide in or out based on the scroll direction
+    if (currentScrollPos > lastScrollTop && currentScrollPos > 0) {
+      setVisible(false)
+    } else {
+      setVisible(true)
+    }
+    lastScrollTop = currentScrollPos <= 0 ? 0 : currentScrollPos // For Mobile or negative scrolling
+  }
+
+  const debounce = (func, wait = 50) => {
+    let timeout
+    return function(...args) {
+      clearTimeout(timeout)
+      timeout = setTimeout(() => func(...args), wait)
+    }
+  }
+
+  useEffect(() => {
+    const debouncedHandleScroll = debounce(handleScroll)
+    window.addEventListener('scroll', debouncedHandleScroll)
+
+    return () => {
+      window.removeEventListener('scroll', debouncedHandleScroll)
+    }
+  }, [])
+
   return (
-    <Header className="site-layout-background">
+    <Header className={`site-layout-background ${!visible && 'header-hidden'}`}>
       <Link to="/" className="logo-link">
         <Image src={logo} alt="Logo" className="header-logo" preview={false} />
       </Link>

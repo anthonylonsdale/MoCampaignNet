@@ -4,6 +4,7 @@
   width: 100%;
   justify-content: space-between;
   position: sticky;
+  transition: top 0.3s ease-in-out; /* This provides the smooth slide effect */
   top: 0;
   z-index: 100;
   align-items: center;
@@ -52,4 +53,8 @@
 
 .site-layout-background .custom-menu .ant-menu-item-selected a {
   color: #fff;
+}
+
+.header-hidden {
+  top: -64px; /* Adjust this value to match your header's height */
 }

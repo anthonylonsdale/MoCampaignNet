@@ -28,7 +28,6 @@ export const calcPartisanAdvantage = (shapefileShapes, precinctShapes, electoral
   shapefileShapes.forEach((districtFeature) => {
     const districtId = districtFeature.properties.ID
 
-    // Use the R-tree to find potential intersecting precincts
     const districtBbox = turf.bbox(districtFeature.geometry)
     const candidates = tree.search({
       minX: districtBbox[0],
@@ -37,7 +36,6 @@ export const calcPartisanAdvantage = (shapefileShapes, precinctShapes, electoral
       maxY: districtBbox[3],
     })
 
-    // Process each potentially intersecting precinct
     candidates.forEach((candidate) => {
       const precinctFeature = precinctShapes[candidate.id]
       const precinctId = precinctFeature.properties.NAME
@@ -52,8 +50,7 @@ export const calcPartisanAdvantage = (shapefileShapes, precinctShapes, electoral
 
           const properties = precinctFeature.properties
 
-          // If the area ratio is 1 (or very close), the precinct is fully within the district
-          if (areaRatio >= 0.99) { // using 0.99 to account for minor numerical inaccuracies
+          if (areaRatio >= 0.99) {
             checkedPrecincts.add(precinctId)
           }
 
@@ -62,8 +59,7 @@ export const calcPartisanAdvantage = (shapefileShapes, precinctShapes, electoral
             const candidateCode = field.content.substring(mapping[4].start, mapping[4].end)
             const partyCode = field.content.substring(mapping[3].start, mapping[3].end) // Extracting party code
 
-            const votes = properties[field.content]
-            // const proportionalVotes = Math.round(votes * areaRatio) // Multiply votes by area ratio and round
+            const proportionalVotes = Math.round(properties[field.content] * areaRatio)
 
             if (!districtResults[districtId]) {
               districtResults[districtId] = {}
@@ -75,7 +71,7 @@ export const calcPartisanAdvantage = (shapefileShapes, precinctShapes, electoral
               districtResults[districtId][electionCode][partyCode] = { totalVotes: 0, candidate: candidateCode }
             }
 
-            districtResults[districtId][electionCode][partyCode].totalVotes += votes
+            districtResults[districtId][electionCode][partyCode].totalVotes += proportionalVotes
           })
         }
       } catch (error) {

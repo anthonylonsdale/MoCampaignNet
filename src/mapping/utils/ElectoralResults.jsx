@@ -96,6 +96,7 @@ const ElectoralResults = ({ electoralFields, mapping, precinctData }) => {
         </Panel>
       ))}
     </Collapse>
+
   )
 }
 

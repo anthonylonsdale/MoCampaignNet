@@ -150,11 +150,11 @@ function Homescreen() {
             <Divider />
             <div className="statistics-container">
               <div className="statistic-item" style={{ transform: 'translateY(-100px)' }}>
-                <div className="statistic-number">500K</div>
+                <div className="statistic-number">500K+</div>
                 <div className="statistic-caption">TEXT MESSAGES SENT SINCE 2020</div>
               </div>
               <div className="statistic-item" style={{ transform: 'translateY(-50px)' }}>
-                <div className="statistic-number">10,000&apos;S</div>
+                <div className="statistic-number">100,000+</div>
                 <div className="statistic-caption">EMAILS, VOICEMAILS, VOTERS ENGAGED</div>
               </div>
               <div className="statistic-item">

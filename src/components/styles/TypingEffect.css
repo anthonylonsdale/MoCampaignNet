@@ -1,16 +1,16 @@
 .typing-effect {
-  font-size: 3rem;
+  font-size: 2rem;
   color: #0052cc;
   font-weight: bold;
   text-transform: uppercase;
 }
 
 .typing-effect::after {
-    content: '|';
-    animation: blink 1s infinite;
-  }
-  
-  @keyframes blink {
-    50% { opacity: 0; }
-  }
+  content: '|';
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
   

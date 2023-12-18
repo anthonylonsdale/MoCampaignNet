@@ -69,7 +69,6 @@ function createPopupContent(districtResults, districtId) {
   const container = document.createElement('div')
   container.className = 'election-popup'
 
-  // Set a specific height and enable scrolling
   container.style.maxHeight = '300px' // Set the height as needed
   container.style.overflowY = 'auto' // Enable vertical scrolling
 
@@ -110,8 +109,6 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
 
     if (data && precinctShapes && fields && mapping) {
       const { districtMargins, districtResults } = calcPartisanAdvantage(data, precinctShapes, fields, mapping)
-
-      console.log(precinctShapes)
 
       L.geoJson(data, {
         style: (feature) => {
@@ -158,6 +155,22 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
   return null
 }
 
+const RemoveLayersControl = ({ onRemove }) => {
+  const map = useMap()
+
+  const handleRemoveClick = () => {
+    onRemove(map)
+  }
+
+  return (
+    <div className="leaflet-bottom leaflet-right remove-layers-control">
+      <button onClick={handleRemoveClick} className="remove-layers-button">
+        Remove Layers
+      </button>
+    </div>
+  )
+}
+
 const InteractiveMapper = ({
   mapPoints,
   setSelectedPoints,
@@ -180,8 +193,18 @@ const InteractiveMapper = ({
   const [modalCompleted, setModalCompleted] = useState(false)
   const [filteredShapes, setFilteredShapes] = useState([])
 
+  const removeMapLayers = () => {
+    if (shapefileGroupRef.current) {
+      shapefileGroupRef.current.clearLayers()
+    }
+    if (precinctGroupRef.current) {
+      precinctGroupRef.current.clearLayers()
+    }
+    setModalCompleted(false)
+  }
+
   useEffect(() => {
-    if (precinctShapes && shapes && shapes.length > 0) {
+    if (shapes && shapes.length > 0) {
       setIsModalOpen(true)
     }
   }, [shapes])
@@ -266,6 +289,10 @@ const InteractiveMapper = ({
     }
   }, [visualizationType, mapPoints, selectedParties, showPoliticalDots])
 
+  console.log(isShapefileVisible)
+  console.log(filteredShapes)
+  console.log(modalCompleted)
+
   return (
     <>
       <div className="interactive-mapper-container">
@@ -310,6 +337,7 @@ const InteractiveMapper = ({
             }
           </FeatureGroup>
 
+          <RemoveLayersControl onRemove={removeMapLayers} />
           <SetViewToBounds points={mapPoints} />
         </MapContainer>
       </div>

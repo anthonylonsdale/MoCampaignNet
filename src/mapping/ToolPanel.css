@@ -1,5 +1,8 @@
 .tool-panel {
-  width: 25rem; /* Fixed width or use flex-basis if you want it flexible */
+  width: 350px; /* Fixed width or use flex-basis if you want it flexible */
+  min-width: 250px; /* Minimum width */
+  max-width: 400px; /* Maximum width */
+  resize: horizontal;
   background-color: #f8f9fa; /* Light gray background for the panel */
   padding: 20px; /* Padding inside the panel */
   box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1); /* Right shadow for depth */
