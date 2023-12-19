@@ -113,9 +113,9 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
 
     const handleProgressUpdate = (progressData) => {
       if (progressData.type === 'progress') {
-        setProgressBar((progressData.processedDistricts / progressData.totalDistricts) * 100)
+        setProgressBar(Number(((progressData.processedDistricts / progressData.totalDistricts) * 100).toFixed(2)))
       } else if (progressData.type === 'progress2') {
-        setProgressDialog(`Processed ${progressData.processedPrecincts} out of ${progressData.totalPrecincts} total precincts.`)
+        setProgressDialog(`Processed ${progressData.processedPrecincts} out of ${progressData.totalPrecincts} candidate precincts.`)
       }
     }
 
@@ -161,9 +161,7 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
     }
 
     if (data && precinctShapes && fields && mapping && idFieldName) {
-      console.log(isLoading)
       calculateData()
-      console.log(isLoading)
     } else {
       L.geoJson(data, {
         onEachFeature: function tooltip(f, l) {
@@ -193,7 +191,10 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
     return (
       <div className="loading-overlay">
         <Spin size="large" />
-        <Progress percent={progressBar} status="active" style={{ width: '80%' }} />
+        <div className="progress-info">
+          <div className="current-district">Processing District #{currentDistrict}</div>
+          <Progress percent={progressBar} status="active" style={{ width: '80%' }} />
+        </div>
         <div className="progress-text">
           {progressDialog}
         </div>
