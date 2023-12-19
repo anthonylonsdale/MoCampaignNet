@@ -66,37 +66,36 @@ const PrecinctLayer = ({ data, featureGroupRef, setHasPrecinctLayer }) => {
   return null
 }
 
-function createPopupContent(districtResults, districtId) {
-  const electionResults = districtResults[districtId]
+function createPopupContent(electionResults, electionCode) {
+  console.log(electionResults[electionCode])
+
   const container = document.createElement('div')
   container.className = 'election-popup'
 
   container.style.maxHeight = '300px' // Set the height as needed
   container.style.overflowY = 'auto' // Enable vertical scrolling
 
-  Object.keys(electionResults).forEach((electionCode) => {
-    const candidates = electionResults[electionCode]
-    const totalDistrictVotes = Object.values(candidates).reduce((sum, { totalVotes }) => sum + totalVotes, 0)
-    const electionDiv = document.createElement('div')
-    electionDiv.className = 'election-info'
-    electionDiv.innerHTML = `<h4>Election ${electionCode}</h4>`
+  const candidates = electionResults[electionCode]
+  const totalDistrictVotes = Object.values(candidates).reduce((sum, { totalVotes }) => sum + totalVotes, 0)
+  const electionDiv = document.createElement('div')
+  electionDiv.className = 'election-info'
+  electionDiv.innerHTML = `<h4>Election ${electionCode}</h4>`
 
-    const list = document.createElement('ul')
-    Object.entries(candidates).forEach(([partyCode, { totalVotes, candidate }]) => {
-      const votePercentage = ((totalVotes / totalDistrictVotes) * 100).toFixed(2) // Fixed to two decimal places
-      const listItem = document.createElement('li')
-      listItem.innerHTML = `
+  const list = document.createElement('ul')
+  Object.entries(candidates).forEach(([partyCode, { totalVotes, candidate }]) => {
+    const votePercentage = ((totalVotes / totalDistrictVotes) * 100).toFixed(2) // Fixed to two decimal places
+    const listItem = document.createElement('li')
+    listItem.innerHTML = `
         <span class="candidate-name">${candidate}</span>
         (<span class="party-code">${partyCode}</span>):
         <span class="candidate-votes">${totalVotes.toLocaleString()}</span> votes
         - <span class="candidate-percentage">${votePercentage}%</span>`
 
-      list.appendChild(listItem)
-    })
-
-    electionDiv.appendChild(list)
-    container.appendChild(electionDiv)
+    list.appendChild(listItem)
   })
+
+  electionDiv.appendChild(list)
+  container.appendChild(electionDiv)
 
   return container
 }
@@ -106,13 +105,57 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
   const [isLoading, setIsLoading] = useState(false)
   const [progressBar, setProgressBar] = useState(0)
   const [progressDialog, setProgressDialog] = useState('')
+  const [currentDistrict, setCurrentDistrict] = useState('')
+
+  const electionLayers = useRef({}) // Correctly using useRef hook inside the component
+  const layerControlRef = useRef(null) // Ref for the layer control
 
   const shapefileLayer = L.featureGroup()
   useEffect(() => {
     if (!data) return
 
+    const createLayersForElections = (districtResults, districtMargins) => {
+      const allElectionCodes = new Set()
+      const layers = {} // Object to store layers for control
+
+      Object.values(districtResults).forEach((district) => {
+        Object.keys(district).forEach((electionCode) => {
+          allElectionCodes.add(electionCode)
+        })
+      })
+
+      allElectionCodes.forEach((electionCode) => {
+        const electionLayer = L.featureGroup()
+
+        L.geoJson(data, {
+          style: (feature) => {
+            const districtId = feature.properties[idFieldName]
+            return {
+              color: 'black',
+              weight: 2,
+              opacity: 1,
+              fillColor: districtMargins[districtId][electionCode],
+              fillOpacity: 0.5,
+            }
+          },
+          onEachFeature: (feature, layer) => {
+            const districtId = feature.properties[idFieldName]
+            layer.on('click', () => {
+              const popupContent = createPopupContent(districtResults[districtId], electionCode)
+              layer.bindPopup(popupContent).openPopup()
+            })
+          },
+        }).addTo(electionLayer)
+
+        electionLayers.current[electionCode] = electionLayer
+        layers[electionCode] = electionLayer
+      })
+      return layers
+    }
+
     const handleProgressUpdate = (progressData) => {
       if (progressData.type === 'progress') {
+        setCurrentDistrict(`${progressData.processedDistricts}`)
         setProgressBar(Number(((progressData.processedDistricts / progressData.totalDistricts) * 100).toFixed(2)))
       } else if (progressData.type === 'progress2') {
         setProgressDialog(`Processed ${progressData.processedPrecincts} out of ${progressData.totalPrecincts} candidate precincts.`)
@@ -126,31 +169,17 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
       calcPartisanAdvantage(data, precinctShapes, fields, mapping, idFieldName, handleProgressUpdate).then((res) => {
         const { districtMargins, districtResults } = res
 
-        L.geoJson(data, {
-          style: (feature) => {
-            const districtId = feature.properties[idFieldName]
+        const layers = createLayersForElections(districtResults, districtMargins)
+        layerControlRef.current = L.control.layers(null, layers).addTo(map)
 
-            return {
-              color: 'black',
-              weight: 2,
-              opacity: 1,
-              fillColor: districtMargins[districtId],
-              fillOpacity: 0.5,
-            }
-          },
-          onEachFeature: (feature, layer) => {
-            const districtId = feature.properties[idFieldName]
-            layer.on('click', () => {
-              const popupContent = createPopupContent(districtResults, districtId)
-              layer.bindPopup(popupContent).openPopup()
-            })
-          },
-        }).addTo(shapefileLayer)
+        const firstElectionCode = Object.keys(layers)[0]
+        if (firstElectionCode) {
+          map.addLayer(layers[firstElectionCode])
+          featureGroupRef.current.addLayer(layers[firstElectionCode])
+          map.fitBounds(layers[firstElectionCode].getBounds())
+        }
 
-        featureGroupRef.current.addLayer(shapefileLayer)
         setHasShapefileLayer(true)
-        map.fitBounds(shapefileLayer.getBounds())
-
         setIsLoading(false)
         setProgressDialog('Data processing complete.')
       }).catch((error) => {
@@ -183,6 +212,7 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
     return () => {
       try {
         featureGroupRef.current.removeLayer(shapefileLayer)
+        map.removeControl(layerControlRef.current)
       } catch {}
     }
   }, [data, map, featureGroupRef, precinctShapes, mapping, fields])
@@ -191,10 +221,8 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
     return (
       <div className="loading-overlay">
         <Spin size="large" />
-        <div className="progress-info">
-          <div className="current-district">Processing District #{currentDistrict}</div>
-          <Progress percent={progressBar} status="active" style={{ width: '80%' }} />
-        </div>
+        <div className="current-district">Current District: {Number(currentDistrict) + 1}</div>
+        <Progress percent={progressBar} status="active" className="progress-info" />
         <div className="progress-text">
           {progressDialog}
         </div>
@@ -223,14 +251,14 @@ const InteractiveMapper = ({
   const shapefileGroupRef = useRef(null)
   const precinctGroupRef = useRef(null)
 
-  const [idFieldName, setIdFieldName] = useState('')
-
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [modalCompleted, setModalCompleted] = useState(false)
   const [filteredShapes, setFilteredShapes] = useState([])
 
   const [hasPrecinctLayer, setHasPrecinctLayer] = useState(false)
   const [hasShapefileLayer, setHasShapefileLayer] = useState(false)
+
+  const [idFieldName, setIdFieldName] = useState('')
 
   const managePrecinctLayer = () => {
     if (precinctGroupRef.current) {
@@ -334,8 +362,6 @@ const InteractiveMapper = ({
   useEffect(() => {
     featureGroupRef.current = new L.FeatureGroup()
   }, [])
-
-  console.log(isSidebarVisible)
 
   return (
     <>
