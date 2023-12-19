@@ -35,7 +35,6 @@ self.onmessage = function(e) {
   shapefileShapes.forEach((districtFeature) => {
     const districtId = districtFeature.properties[idFieldName]
     let processedPrecincts = 0
-    processedDistricts++
     self.postMessage({ type: 'progress', processedDistricts, totalDistricts })
 
     const districtBbox = turf.bbox(districtFeature.geometry)
@@ -93,9 +92,11 @@ self.onmessage = function(e) {
         console.error('Error processing feature:', error)
       }
     })
+    processedDistricts++
   })
 
   Object.keys(districtResults).forEach((districtId) => {
+    districtMargins[districtId] = {}
     Object.keys(districtResults[districtId]).forEach((electionCode) => {
       const parties = districtResults[districtId][electionCode]
       const sortedParties = Object.entries(parties).sort((a, b) => b[1].totalVotes - a[1].totalVotes)
@@ -114,7 +115,13 @@ self.onmessage = function(e) {
         color = colorScale(winningMargin).hex()
       }
 
-      districtMargins[districtId] = color
+      console.log(electionCode)
+      console.log(parties)
+      console.log(sortedParties)
+      console.log(winningMargin)
+      console.log(districtMargins)
+
+      districtMargins[districtId][electionCode] = color
     })
   })
 
