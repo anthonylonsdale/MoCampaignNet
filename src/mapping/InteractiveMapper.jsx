@@ -5,8 +5,8 @@ import 'leaflet-draw/dist/leaflet.draw.css'
 import 'leaflet.fullscreen'
 import 'leaflet.fullscreen/Control.FullScreen.css'
 import 'leaflet.heat'
-import 'leaflet.markercluster/dist/leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
+import 'leaflet.markercluster/dist/leaflet.markercluster'
 import React, { useEffect, useRef, useState } from 'react'
 import { FeatureGroup, MapContainer, TileLayer, useMap } from 'react-leaflet'
 import { EditControl } from 'react-leaflet-draw'
@@ -103,35 +103,48 @@ function createPopupContent(districtResults, districtId) {
 
 const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields, setHasShapefileLayer, idFieldName }) => {
   const map = useMap()
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     if (!data) return
 
     const shapefileLayer = L.featureGroup()
 
+    const calculateData = async () => {
+      setIsLoading(true)
+      try {
+        const { districtMargins, districtResults } = await calcPartisanAdvantage(data, precinctShapes, fields, mapping, idFieldName)
+
+        L.geoJson(data, {
+          style: (feature) => {
+            const districtId = feature.properties[idFieldName]
+
+            return {
+              color: 'black',
+              weight: 2,
+              opacity: 1,
+              fillColor: districtMargins[districtId],
+              fillOpacity: 0.5,
+            }
+          },
+          onEachFeature: (feature, layer) => {
+            const districtId = feature.properties[idFieldName]
+            layer.on('click', () => {
+              const popupContent = createPopupContent(districtResults, districtId)
+              layer.bindPopup(popupContent).openPopup()
+            })
+          },
+        }).addTo(shapefileLayer)
+      } catch (error) {
+        console.error(error)
+      }
+      setIsLoading(false)
+    }
+
+
     if (data && precinctShapes && fields && mapping && idFieldName) {
-      const { districtMargins, districtResults } = calcPartisanAdvantage(data, precinctShapes, fields, mapping, idFieldName)
-
-      L.geoJson(data, {
-        style: (feature) => {
-          const districtId = feature.properties[idFieldName]
-
-          return {
-            color: 'black',
-            weight: 2,
-            opacity: 1,
-            fillColor: districtMargins[districtId],
-            fillOpacity: 0.5,
-          }
-        },
-        onEachFeature: (feature, layer) => {
-          const districtId = feature.properties[idFieldName]
-          layer.on('click', () => {
-            const popupContent = createPopupContent(districtResults, districtId)
-            layer.bindPopup(popupContent).openPopup()
-          })
-        },
-      }).addTo(shapefileLayer)
+      console.log(isLoading)
+      calculateData()
     } else {
       L.geoJson(data, {
         onEachFeature: function tooltip(f, l) {
