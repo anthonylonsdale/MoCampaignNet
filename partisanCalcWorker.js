@@ -84,10 +84,10 @@ self.onmessage = function(e) {
             }
 
             districtResults[districtId][electionCode][partyCode].totalVotes += proportionalVotes
-
-            processedPrecincts++
-            self.postMessage({ type: 'progress2', processedPrecincts, totalPrecincts })
           })
+
+          processedPrecincts++
+          self.postMessage({ type: 'progress2', processedPrecincts, totalPrecincts })
         }
       } catch (error) {
         console.error('Error processing feature:', error)
