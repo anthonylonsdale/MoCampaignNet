@@ -1,12 +1,12 @@
 import * as turf from '@turf/turf'
-import { Button, message } from 'antd'
+import { Button, message, Spin } from 'antd'
 import L from 'leaflet'
 import 'leaflet-draw/dist/leaflet.draw.css'
 import 'leaflet.fullscreen'
 import 'leaflet.fullscreen/Control.FullScreen.css'
 import 'leaflet.heat'
-import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import 'leaflet.markercluster/dist/leaflet.markercluster'
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import React, { useEffect, useRef, useState } from 'react'
 import { FeatureGroup, MapContainer, TileLayer, useMap } from 'react-leaflet'
 import { EditControl } from 'react-leaflet-draw'
@@ -105,15 +105,19 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
   const map = useMap()
   const [isLoading, setIsLoading] = useState(false)
 
+  const shapefileLayer = L.featureGroup()
   useEffect(() => {
     if (!data) return
-
-    const shapefileLayer = L.featureGroup()
 
     const calculateData = async () => {
       setIsLoading(true)
       try {
         const { districtMargins, districtResults } = await calcPartisanAdvantage(data, precinctShapes, fields, mapping, idFieldName)
+
+        console.log(districtMargins)
+        console.log(districtResults)
+
+        setIsLoading(false)
 
         L.geoJson(data, {
           style: (feature) => {
@@ -135,16 +139,19 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
             })
           },
         }).addTo(shapefileLayer)
+
+        featureGroupRef.current.addLayer(shapefileLayer)
+        setHasShapefileLayer(true)
+        map.fitBounds(shapefileLayer.getBounds())
       } catch (error) {
         console.error(error)
       }
-      setIsLoading(false)
     }
-
 
     if (data && precinctShapes && fields && mapping && idFieldName) {
       console.log(isLoading)
       calculateData()
+      console.log(isLoading)
     } else {
       L.geoJson(data, {
         onEachFeature: function tooltip(f, l) {
@@ -157,11 +164,11 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
           }
         },
       }).addTo(shapefileLayer)
-    }
 
-    featureGroupRef.current.addLayer(shapefileLayer)
-    setHasShapefileLayer(true)
-    map.fitBounds(shapefileLayer.getBounds())
+      featureGroupRef.current.addLayer(shapefileLayer)
+      setHasShapefileLayer(true)
+      map.fitBounds(shapefileLayer.getBounds())
+    }
 
     return () => {
       try {
@@ -169,6 +176,15 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
       } catch {}
     }
   }, [data, map, featureGroupRef, precinctShapes, mapping, fields])
+
+  if (isLoading) {
+    return (
+      <div className="loading-overlay">
+        <Spin size="large" tip="Loading data..." />
+      </div>
+    )
+  }
+
   return null
 }
 

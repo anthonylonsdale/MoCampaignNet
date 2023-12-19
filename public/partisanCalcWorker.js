@@ -1,7 +1,7 @@
 importScripts(
-    'https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/dist/turf.min.js',
+    'https://cdn.jsdelivr.net/npm/@turf/turf@6.5/turf.min.js',
     'https://cdn.jsdelivr.net/npm/chroma-js@2.1.1/chroma.min.js',
-    'https://cdn.jsdelivr.net/npm/rbush@3.0.1/index.js',
+    'https://cdn.jsdelivr.net/npm/rbush@3.0/rbush.min.js',
 )
 
 
@@ -107,7 +107,5 @@ self.onmessage = function(e) {
     })
   })
 
-
-  // Post the results back to the main thread
   self.postMessage({ districtMargins, districtResults })
 }

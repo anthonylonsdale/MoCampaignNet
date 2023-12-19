@@ -64,3 +64,16 @@
 .sidebar-visible {
   transform: translateX(0%);
 }
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.7); /* White with opacity */
+  z-index: 1000; /* Should be higher than the map's z-index */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
