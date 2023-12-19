@@ -5,7 +5,13 @@ export const calcPartisanAdvantage = (shapefileShapes, precinctShapes, electoral
     worker.postMessage({ shapefileShapes, precinctShapes, electoralFields, mapping, idFieldName })
 
     worker.onmessage = function(e) {
-      resolve(e.data)
+      if (e.data.type === 'progress') {
+        resolve({ type: 'progress', ...e.data })
+      } else if (e.data.type === 'progress2') {
+        resolve({ type: 'progress2', ...e.data })
+      } else if (e.data.type === 'result') {
+        resolve({ type: 'result', ...e.data })
+      }
     }
 
     worker.onerror = function(error) {

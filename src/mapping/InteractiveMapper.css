@@ -74,6 +74,12 @@
   background: rgba(255, 255, 255, 0.7); /* White with opacity */
   z-index: 1000; /* Should be higher than the map's z-index */
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  align-items: center; /* Center items horizontally */
+  justify-content: center; /* Center items vertically */
+  text-align: center; /* Center text for the progress text */
+}
+
+.progress-text {
+  margin-top: 20px; /* Space between progress bar and text */
 }

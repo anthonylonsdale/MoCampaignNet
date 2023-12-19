@@ -1,12 +1,12 @@
 import * as turf from '@turf/turf'
-import { Button, message, Spin } from 'antd'
+import { Button, Progress, Spin, message } from 'antd'
 import L from 'leaflet'
 import 'leaflet-draw/dist/leaflet.draw.css'
 import 'leaflet.fullscreen'
 import 'leaflet.fullscreen/Control.FullScreen.css'
 import 'leaflet.heat'
-import 'leaflet.markercluster/dist/leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
+import 'leaflet.markercluster/dist/leaflet.markercluster'
 import React, { useEffect, useRef, useState } from 'react'
 import { FeatureGroup, MapContainer, TileLayer, useMap } from 'react-leaflet'
 import { EditControl } from 'react-leaflet-draw'
@@ -104,6 +104,8 @@ function createPopupContent(districtResults, districtId) {
 const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields, setHasShapefileLayer, idFieldName }) => {
   const map = useMap()
   const [isLoading, setIsLoading] = useState(false)
+  const [progressBar, setProgressBar] = useState(0)
+  const [progressDialog, setProgressDialog] = useState('')
 
   const shapefileLayer = L.featureGroup()
   useEffect(() => {
@@ -111,41 +113,49 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
 
     const calculateData = async () => {
       setIsLoading(true)
-      try {
-        const { districtMargins, districtResults } = await calcPartisanAdvantage(data, precinctShapes, fields, mapping, idFieldName)
+      setProgressDialog('Starting data processing...')
 
-        console.log(districtMargins)
-        console.log(districtResults)
+      calcPartisanAdvantage(data, precinctShapes, fields, mapping, idFieldName).then((res) => {
+        if (res.type === 'progress') {
+          setProgressBar((res.processedDistricts / res.totalDistricts) * 100)
+        } else if (res.type === 'progress2') {
+          setProgressDialog(`Processed ${res.processedPrecincts} out of ${res.totalPrecincts} total precincts.`)
+        } else if (res.type === 'result') {
+          const { districtMargins, districtResults } = res
 
-        setIsLoading(false)
+          L.geoJson(data, {
+            style: (feature) => {
+              const districtId = feature.properties[idFieldName]
 
-        L.geoJson(data, {
-          style: (feature) => {
-            const districtId = feature.properties[idFieldName]
+              return {
+                color: 'black',
+                weight: 2,
+                opacity: 1,
+                fillColor: districtMargins[districtId],
+                fillOpacity: 0.5,
+              }
+            },
+            onEachFeature: (feature, layer) => {
+              const districtId = feature.properties[idFieldName]
+              layer.on('click', () => {
+                const popupContent = createPopupContent(districtResults, districtId)
+                layer.bindPopup(popupContent).openPopup()
+              })
+            },
+          }).addTo(shapefileLayer)
 
-            return {
-              color: 'black',
-              weight: 2,
-              opacity: 1,
-              fillColor: districtMargins[districtId],
-              fillOpacity: 0.5,
-            }
-          },
-          onEachFeature: (feature, layer) => {
-            const districtId = feature.properties[idFieldName]
-            layer.on('click', () => {
-              const popupContent = createPopupContent(districtResults, districtId)
-              layer.bindPopup(popupContent).openPopup()
-            })
-          },
-        }).addTo(shapefileLayer)
+          featureGroupRef.current.addLayer(shapefileLayer)
+          setHasShapefileLayer(true)
+          map.fitBounds(shapefileLayer.getBounds())
 
-        featureGroupRef.current.addLayer(shapefileLayer)
-        setHasShapefileLayer(true)
-        map.fitBounds(shapefileLayer.getBounds())
-      } catch (error) {
+          setIsLoading(false)
+          setProgressDialog('Data processing complete.')
+        }
+      }).catch((error) => {
         console.error(error)
-      }
+        setIsLoading(false)
+        setProgressDialog('An error occurred during data processing.')
+      })
     }
 
     if (data && precinctShapes && fields && mapping && idFieldName) {
@@ -181,6 +191,10 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
     return (
       <div className="loading-overlay">
         <Spin size="large" tip="Loading data..." />
+        <Progress percent={progressBar} status="active" style={{ width: '80%' }} />
+        <div className="progress-text">
+          {progressDialog}
+        </div>
       </div>
     )
   }
