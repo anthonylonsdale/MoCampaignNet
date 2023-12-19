@@ -111,46 +111,48 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
   useEffect(() => {
     if (!data) return
 
+    const handleProgressUpdate = (progressData) => {
+      if (progressData.type === 'progress') {
+        setProgressBar((progressData.processedDistricts / progressData.totalDistricts) * 100)
+      } else if (progressData.type === 'progress2') {
+        setProgressDialog(`Processed ${progressData.processedPrecincts} out of ${progressData.totalPrecincts} total precincts.`)
+      }
+    }
+
     const calculateData = async () => {
       setIsLoading(true)
       setProgressDialog('Starting data processing...')
 
-      calcPartisanAdvantage(data, precinctShapes, fields, mapping, idFieldName).then((res) => {
-        if (res.type === 'progress') {
-          setProgressBar((res.processedDistricts / res.totalDistricts) * 100)
-        } else if (res.type === 'progress2') {
-          setProgressDialog(`Processed ${res.processedPrecincts} out of ${res.totalPrecincts} total precincts.`)
-        } else if (res.type === 'result') {
-          const { districtMargins, districtResults } = res
+      calcPartisanAdvantage(data, precinctShapes, fields, mapping, idFieldName, handleProgressUpdate).then((res) => {
+        const { districtMargins, districtResults } = res
 
-          L.geoJson(data, {
-            style: (feature) => {
-              const districtId = feature.properties[idFieldName]
+        L.geoJson(data, {
+          style: (feature) => {
+            const districtId = feature.properties[idFieldName]
 
-              return {
-                color: 'black',
-                weight: 2,
-                opacity: 1,
-                fillColor: districtMargins[districtId],
-                fillOpacity: 0.5,
-              }
-            },
-            onEachFeature: (feature, layer) => {
-              const districtId = feature.properties[idFieldName]
-              layer.on('click', () => {
-                const popupContent = createPopupContent(districtResults, districtId)
-                layer.bindPopup(popupContent).openPopup()
-              })
-            },
-          }).addTo(shapefileLayer)
+            return {
+              color: 'black',
+              weight: 2,
+              opacity: 1,
+              fillColor: districtMargins[districtId],
+              fillOpacity: 0.5,
+            }
+          },
+          onEachFeature: (feature, layer) => {
+            const districtId = feature.properties[idFieldName]
+            layer.on('click', () => {
+              const popupContent = createPopupContent(districtResults, districtId)
+              layer.bindPopup(popupContent).openPopup()
+            })
+          },
+        }).addTo(shapefileLayer)
 
-          featureGroupRef.current.addLayer(shapefileLayer)
-          setHasShapefileLayer(true)
-          map.fitBounds(shapefileLayer.getBounds())
+        featureGroupRef.current.addLayer(shapefileLayer)
+        setHasShapefileLayer(true)
+        map.fitBounds(shapefileLayer.getBounds())
 
-          setIsLoading(false)
-          setProgressDialog('Data processing complete.')
-        }
+        setIsLoading(false)
+        setProgressDialog('Data processing complete.')
       }).catch((error) => {
         console.error(error)
         setIsLoading(false)
@@ -190,7 +192,7 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
   if (isLoading) {
     return (
       <div className="loading-overlay">
-        <Spin size="large" tip="Loading data..." />
+        <Spin size="large" />
         <Progress percent={progressBar} status="active" style={{ width: '80%' }} />
         <div className="progress-text">
           {progressDialog}

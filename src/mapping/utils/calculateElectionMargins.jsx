@@ -1,16 +1,14 @@
-export const calcPartisanAdvantage = (shapefileShapes, precinctShapes, electoralFields, mapping, idFieldName) => {
+export const calcPartisanAdvantage = (shapefileShapes, precinctShapes, electoralFields, mapping, idFieldName, onProgressUpdate) => {
   return new Promise((resolve, reject) => {
     const worker = new Worker('partisanCalcWorker.js')
 
     worker.postMessage({ shapefileShapes, precinctShapes, electoralFields, mapping, idFieldName })
 
     worker.onmessage = function(e) {
-      if (e.data.type === 'progress') {
-        resolve({ type: 'progress', ...e.data })
-      } else if (e.data.type === 'progress2') {
-        resolve({ type: 'progress2', ...e.data })
+      if (e.data.type === 'progress' || e.data.type === 'progress2') {
+        onProgressUpdate(e.data)
       } else if (e.data.type === 'result') {
-        resolve({ type: 'result', ...e.data })
+        resolve(e.data)
       }
     }
 
