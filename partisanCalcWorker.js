@@ -10,7 +10,6 @@ self.onmessage = function(e) {
 
   const totalDistricts = shapefileShapes.length
   let processedDistricts = 0
-  let processedPrecincts = 0
 
   const districtResults = {}
   const districtMargins = {}
@@ -35,6 +34,7 @@ self.onmessage = function(e) {
 
   shapefileShapes.forEach((districtFeature) => {
     const districtId = districtFeature.properties[idFieldName]
+    let processedPrecincts = 0
     processedDistricts++
     self.postMessage({ type: 'progress', processedDistricts, totalDistricts })
 
