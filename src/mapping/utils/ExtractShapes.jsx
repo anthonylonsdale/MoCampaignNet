@@ -14,8 +14,8 @@ const extractShapes = async (files) => {
       reader.onload = async (e) => {
         try {
           const arrayBuffer = e.target.result
-          const geojson = await shp(arrayBuffer) // Convert to GeoJSON
-          resolve(geojson.features) // Assuming you want to extract features
+          const geojson = await shp(arrayBuffer)
+          resolve(geojson.features)
         } catch (error) {
           console.error('Error parsing shapefile:', error)
         }
@@ -25,21 +25,19 @@ const extractShapes = async (files) => {
         console.error('FileReader error:', e)
       }
 
-      reader.readAsArrayBuffer(file) // Read the file as an ArrayBuffer
+      reader.readAsArrayBuffer(file)
     })
   }
 
   try {
-    // Process all files and wait for all to complete
     const filesArray = Array.from(files)
     const data = await Promise.all(filesArray.map(_parseFile))
 
-    // Check if any of the files returned empty data
     if (data.some((fileData) => !fileData || fileData.length < 1)) {
       throw new Error('EXTRACT_FILE_EMPTY')
     }
 
-    result.data = data.flat() // Flatten the array of features arrays
+    result.data = data.flat()
   } catch (error) {
     console.error('Error extracting shapes:', error)
     result.hasError = true

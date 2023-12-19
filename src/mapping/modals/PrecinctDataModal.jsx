@@ -115,9 +115,6 @@ const PrecinctDataModal = ({ visible, precinctData, onCancel, setElectoralFieldM
     setItems([])
   }
 
-  console.log(electoralFields)
-  console.log(nonElectoralFields)
-
   return (
     <>
       <Modal

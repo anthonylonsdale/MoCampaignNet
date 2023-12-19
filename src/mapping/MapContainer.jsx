@@ -21,7 +21,6 @@ const MappingContainer = () => {
   const clearAllData = () => {
     setMapPoints([])
     setSelectedPoints([])
-    setShapes(undefined)
     setSelectedParties(new Set())
     setPartyCounts([])
     setShowPoliticalDots(false)

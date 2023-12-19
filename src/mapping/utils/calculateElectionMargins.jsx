@@ -3,7 +3,7 @@ import chroma from 'chroma-js'
 import RBush from 'rbush'
 
 
-export const calcPartisanAdvantage = (shapefileShapes, precinctShapes, electoralFields, mapping) => {
+export const calcPartisanAdvantage = (shapefileShapes, precinctShapes, electoralFields, mapping, idFieldName) => {
   const districtResults = {}
   const districtMargins = {}
 
@@ -26,7 +26,7 @@ export const calcPartisanAdvantage = (shapefileShapes, precinctShapes, electoral
   })
 
   shapefileShapes.forEach((districtFeature) => {
-    const districtId = districtFeature.properties.ID
+    const districtId = districtFeature.properties[idFieldName]
 
     const districtBbox = turf.bbox(districtFeature.geometry)
     const candidates = tree.search({
@@ -103,6 +103,5 @@ export const calcPartisanAdvantage = (shapefileShapes, precinctShapes, electoral
     })
   })
 
-  console.log(districtMargins)
   return { districtMargins, districtResults }
 }

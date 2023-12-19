@@ -17,13 +17,10 @@ function CustomHeader() {
 
   const handleScroll = () => {
     const currentScrollPos = window.scrollY
-    // Determine whether to slide in or out based on the scroll direction
     if (currentScrollPos > lastScrollTop && currentScrollPos > 0) {
       setVisible(false)
-    } else {
-      setVisible(true)
     }
-    lastScrollTop = currentScrollPos <= 0 ? 0 : currentScrollPos // For Mobile or negative scrolling
+    lastScrollTop = currentScrollPos <= 0 ? 0 : currentScrollPos
   }
 
   const debounce = (func, wait = 50) => {

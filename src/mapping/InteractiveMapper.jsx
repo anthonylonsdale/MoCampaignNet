@@ -1,18 +1,19 @@
 import * as turf from '@turf/turf'
-import { message } from 'antd'
+import { Button, message } from 'antd'
 import L from 'leaflet'
 import 'leaflet-draw/dist/leaflet.draw.css'
 import 'leaflet.fullscreen'
 import 'leaflet.fullscreen/Control.FullScreen.css'
 import 'leaflet.heat'
-import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import 'leaflet.markercluster/dist/leaflet.markercluster'
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import React, { useEffect, useRef, useState } from 'react'
 import { FeatureGroup, MapContainer, TileLayer, useMap } from 'react-leaflet'
 import { EditControl } from 'react-leaflet-draw'
 import './InteractiveMapper.css'
 import ShapeSelectorModal from './modals/ShapeSelectorModal.jsx'
 import { calcPartisanAdvantage } from './utils/calculateElectionMargins.jsx'
+
 
 const createCustomIcon = (color) => {
   const markerColor = color || 'black'
@@ -38,7 +39,7 @@ const SetViewToBounds = ({ points }) => {
   return null
 }
 
-const PrecinctLayer = ({ data, featureGroupRef }) => {
+const PrecinctLayer = ({ data, featureGroupRef, setHasPrecinctLayer }) => {
   const map = useMap()
   useEffect(() => {
     if (!data) return
@@ -52,6 +53,7 @@ const PrecinctLayer = ({ data, featureGroupRef }) => {
     })
 
     featureGroupRef.current.addLayer(precinctLayer)
+    setHasPrecinctLayer(true)
     map.fitBounds(precinctLayer.getBounds())
 
     return () => {
@@ -99,7 +101,7 @@ function createPopupContent(districtResults, districtId) {
   return container
 }
 
-const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields }) => {
+const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields, setHasShapefileLayer, idFieldName }) => {
   const map = useMap()
 
   useEffect(() => {
@@ -107,12 +109,13 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
 
     const shapefileLayer = L.featureGroup()
 
-    if (data && precinctShapes && fields && mapping) {
-      const { districtMargins, districtResults } = calcPartisanAdvantage(data, precinctShapes, fields, mapping)
+    if (data && precinctShapes && fields && mapping && idFieldName) {
+      const { districtMargins, districtResults } = calcPartisanAdvantage(data, precinctShapes, fields, mapping, idFieldName)
 
       L.geoJson(data, {
         style: (feature) => {
-          const districtId = feature.properties.ID
+          const districtId = feature.properties[idFieldName]
+
           return {
             color: 'black',
             weight: 2,
@@ -122,7 +125,7 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
           }
         },
         onEachFeature: (feature, layer) => {
-          const districtId = feature.properties.ID
+          const districtId = feature.properties[idFieldName]
           layer.on('click', () => {
             const popupContent = createPopupContent(districtResults, districtId)
             layer.bindPopup(popupContent).openPopup()
@@ -144,6 +147,7 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
     }
 
     featureGroupRef.current.addLayer(shapefileLayer)
+    setHasShapefileLayer(true)
     map.fitBounds(shapefileLayer.getBounds())
 
     return () => {
@@ -153,22 +157,6 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
     }
   }, [data, map, featureGroupRef, precinctShapes, mapping, fields])
   return null
-}
-
-const RemoveLayersControl = ({ onRemove }) => {
-  const map = useMap()
-
-  const handleRemoveClick = () => {
-    onRemove(map)
-  }
-
-  return (
-    <div className="leaflet-bottom leaflet-right remove-layers-control">
-      <button onClick={handleRemoveClick} className="remove-layers-button">
-        Remove Layers
-      </button>
-    </div>
-  )
 }
 
 const InteractiveMapper = ({
@@ -189,19 +177,30 @@ const InteractiveMapper = ({
   const shapefileGroupRef = useRef(null)
   const precinctGroupRef = useRef(null)
 
+  const [idFieldName, setIdFieldName] = useState('')
+
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [modalCompleted, setModalCompleted] = useState(false)
   const [filteredShapes, setFilteredShapes] = useState([])
 
-  const removeMapLayers = () => {
-    if (shapefileGroupRef.current) {
-      shapefileGroupRef.current.clearLayers()
-    }
+  const [hasPrecinctLayer, setHasPrecinctLayer] = useState(false)
+  const [hasShapefileLayer, setHasShapefileLayer] = useState(false)
+
+  const managePrecinctLayer = () => {
     if (precinctGroupRef.current) {
       precinctGroupRef.current.clearLayers()
+      setHasPrecinctLayer(false)
     }
-    setModalCompleted(false)
   }
+
+  const manageShapefileLayer = () => {
+    if (shapefileGroupRef.current) {
+      shapefileGroupRef.current.clearLayers()
+      setHasShapefileLayer(false)
+    }
+  }
+
+  const isSidebarVisible = hasPrecinctLayer || hasShapefileLayer
 
   useEffect(() => {
     if (shapes && shapes.length > 0) {
@@ -216,7 +215,7 @@ const InteractiveMapper = ({
   const onCreated = (e) => {
     const layer = e.layer
     const drawnPolygon = layer.toGeoJSON()
-    const currentMapPoints = mapPointsRef.current // Use ref to access the latest mapPoints
+    const currentMapPoints = mapPointsRef.current
 
     const pointsSelected = currentMapPoints.filter((point) => {
       const pointToCheck = turf.point([point.lng, point.lat])
@@ -236,9 +235,7 @@ const InteractiveMapper = ({
         }
       }
     })
-    if (featureGroupRef.current && Object.keys(_layers).length === featureGroupRef.current.getLayers().length) {
-      clearAllData()
-    }
+    clearAllData()
   }
 
   useEffect(() => {
@@ -247,7 +244,6 @@ const InteractiveMapper = ({
     }
 
     const addMarkers = (points, color) => {
-      const markersLayerGroup = L.layerGroup()
       points.forEach((point) => {
         const marker = L.marker([point.lat, point.lng], {
           icon: createCustomIcon(color ? color : point.color),
@@ -256,9 +252,9 @@ const InteractiveMapper = ({
           interactive: true,
           direction: 'top',
         })
-        markersLayerGroup.addLayer(marker)
+
+        featureGroupRef.current.addLayer(marker)
       })
-      featureGroupRef?.current?.addLayer(markersLayerGroup)
     }
 
     if (visualizationType === 'clusters') {
@@ -289,9 +285,11 @@ const InteractiveMapper = ({
     }
   }, [visualizationType, mapPoints, selectedParties, showPoliticalDots])
 
-  console.log(isShapefileVisible)
-  console.log(filteredShapes)
-  console.log(modalCompleted)
+  useEffect(() => {
+    featureGroupRef.current = new L.FeatureGroup()
+  }, [])
+
+  console.log(isSidebarVisible)
 
   return (
     <>
@@ -305,6 +303,7 @@ const InteractiveMapper = ({
             <EditControl
               position="topright"
               onCreated={onCreated}
+              onDeleted={onDeleted}
               draw={{
                 rectangle: true,
                 polygon: true,
@@ -317,12 +316,11 @@ const InteractiveMapper = ({
                 edit: true,
                 remove: true,
               }}
-              onDeleted={onDeleted}
             />
           </FeatureGroup>
 
           <FeatureGroup ref={precinctGroupRef}>
-            {precinctShapes && <PrecinctLayer data={precinctShapes} featureGroupRef={precinctGroupRef}/>}
+            {precinctShapes && <PrecinctLayer data={precinctShapes} featureGroupRef={precinctGroupRef} setHasPrecinctLayer={setHasPrecinctLayer} />}
           </FeatureGroup>
 
           <FeatureGroup ref={shapefileGroupRef}>
@@ -333,12 +331,20 @@ const InteractiveMapper = ({
               precinctShapes={precinctShapes}
               mapping={electoralFieldMapping}
               fields={electoralFields}
+              setHasShapefileLayer={setHasShapefileLayer}
+              idFieldName={idFieldName}
             />
             }
           </FeatureGroup>
 
-          <RemoveLayersControl onRemove={removeMapLayers} />
           <SetViewToBounds points={mapPoints} />
+
+          {isSidebarVisible && (
+            <div className={`sidebar ${isSidebarVisible ? 'sidebar-visible' : ''}`}>
+              <Button type="primary" onClick={() => managePrecinctLayer(false)} disabled={!hasPrecinctLayer}>Remove Precinct Layer</Button>
+              <Button type="primary" onClick={() => manageShapefileLayer(false)} disabled={!hasShapefileLayer}>Remove Shapefile Layer</Button>
+            </div>
+          )}
         </MapContainer>
       </div>
 
@@ -348,6 +354,8 @@ const InteractiveMapper = ({
         shapes={shapes}
         setFilteredShapes={setFilteredShapes}
         setModalCompleted={setModalCompleted}
+        idFieldName={idFieldName}
+        setIdFieldName={setIdFieldName}
       />
     </>
   )

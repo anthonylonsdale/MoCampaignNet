@@ -46,3 +46,21 @@
   background-color: #e2e6ea;
   color: #212529;
 }
+
+.sidebar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 250px;
+  height: 100%;
+  background-color: #f8f9fa; /* Light gray background for the panel */
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  z-index: 400;
+  transform: translateX(100%); /* Start off-screen to the right */
+  transition: transform 1s ease-out; /* Animate the transform property */
+}
+
+.sidebar-visible {
+  transform: translateX(0%);
+}

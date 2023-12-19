@@ -3,11 +3,10 @@ import { Button, Modal, Select } from 'antd'
 import React, { useState } from 'react'
 import './ShapeSelectorModal.css'
 
-const ShapeSelectorModal = ({ isModalOpen, setIsModalOpen, shapes, setFilteredShapes, setModalCompleted }) => {
+const ShapeSelectorModal = ({ isModalOpen, setIsModalOpen, shapes, setFilteredShapes, setModalCompleted, idFieldName, setIdFieldName }) => {
   const [tempSelectedShapes, setTempSelectedShapes] = useState([])
   const [selectAll, setSelectAll] = useState(false)
   const [isMouseDown, setIsMouseDown] = useState(false)
-  const [idFieldName, setIdFieldName] = useState('')
 
   const handleIdFieldChange = (value) => {
     setIdFieldName(value)
@@ -18,7 +17,7 @@ const ShapeSelectorModal = ({ isModalOpen, setIsModalOpen, shapes, setFilteredSh
       if (isSelected) {
         return [...prevSelectedShapes, shape]
       } else {
-        return prevSelectedShapes.filter((s) => s.properties.ID !== shape.properties.ID)
+        return prevSelectedShapes.filter((s) => s.properties[idFieldName] !== shape.properties[idFieldName])
       }
     })
     setIsMouseDown(isSelected)
@@ -26,7 +25,7 @@ const ShapeSelectorModal = ({ isModalOpen, setIsModalOpen, shapes, setFilteredSh
 
   const handleMouseEnter = (shape) => {
     if (isMouseDown) {
-      handleShapeSelection(shape, !tempSelectedShapes.some((s) => s.properties.ID === shape.properties.ID))
+      handleShapeSelection(shape, !tempSelectedShapes.some((s) => s.properties[idFieldName] === shape.properties[idFieldName]))
     }
   }
 
