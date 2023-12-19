@@ -1,12 +1,16 @@
 importScripts(
-    'https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/dist/turf.min.js',
+    'https://cdn.jsdelivr.net/npm/@turf/turf@6.5/turf.min.js',
     'https://cdn.jsdelivr.net/npm/chroma-js@2.1.1/chroma.min.js',
-    'https://cdn.jsdelivr.net/npm/rbush@3.0.1/index.js',
+    'https://cdn.jsdelivr.net/npm/rbush@3.0/rbush.min.js',
 )
 
 
 self.onmessage = function(e) {
   const { shapefileShapes, precinctShapes, electoralFields, mapping, idFieldName } = e.data
+
+  const totalDistricts = shapefileShapes.length
+  let processedDistricts = 0
+  let processedPrecincts = 0
 
   const districtResults = {}
   const districtMargins = {}
@@ -31,6 +35,8 @@ self.onmessage = function(e) {
 
   shapefileShapes.forEach((districtFeature) => {
     const districtId = districtFeature.properties[idFieldName]
+    processedDistricts++
+    self.postMessage({ type: 'progress', processedDistricts, totalDistricts })
 
     const districtBbox = turf.bbox(districtFeature.geometry)
     const candidates = tree.search({
@@ -39,6 +45,8 @@ self.onmessage = function(e) {
       maxX: districtBbox[2],
       maxY: districtBbox[3],
     })
+
+    const totalPrecincts = candidates.length
 
     candidates.forEach((candidate) => {
       const precinctFeature = precinctShapes[candidate.id]
@@ -76,6 +84,9 @@ self.onmessage = function(e) {
             }
 
             districtResults[districtId][electionCode][partyCode].totalVotes += proportionalVotes
+
+            processedPrecincts++
+            self.postMessage({ type: 'progress2', processedPrecincts, totalPrecincts })
           })
         }
       } catch (error) {
@@ -107,7 +118,5 @@ self.onmessage = function(e) {
     })
   })
 
-
-  // Post the results back to the main thread
-  self.postMessage({ districtMargins, districtResults })
+  self.postMessage({ type: 'result', districtMargins, districtResults })
 }
