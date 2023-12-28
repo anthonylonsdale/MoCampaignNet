@@ -93,3 +93,11 @@
 .current-district {
   margin-bottom: 5px; /* Space between district text and progress bar */
 }
+
+.district-label {
+  border: none; /* No border */
+  font-size: 12px; /* Adjust the font size as needed */
+  font-weight: bold; /* Make the text bold */
+  color: black; /* Text color */
+  text-align: center; /* Center the text within the divIcon */
+}

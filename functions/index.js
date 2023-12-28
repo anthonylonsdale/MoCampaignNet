@@ -7,19 +7,17 @@ admin.initializeApp()
 
 const allowedOrigins = ["https://bernoullitechnologies.net", "http://localhost:3000"]
 
-const corsHandler = cors((req, callback) => {
-  const origin = req.header("Origin")
-  let corsOptions
-  if (allowedOrigins.includes(origin)) {
-    corsOptions = { origin: true }
-  } else {
-    corsOptions = { origin: false }
-  }
-  callback(null, corsOptions)
+const corsHandler = cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error("Not allowed by CORS"))
+    }
+  },
 })
 
 // above is the config required, below is a sample request
-
 exports.addmessage = functions.https.onRequest((req, res) => {
   corsHandler(req, res, () => {
     if (req.method === "POST") {
