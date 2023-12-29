@@ -66,7 +66,7 @@ function CampaignTools() {
       const functionUrl = 'https://us-central1-leaddrive-pro.cloudfunctions.net/addmessage'
       const response = await fetch(functionUrl, {
         method: 'POST',
-        body: JSON.stringify({ text: 'test' }),
+        body: JSON.stringify({ text: 'gibs' }),
         headers: {
           'Content-Type': 'application/json',
         },

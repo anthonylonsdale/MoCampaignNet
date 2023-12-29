@@ -1,3 +1,4 @@
+import { DoubleLeftOutlined, DoubleRightOutlined } from '@ant-design/icons'
 import * as turf from '@turf/turf'
 import { Button, Progress, Spin, message } from 'antd'
 import L from 'leaflet'
@@ -11,9 +12,9 @@ import React, { useEffect, useRef, useState } from 'react'
 import { FeatureGroup, MapContainer, TileLayer, useMap } from 'react-leaflet'
 import { EditControl } from 'react-leaflet-draw'
 import './InteractiveMapper.css'
+import StatisticsPanel from './StatisticsPanel.jsx'
 import ShapeSelectorModal from './modals/ShapeSelectorModal.jsx'
 import { calcPartisanAdvantage } from './utils/calculateElectionMargins.jsx'
-
 
 const createCustomIcon = (color) => {
   const markerColor = color || 'black'
@@ -67,8 +68,6 @@ const PrecinctLayer = ({ data, featureGroupRef, setHasPrecinctLayer }) => {
 }
 
 function createPopupContent(electionResults, electionCode) {
-  console.log(electionResults[electionCode])
-
   const container = document.createElement('div')
   container.className = 'election-popup'
 
@@ -100,23 +99,41 @@ function createPopupContent(electionResults, electionCode) {
   return container
 }
 
-const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields, setHasShapefileLayer, idFieldName }) => {
+const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields, setHasShapefileLayer, idFieldName, demographicSelections }) => {
   const map = useMap()
   const [isLoading, setIsLoading] = useState(false)
   const [progressBar, setProgressBar] = useState(0)
   const [progressDialog, setProgressDialog] = useState('')
   const [currentDistrict, setCurrentDistrict] = useState('')
 
-  const electionLayers = useRef({}) // Correctly using useRef hook inside the component
-  const layerControlRef = useRef(null) // Ref for the layer control
+  const electionLayers = useRef({})
+  const layerControlRef = useRef(null)
+
+  const prevDataRef = useRef()
+  const prevPrecinctShapesRef = useRef()
+  const prevMappingRef = useRef()
+  const prevFieldsRef = useRef()
+  const prevIdFieldNameRef = useRef()
 
   const shapefileLayer = L.featureGroup()
   useEffect(() => {
     if (!data) return
 
+    const isDataChanged = data !== prevDataRef.current
+    const isPrecinctShapesChanged = precinctShapes !== prevPrecinctShapesRef.current
+    const isMappingChanged = mapping !== prevMappingRef.current
+    const isFieldsChanged = fields !== prevFieldsRef.current
+    const isIdFieldNameChanged = idFieldName !== prevIdFieldNameRef.current
+
+    prevDataRef.current = data
+    prevPrecinctShapesRef.current = precinctShapes
+    prevMappingRef.current = mapping
+    prevFieldsRef.current = fields
+    prevIdFieldNameRef.current = idFieldName
+
     const createLayersForElections = (districtResults, districtMargins) => {
       const allElectionCodes = new Set()
-      const layers = {} // Object to store layers for control
+      const layers = {}
 
       Object.values(districtResults).forEach((district) => {
         Object.keys(district).forEach((electionCode) => {
@@ -140,6 +157,17 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
           },
           onEachFeature: (feature, layer) => {
             const districtId = feature.properties[idFieldName]
+
+            const centroid = turf.centroid(feature.geometry)
+            const labelIcon = L.divIcon({ className: 'district-label', html: `<div style="background-color: white; border-radius: 50%; width: 2em; height: 2em; display: flex; align-items: center; justify-content: center; border: 1px solid black;">${String(districtId)}</div>` })
+
+            const labelMarker = L.marker([centroid.geometry.coordinates[1], centroid.geometry.coordinates[0]], {
+              icon: labelIcon,
+              interactive: false,
+            })
+
+            labelMarker.addTo(electionLayer)
+
             layer.on('click', () => {
               const popupContent = createPopupContent(districtResults[districtId], electionCode)
               layer.bindPopup(popupContent).openPopup()
@@ -158,7 +186,7 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
         setCurrentDistrict(`${progressData.processedDistricts}`)
         setProgressBar(Number(((progressData.processedDistricts / progressData.totalDistricts) * 100).toFixed(2)))
       } else if (progressData.type === 'progress2') {
-        setProgressDialog(`Processed ${progressData.processedPrecincts} out of ${progressData.totalPrecincts} candidate precincts.`)
+        setProgressDialog(`Processed ${progressData.processedPrecincts} out of ${progressData.totalPrecincts} intersecting precincts.`)
       }
     }
 
@@ -189,16 +217,55 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
       })
     }
 
-    if (data && precinctShapes && fields && mapping && idFieldName) {
+    if ((data && precinctShapes && fields && mapping && idFieldName) &&
+    (isDataChanged || isPrecinctShapesChanged || isMappingChanged || isFieldsChanged || isIdFieldNameChanged)) {
       calculateData()
     } else {
       L.geoJson(data, {
+        style: function(feature) {
+          const districtId = feature.properties[idFieldName]
+          const demographicData = demographicSelections?.demographicCounts?.find((dem) => dem.districtId === Number(districtId))
+          let color = 'lightgrey'
+
+
+          if (demographicData) {
+            const whitePopulation = demographicData.demographics.White
+            const totalPopulation = demographicData.totalPopulation
+            const whiteShare = whitePopulation / totalPopulation
+
+            // Create a gradient from white (lightgrey) to brown
+            // Adjust the color mix based on the whiteShare
+            const red = Math.round(245 - whiteShare * 245)
+            const green = Math.round(222 - whiteShare * 222)
+            const blue = Math.round(179 - whiteShare * 179)
+
+            color = `rgb(${red},${green},${blue})`
+          }
+          return {
+            color: 'black',
+            weight: 1,
+            opacity: 1,
+            fillColor: color,
+            fillOpacity: 0.7,
+          }
+        },
         onEachFeature: function tooltip(f, l) {
           const out = []
           if (f.properties) {
             Object.keys(f.properties).forEach((key) => {
               out.push(`${key}: ${f.properties[key]}`)
             })
+
+            const districtId = f.properties[idFieldName]
+            const demographicData = demographicSelections?.demographicCounts?.find((data) => data.districtId === Number(districtId))?.demographics
+
+            if (demographicData) {
+              out.push('<hr><strong>Demographics:</strong>')
+              Object.keys(demographicData).forEach((demKey) => {
+                out.push(`${demKey}: ${demographicData[demKey]}`)
+              })
+            }
+
             l.bindTooltip(out.join('<br />'))
           }
         },
@@ -233,19 +300,27 @@ const ShapefileLayer = ({ data, featureGroupRef, precinctShapes, mapping, fields
   return null
 }
 
-const InteractiveMapper = ({
-  mapPoints,
-  setSelectedPoints,
-  shapes,
-  selectedParties,
-  isShapefileVisible,
-  clearAllData,
-  visualizationType,
-  showPoliticalDots,
-  precinctShapes,
-  electoralFieldMapping,
-  electoralFields,
-}) => {
+const InteractiveMapper = ({ mapData, setMapData, precinctData, clearMarkerData, clearPrecinctData }) => {
+  const {
+    mapPoints,
+    showPoliticalDots,
+    selectedParties,
+    isShapefileVisible,
+    visualizationType,
+  } = mapData
+
+  const {
+    shapes,
+    precinctShapes,
+    electoralFieldMapping,
+    electoralFields,
+    demographicSelections,
+  } = precinctData
+
+  const {
+    setSelectedPoints,
+  } = setMapData
+
   const mapPointsRef = useRef(mapPoints)
   const featureGroupRef = useRef()
   const shapefileGroupRef = useRef(null)
@@ -260,10 +335,13 @@ const InteractiveMapper = ({
 
   const [idFieldName, setIdFieldName] = useState('')
 
+  const [isStatisticsPanelVisible, setIsStatisticsPanelVisible] = useState(true)
+
   const managePrecinctLayer = () => {
     if (precinctGroupRef.current) {
       precinctGroupRef.current.clearLayers()
       setHasPrecinctLayer(false)
+      clearPrecinctData()
     }
   }
 
@@ -309,7 +387,7 @@ const InteractiveMapper = ({
         }
       }
     })
-    clearAllData()
+    clearMarkerData()
   }
 
   useEffect(() => {
@@ -365,6 +443,9 @@ const InteractiveMapper = ({
 
   return (
     <>
+      {isStatisticsPanelVisible && (
+        <StatisticsPanel />
+      )}
       <div className="interactive-mapper-container">
         <MapContainer center={[38.573936, -92.603760]} zoom={13} fullscreenControl={true}>
           <TileLayer
@@ -397,15 +478,16 @@ const InteractiveMapper = ({
 
           <FeatureGroup ref={shapefileGroupRef}>
             {isShapefileVisible && filteredShapes && modalCompleted &&
-            <ShapefileLayer
-              data={filteredShapes}
-              featureGroupRef={shapefileGroupRef}
-              precinctShapes={precinctShapes}
-              mapping={electoralFieldMapping}
-              fields={electoralFields}
-              setHasShapefileLayer={setHasShapefileLayer}
-              idFieldName={idFieldName}
-            />
+              <ShapefileLayer
+                data={filteredShapes}
+                featureGroupRef={shapefileGroupRef}
+                precinctShapes={precinctShapes}
+                mapping={electoralFieldMapping}
+                fields={electoralFields}
+                setHasShapefileLayer={setHasShapefileLayer}
+                idFieldName={idFieldName}
+                demographicSelections={demographicSelections}
+              />
             }
           </FeatureGroup>
 
@@ -413,8 +495,23 @@ const InteractiveMapper = ({
 
           {isSidebarVisible && (
             <div className={`sidebar ${isSidebarVisible ? 'sidebar-visible' : ''}`}>
-              <Button type="primary" onClick={() => managePrecinctLayer(false)} disabled={!hasPrecinctLayer}>Remove Precinct Layer</Button>
-              <Button type="primary" onClick={() => manageShapefileLayer(false)} disabled={!hasShapefileLayer}>Remove Shapefile Layer</Button>
+              <Button
+                type="primary"
+                className="pill-button"
+                icon={isStatisticsPanelVisible ? <DoubleRightOutlined /> : <DoubleLeftOutlined />}
+                onClick={() => {
+                  setIsStatisticsPanelVisible(!isStatisticsPanelVisible)
+                }}
+                style={{ marginBottom: '1rem', alignSelf: 'flex-start' }}
+              >
+                {isStatisticsPanelVisible ? 'Hide Statistics' : 'Show Statistics'}
+              </Button>
+              <Button type="primary" onClick={() => manageShapefileLayer(false)} disabled={!hasShapefileLayer} style={{ marginBottom: '1rem' }}>
+                Remove Shapefile Layer
+              </Button>
+              <Button type="primary" onClick={() => managePrecinctLayer(false)} disabled={!hasPrecinctLayer} style={{ marginBottom: '1rem' }}>
+                Remove Precinct Layer
+              </Button>
             </div>
           )}
         </MapContainer>

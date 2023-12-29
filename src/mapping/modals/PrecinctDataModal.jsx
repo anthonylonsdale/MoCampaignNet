@@ -18,17 +18,18 @@ const PrecinctDataModal = ({ visible, precinctData, onCancel, setElectoralFieldM
 
   useEffect(() => {
     if (visible && electoralFields.length > 0) {
-      // Set the first electoral field as the current one for highlighting
       setCurrentElectoralField(electoralFields[0].content)
     }
   }, [visible, electoralFields])
 
   const handleMappingFinalized = (mapping) => {
-    console.log('Mapping finalized:', mapping)
     setElectoralFieldMapping(mapping)
     setElectoralDataFields(electoralFields)
     setMappingModalVisible(false)
     onCancel()
+    setNonElectoralFields([])
+    setElectoralFields([])
+    setItems([])
   }
 
   const openMappingModal = () => {

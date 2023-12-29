@@ -34,8 +34,9 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
         .then((excelData) => {
           console.log(excelData)
           setExcelData(excelData)
-          setMaxRows(excelData.data['A'].length)
-          setSliderValue(excelData.data['A'].length)
+          const firstColumn = excelData.columns.length > 0 ? excelData.columns[0].match(/\(([^)]+)\)/)[1] : 'A'
+          setMaxRows(excelData.data[firstColumn].length)
+          setSliderValue(excelData.data[firstColumn].length)
         })
         .catch((error) => {
           console.error('Error reading file:', error)

@@ -1,7 +1,7 @@
 import { DownOutlined, UpOutlined } from '@ant-design/icons'
 import { Button, List, Modal, Select, message } from 'antd'
 import React, { useEffect, useState } from 'react'
-import './PartyAffiliation.css'
+import './PartyAffiliationModal.css'
 
 const assignPartyColor = (party) => {
   switch (party) {
@@ -64,17 +64,14 @@ const PartyAffiliationModal = ({
     const counts = { ...partyCountStructure }
 
     mapData.data[columnLetter].forEach((rawValue) => {
-      // Use the mapping to increase the count for the corresponding party
       const party = partyMappings[rawValue]
       if (party && counts.hasOwnProperty(party)) {
         counts[party]++
       } else {
-        // If the value is not mapped, count it as 'No Data'
         counts['No Data']++
       }
     })
 
-    // Convert the counts to an array suitable for the dataSource of the List component
     return Object.keys(partyCountStructure).map((party) => ({
       party: party,
       count: counts[party],

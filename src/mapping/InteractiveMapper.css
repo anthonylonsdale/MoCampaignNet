@@ -101,3 +101,8 @@
   color: black; /* Text color */
   text-align: center; /* Center the text within the divIcon */
 }
+
+.pill-button {
+  height: 2rem; /* Adjust height to your preference */
+  border-radius: 20px; /* Half of the height will give us a perfect pill shape */
+}

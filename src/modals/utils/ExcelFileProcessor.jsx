@@ -1,48 +1,66 @@
 import * as XLSX from 'xlsx'
 
+export const processData = (workbook) => {
+  const sheetName = workbook.SheetNames[0]
+  const sheet = workbook.Sheets[sheetName]
+  const range = XLSX.utils.decode_range(sheet['!ref'])
+  const dataDict = {}
+  const columns = []
+
+  for (let R = range.s.r; R <= range.e.r; ++R) {
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      const cellRef = XLSX.utils.encode_cell({ c: C, r: R })
+      const cell = sheet[cellRef]
+      const columnName = XLSX.utils.encode_col(C)
+
+      if (R === 0 && cell) {
+        columns.push(`${cell.v} (${columnName})`)
+        dataDict[columnName] = []
+      } else if (cell) {
+        dataDict[columnName][R - 1] = cell.v
+      }
+    }
+  }
+
+  Object.keys(dataDict).forEach((column) => {
+    for (let i = 0; i < range.e.r; i++) {
+      if (dataDict[column][i] === undefined) {
+        dataDict[column][i] = null
+      }
+    }
+  })
+
+  return { sheetName, columns, data: dataDict }
+}
+
 export const readExcelFile = (droppedFile) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
 
     reader.onload = (e) => {
-      const data = new Uint8Array(e.target.result)
-      const workbook = XLSX.read(data, { type: 'array' })
-      const sheetName = workbook.SheetNames[0]
-      const sheet = workbook.Sheets[sheetName]
-      const range = XLSX.utils.decode_range(sheet['!ref'])
-      const dataDict = {}
-      const columns = []
+      let workbook
 
-      for (let R = range.s.r; R <= range.e.r; ++R) {
-        for (let C = range.s.c; C <= range.e.c; ++C) {
-          const cellRef = XLSX.utils.encode_cell({ c: C, r: R })
-          const cell = sheet[cellRef]
-          const columnName = XLSX.utils.encode_col(C)
-
-          if (R === 0 && cell) {
-            columns.push(`${cell.v} (${columnName})`)
-            dataDict[columnName] = []
-          } else if (cell) {
-            dataDict[columnName][R - 1] = cell.v
-          }
-        }
+      if (droppedFile.type === 'text/csv' || /\.csv$/i.test(droppedFile.name)) {
+        const data = e.target.result
+        const parsedCSV = XLSX.read(data, { type: 'string' })
+        workbook = parsedCSV
+      } else {
+        const binaryData = droppedFile.type === 'application/vnd.ms-excel' || /\.xls$/i.test(droppedFile.name) ? e.target.result : new Uint8Array(e.target.result)
+        workbook = XLSX.read(binaryData, { type: droppedFile.type === 'application/vnd.ms-excel' ? 'binary' : 'array' })
       }
 
-      Object.keys(dataDict).forEach((column) => {
-        for (let i = 0; i < range.e.r; i++) {
-          if (dataDict[column][i] === undefined) {
-            dataDict[column][i] = null
-          }
-        }
-      })
-      resolve({ sheetName, columns, data: dataDict })
+      resolve(processData(workbook))
     }
 
     reader.onerror = reject
-    reader.readAsArrayBuffer(droppedFile)
+
+    if (droppedFile.type === 'text/csv' || /\.csv$/i.test(droppedFile.name)) {
+      reader.readAsText(droppedFile)
+    } else {
+      reader.readAsArrayBuffer(droppedFile)
+    }
   })
 }
-
 
 export const applyDataCleaning = (data, options) => {
   const newData = {}

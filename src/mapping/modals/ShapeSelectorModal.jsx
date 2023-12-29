@@ -1,5 +1,5 @@
 // ShapeSelectorModal.jsx
-import { Button, Modal, Select } from 'antd'
+import { Button, Checkbox, Modal, Select } from 'antd'
 import React, { useState } from 'react'
 import './ShapeSelectorModal.css'
 
@@ -10,6 +10,11 @@ const ShapeSelectorModal = ({ isModalOpen, setIsModalOpen, shapes, setFilteredSh
 
   const handleIdFieldChange = (value) => {
     setIdFieldName(value)
+  }
+
+  const resetIdFieldSelection = () => {
+    setIdFieldName('')
+    setTempSelectedShapes([])
   }
 
   const handleShapeSelection = (shape, isSelected) => {
@@ -45,8 +50,32 @@ const ShapeSelectorModal = ({ isModalOpen, setIsModalOpen, shapes, setFilteredSh
     }
 
     setFilteredShapes(tempSelectedShapes)
+    setTempSelectedShapes([])
     setIsModalOpen(false)
     setModalCompleted(true)
+  }
+
+  const renderFooter = () => {
+    // When idFieldName is set, show the footer with the "Change Field Selection" button
+    if (idFieldName) {
+      return [
+        <Button key="back" onClick={resetIdFieldSelection}>
+          Change Field Selection
+        </Button>,
+        <Button key="submit" type="primary" onClick={handleModalSubmit}>
+          OK
+        </Button>,
+        <Button key="cancel" onClick={() => setIsModalOpen(false)}>
+          Cancel
+        </Button>,
+      ]
+    } else {
+      return [
+        <Button key="cancel" onClick={() => setIsModalOpen(false)}>
+          Cancel
+        </Button>,
+      ]
+    }
   }
 
   return (
@@ -55,6 +84,7 @@ const ShapeSelectorModal = ({ isModalOpen, setIsModalOpen, shapes, setFilteredSh
       open={isModalOpen}
       onOk={handleModalSubmit}
       onCancel={() => setIsModalOpen(false)}
+      footer={renderFooter()}
     >
       {!idFieldName && (
         <>
@@ -62,7 +92,7 @@ const ShapeSelectorModal = ({ isModalOpen, setIsModalOpen, shapes, setFilteredSh
           <Select
             showSearch
             style={{ width: '100%' }}
-            placeholder="Select the field for IDs"
+            placeholder="Select district ID from fields"
             onChange={handleIdFieldChange}
           >
             {Object.keys(shapes?.[0]?.properties || {}).map((key) => (
@@ -79,16 +109,17 @@ const ShapeSelectorModal = ({ isModalOpen, setIsModalOpen, shapes, setFilteredSh
           <div className="shape-selection-container">
             {shapes && shapes.map((shape) => (
               <div key={shape.properties[idFieldName]} className="shape-row">
-                <label>
-                  <input
-                    type="checkbox"
-                    onMouseDown={(e) => handleShapeSelection(shape, !e.target.checked)}
-                    onMouseUp={() => setIsMouseDown(false)}
-                    onMouseEnter={() => handleMouseEnter(shape)}
-                    checked={tempSelectedShapes.some((s) => s.properties[idFieldName] === shape.properties[idFieldName])}
-                  />
+                <Checkbox
+                  onMouseDown={(e) => {
+                    e.preventDefault()
+                    handleShapeSelection(shape, !e.target.checked)
+                  }}
+                  onMouseUp={() => setIsMouseDown(false)}
+                  onMouseEnter={() => handleMouseEnter(shape)}
+                  checked={tempSelectedShapes.some((s) => s.properties[idFieldName] === shape.properties[idFieldName])}
+                >
                   {` District ${shape.properties[idFieldName]}`}
-                </label>
+                </Checkbox>
               </div>
             ))}
           </div>
