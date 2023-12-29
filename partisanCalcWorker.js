@@ -115,12 +115,6 @@ self.onmessage = function(e) {
         color = colorScale(winningMargin).hex()
       }
 
-      console.log(electionCode)
-      console.log(parties)
-      console.log(sortedParties)
-      console.log(winningMargin)
-      console.log(districtMargins)
-
       districtMargins[districtId][electionCode] = color
     })
   })
