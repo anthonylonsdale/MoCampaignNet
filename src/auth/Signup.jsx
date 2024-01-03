@@ -1,5 +1,4 @@
-import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
-import { Button, Form, Input, List, Typography, message } from 'antd'
+import { Button, Form, Input, Typography, message } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { createUserWithEmailAndPassword, getAuth, updateProfile } from 'firebase/auth'
 import { collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore'
@@ -7,6 +6,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import logo from '../images/logoblank.png'
 import './Signup.css'
+import PasswordRequirements from './components/PasswordRequirements.jsx'
 import { db } from './firebase.jsx'
 
 const { Text } = Typography
@@ -15,19 +15,10 @@ function Signup() {
   const [error, setError] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [displayName, setDisplayName] = useState('')
-  const [passwordRequirements, setPasswordRequirements] = useState([false, false, false, false, false])
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true)
   const [showRequirements, setShowRequirements] = useState(false)
   const history = useNavigate()
   const [form] = useForm()
-
-  const onFocusPassword = () => {
-    setShowRequirements(true)
-  }
-
-  const onBlurPassword = () => {
-    setShowRequirements(false)
-  }
 
   const onFinish = async (values) => {
     const { email, password, displayName } = values
@@ -40,7 +31,6 @@ function Signup() {
     const querySnapshot = await getDocs(q)
 
     if (!querySnapshot.empty) {
-      // Display name already exists
       setError('Display name already exists. Please choose another.')
       return
     }
@@ -65,14 +55,6 @@ function Signup() {
     }
   }
 
-  const generateIcon = (isMet) => (
-    isMet ? (
-      <CheckCircleOutlined style={{ color: 'green' }} />
-    ) : (
-      <CloseCircleOutlined style={{ color: 'red' }} />
-    )
-  )
-
   const checkRequirements = async () => {
     const email = form.getFieldValue('email')
     const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
@@ -86,32 +68,12 @@ function Signup() {
       /[!@#$%^&*]/.test(newPassword),
     ]
 
-    setPasswordRequirements(passwordRequirements)
-
     const areAllRequirementsMet =
       isEmailValid &&
       isDisplayNameEntered &&
       passwordRequirements.every((requirement) => requirement)
     setIsSubmitDisabled(!areAllRequirementsMet)
   }
-
-  const requirementsData = [
-    {
-      text: 'At least 8 characters',
-    },
-    {
-      text: 'Contains at least one uppercase letter',
-    },
-    {
-      text: 'Contains at least one lowercase letter',
-    },
-    {
-      text: 'Contains at least one digit (0-9)',
-    },
-    {
-      text: 'Contains at least one special character (!@#$%^&*)',
-    },
-  ]
 
   useEffect(() => {
     checkRequirements()
@@ -155,15 +117,19 @@ function Signup() {
               className="auth-input"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              onFocus={onFocusPassword}
-              onBlur={onBlurPassword}
+              onFocus={() => {
+                setShowRequirements(true)
+              }}
+              onBlur={() => {
+                setShowRequirements(false)
+              }}
             />
           </Form.Item>
 
           <Form.Item
             label="Display Name"
             name="displayName"
-            className="auth-form-item" // Assuming this class is styled in Signup.css
+            className="auth-form-item"
             rules={[
               { required: true, message: 'Please enter your display name!' },
             ]}
@@ -175,23 +141,9 @@ function Signup() {
               onChange={(e) => setDisplayName(e.target.value)}
             />
           </Form.Item>
-          {showRequirements && (
-            <div className="password-requirements">
-              <List
-                size="small"
-                bordered
-                dataSource={requirementsData.map((requirement, index) => ({
-                  ...requirement,
-                  icon: generateIcon(passwordRequirements[index]),
-                }))}
-                renderItem={(item) => (
-                  <List.Item>
-                    {item.icon}&nbsp;{item.text}
-                  </List.Item>
-                )}
-              />
-            </div>
-          )}
+
+          <PasswordRequirements password={newPassword} visible={showRequirements} />
+
           {error && <div className="error-text">{error}</div>}
           <Form.Item>
             <Button

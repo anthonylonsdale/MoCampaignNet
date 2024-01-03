@@ -1,4 +1,4 @@
-import { Button, Layout, Tabs, Typography } from 'antd'
+import { Button, Layout, Typography } from 'antd'
 import { GoogleAuthProvider, getAuth, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
 import 'leaflet/dist/leaflet.css'
@@ -8,15 +8,12 @@ import Auth from '../auth/auth.jsx'
 import { db } from '../auth/firebase.jsx'
 import CustomHeader from '../components/CustomHeader.jsx'
 import AppFooter from '../components/Footer.jsx'
-import HtmlDisplay from '../components/HtmlDisplay.jsx'
 import Sidebar from '../components/SideBar.jsx'
-import missouriDotMap from '../images/mokan.png'
 import MappingContainer from '../mapping/MapContainer.jsx'
 import './CampaignTools.css'
 
 const { Content } = Layout
 const { Text, Title } = Typography
-const { TabPane } = Tabs
 
 function CampaignTools() {
   const [user, setUser] = useState(null)
@@ -80,24 +77,6 @@ function CampaignTools() {
     }
   }
 
-  const userContainer = () => {
-    return (
-      <div className="user-info">
-        <div className="text-container">
-          <Text className="welcome-text">Welcome, {user.displayName}</Text>
-          <Button className="action-button" onClick={() => setModalVisible(true)}>
-            Account Settings
-          </Button>
-        </div>
-        <div className="button-container">
-          <Button className="action-button" onClick={handleSignOut}>
-            Sign Out
-          </Button>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <>
       <Layout className="campaign-layout">
@@ -112,9 +91,28 @@ function CampaignTools() {
             {user ? (
           <>
             <div className="user-container">
-              {userContainer()}
+              <div className="text-container">
+                <Text className="welcome-text">Welcome, {user.displayName}</Text>
+                <Button className="action-button" onClick={() => setModalVisible(true)}>
+                  Account Settings
+                </Button>
+              </div>
+              <div className="button-container">
+                <Button className="action-button" onClick={handleSignOut}>
+                  Sign Out
+                </Button>
+              </div>
             </div>
+
             <MappingContainer />
+
+            <div className="html-container">
+              <Title level={4}>
+                (Demo) Backend Server Integration Test
+              </Title>
+              <Button onClick={sendMessage}>Send Message</Button>
+            </div>
+            {/*
             <div className="html-container">
               <Title level={4}>
                 Common Geographic Subdivisions:
@@ -139,12 +137,6 @@ function CampaignTools() {
             </Tabs>
             <div className="html-container">
               <Title level={4}>
-                (Demo) Backend Server Integration Test
-              </Title>
-              <Button onClick={sendMessage}>Send Message</Button>
-            </div>
-            <div className="html-container">
-              <Title level={4}>
                 Premium Data Map:
               </Title>
             </div>
@@ -156,11 +148,8 @@ function CampaignTools() {
                 (Demo) Clay County Traffic Route Map:
               </Title>
               <HtmlDisplay fileName={'route_map'} />
-              <Title level={4}>
-                (Demo) Travelling Salesman Problem Solver for Voters in Walkbook:
-              </Title>
-              <HtmlDisplay fileName={'optimized_route_map'} />
             </div>
+            */}
           </>
           ) : (
             <Auth handleSignIn={handleSignIn} />

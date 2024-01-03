@@ -335,7 +335,7 @@ const InteractiveMapper = ({ mapData, setMapData, precinctData, clearMarkerData,
 
   const [idFieldName, setIdFieldName] = useState('')
 
-  const [isStatisticsPanelVisible, setIsStatisticsPanelVisible] = useState(true)
+  const [isStatisticsPanelVisible, setIsStatisticsPanelVisible] = useState(false)
 
   const managePrecinctLayer = () => {
     if (precinctGroupRef.current) {

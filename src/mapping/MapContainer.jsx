@@ -6,7 +6,7 @@ import useMapData from './hooks/useMapDataHook.jsx'
 import usePrecinctData from './hooks/usePrecinctDataHook.jsx'
 
 const MappingContainer = () => {
-  // Using custom hooks to manage related state
+  // Using custom hooks to manage related states
   const {
     mapData,
     setMapData,
@@ -20,24 +20,21 @@ const MappingContainer = () => {
   } = usePrecinctData()
 
   return (
-    <>
-      <div className="interactive-mapper-title">Data Analysis and Visualization Platform</div>
-      <div className="interactive-mapper-container">
-        <ToolPanel
-          mapData={mapData}
-          setMapData={setMapData}
-          precinctDataState={precinctData}
-          setPrecinctDataState={setPrecinctData}
-        />
-        <InteractiveMapper
-          mapData={mapData}
-          setMapData={setMapData}
-          precinctData={precinctData}
-          clearMarkerData={clearMarkerData}
-          clearPrecinctData={clearPrecinctData}
-        />
-      </div>
-    </>
+    <div className="interactive-mapper-container">
+      <ToolPanel
+        mapData={mapData}
+        setMapData={setMapData}
+        precinctDataState={precinctData}
+        setPrecinctDataState={setPrecinctData}
+      />
+      <InteractiveMapper
+        mapData={mapData}
+        setMapData={setMapData}
+        precinctData={precinctData}
+        clearMarkerData={clearMarkerData}
+        clearPrecinctData={clearPrecinctData}
+      />
+    </div>
   )
 }
 

@@ -11,12 +11,11 @@
 
 .user-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   padding: 20px;
-  border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  margin: 0 auto;
+  margin-top: 0;
   background-color: #fff;
 }
 
@@ -30,17 +29,17 @@
 
 .user-info {
   align-items: center;
-  display: flex;  /* Ensure this container uses flexbox */
-  justify-content: flex-end;  /* Aligns content to the right */
-  width: 100%;  /* Takes full width */
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
 }
 
 .upload-container {
-  background-color: rgba(0, 0, 0, 0.1); /* Shaded background color */
-  border: 2px dashed #cccccc; /* Dashed border style */
-  padding: 20px; /* Padding for the container */
-  text-align: center; /* Center align the text and button */
-  margin-top: 20px; /* Adjust the margin as needed */
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 2px dashed #cccccc;
+  padding: 20px;
+  text-align: center;
+  margin-top: 20px;
 }
 
 .upload-text p {
@@ -49,10 +48,9 @@
 }
 
 .upload-button {
-  margin-top: 10px; /* Adjust the margin as needed */
+  margin-top: 10px;
 }
 
-/* Style for the "Upload Excel File" button */
 .upload-button button {
   background-color: #1890ff;
   color: #ffffff;
