@@ -2,6 +2,7 @@
 const functions = require("firebase-functions")
 const admin = require("firebase-admin")
 const cors = require("cors")
+const { v4: uuidv4 } = require("uuid")
 
 admin.initializeApp()
 
@@ -70,4 +71,62 @@ exports.createSubaccount = functions.https.onRequest((req, res) => {
       res.status(403).send("Forbidden!")
     }
   })
+})
+
+exports.createSession = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError("unauthenticated",
+        "The user must be logged in to create a session.")
+  }
+
+  const userId = context.auth.uid
+  const sessionId = uuidv4()
+
+  const sessionsRef = admin.firestore().collection("sessions")
+
+  await sessionsRef.doc(userId).set({
+    sessionId: sessionId,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    isValid: true,
+  })
+
+  return { sessionId }
+})
+
+exports.validateSession = functions.https.onCall(async (data) => {
+  const userId = data.userId
+  const sessionId = data.sessionId
+  const sessionDoc = await admin.firestore().collection("sessions")
+      .doc(userId).get()
+
+  if (!sessionDoc.exists) {
+    return { isValid: false }
+  }
+
+  const sessionData = sessionDoc.data()
+  return { isValid: sessionData.sessionId === sessionId &&
+    sessionData.isValid }
+})
+
+exports.invalidateSession = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError("unauthenticated",
+        "The function must be called while authenticated.")
+  }
+
+  const sessionId = data.sessionId
+  if (!sessionId) {
+    throw new functions.https.HttpsError("invalid-argument",
+        "The function must be called with a session ID.")
+  }
+
+  try {
+    const sessionRef = admin.firestore().collection("sessions").doc(sessionId)
+    await sessionRef.update({ isValid: false })
+    return { success: true }
+  } catch (error) {
+    console.error("Error invalidating session:", error)
+    throw new functions.https.HttpsError("unknown",
+        "Failed to invalidate session.")
+  }
 })

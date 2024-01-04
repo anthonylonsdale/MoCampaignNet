@@ -3,8 +3,9 @@ import { Button, Form, Input, List, Modal, Tabs, Tag, Typography, message } from
 import { useForm } from 'antd/es/form/Form'
 import { sendPasswordResetEmail } from 'firebase/auth'
 import { collection, getDocs } from 'firebase/firestore'
+import { getFunctions, httpsCallable } from 'firebase/functions'
 import React, { useEffect, useState } from 'react'
-import { getActiveSessions, markSessionAsInactive } from '../auth/LoginTracer.jsx'
+import { getActiveSessions } from '../auth/LoginTracer.jsx'
 import { usePermissions } from '../auth/Permissions.jsx'
 import { auth, db } from '../auth/firebase.jsx'
 import './AccountInfoModal.css'
@@ -17,6 +18,8 @@ function AccountInfoModal({ visible, onClose }) {
   const { user, permissions } = usePermissions()
   const [subaccounts, setSubaccounts] = useState([])
   const [activeSessions, setActiveSessions] = useState([])
+
+  const functions = getFunctions()
 
   const userInfo = {
     displayName: user?.displayName || 'N/A',
@@ -85,7 +88,7 @@ function AccountInfoModal({ visible, onClose }) {
   }, [user, isAdmin, db])
 
   useEffect(() => {
-    if (user) {
+    if (visible && user) {
       const fetchSessions = async () => {
         const sessions = await getActiveSessions(user.uid)
         setActiveSessions(sessions)
@@ -96,10 +99,16 @@ function AccountInfoModal({ visible, onClose }) {
   }, [user])
 
   const handleTerminateSession = async (sessionId) => {
-    await markSessionAsInactive(user.uid, sessionId)
-    setActiveSessions(activeSessions.filter((session) => session.id !== sessionId))
+    const invalidateSessionFn = httpsCallable(functions, 'invalidateSession')
+    try {
+      await invalidateSessionFn({ sessionId })
+      setActiveSessions(activeSessions.filter((session) => session.sessionId !== sessionId))
+      message.success('Session terminated successfully.')
+    } catch (error) {
+      console.error('Error terminating session:', error)
+      message.error('Failed to terminate session.')
+    }
   }
-
 
   return (
     <Modal
