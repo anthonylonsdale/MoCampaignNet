@@ -3,7 +3,6 @@ import { GoogleAuthProvider, getAuth, onAuthStateChanged, signInWithPopup, signO
 import { doc, getDoc } from 'firebase/firestore'
 import 'leaflet/dist/leaflet.css'
 import React, { useEffect, useState } from 'react'
-import AccountSettingsModal from '../auth/AccountSettingsModal.jsx'
 import Auth from '../auth/auth.jsx'
 import { db } from '../auth/firebase.jsx'
 import CustomHeader from '../components/CustomHeader.jsx'
@@ -17,8 +16,6 @@ const { Text, Title } = Typography
 
 function CampaignTools() {
   const [user, setUser] = useState(null)
-  const [modalVisible, setModalVisible] = useState(false)
-  const [isAdministrator, setIsAdministrator] = useState(false)
 
   const auth = getAuth()
 
@@ -44,13 +41,13 @@ function CampaignTools() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        setUser(currentUser)
-
-        const userDoc = doc(db, 'users', currentUser.email)
+        const userDoc = doc(db, 'users', currentUser.uid)
         const docSnap = await getDoc(userDoc)
 
         if (docSnap.exists()) {
-          setIsAdministrator(docSnap.data().isAdministrator)
+          setUser(currentUser)
+        } else {
+          alert('Error with User...')
         }
       }
     })
@@ -80,22 +77,15 @@ function CampaignTools() {
   return (
     <>
       <Layout className="campaign-layout">
-        <AccountSettingsModal
-          visible={modalVisible}
-          onCancel={() => setModalVisible(false)}
-        />
         <CustomHeader />
         <Layout>
-          <Sidebar isAdministrator={isAdministrator} />
+          <Sidebar user={user} />
           <Content className="content">
             {user ? (
           <>
             <div className="user-container">
               <div className="text-container">
                 <Text className="welcome-text">Welcome, {user.displayName}</Text>
-                <Button className="action-button" onClick={() => setModalVisible(true)}>
-                  Account Settings
-                </Button>
               </div>
               <div className="button-container">
                 <Button className="action-button" onClick={handleSignOut}>

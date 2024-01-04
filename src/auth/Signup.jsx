@@ -36,19 +36,20 @@ function Signup() {
     }
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+      const userCredentials = await createUserWithEmailAndPassword(auth, email, password)
       message.success('Account created successfully')
 
       // Save user info to Firestore
-      const docRef = doc(db, 'users', email)
+      const docRef = doc(db, 'users', userCredentials.user.uid)
       await setDoc(docRef, {
         email: email,
         username: displayName,
         password: password,
+        phoneNumber: null,
         isAdministrator: false,
       })
 
-      await updateProfile(userCredential.user, { displayName })
+      await updateProfile(userCredentials.user, { displayName })
       history('/campaign-tools')
     } catch (error) {
       setError(error.message)

@@ -1,0 +1,15 @@
+.permissions-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-icon {
+  color: gold;
+  margin-right: 8px;
+}
+
+.permissions-list {
+  max-height: 25rem;
+  overflow-y: auto;
+}

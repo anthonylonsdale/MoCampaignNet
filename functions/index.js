@@ -35,3 +35,39 @@ exports.addmessage = functions.https.onRequest((req, res) => {
     }
   })
 })
+
+exports.createSubaccount = functions.https.onRequest((req, res) => {
+  corsHandler(req, res, async () => {
+    if (req.method === "POST") {
+      const { email, displayName, role, parentUserUid } = req.body
+      const subaccountDetails = {
+        email: email,
+        displayName: displayName,
+        role: role,
+      }
+      try {
+        await admin.auth().createUser({
+          email: email,
+          displayName: displayName,
+          emailVerified: false,
+        })
+
+        const userDocRef = admin.firestore().collection("users")
+            .doc(parentUserUid)
+
+        const subaccountDocRef = userDocRef.collection("subaccounts").doc()
+        await subaccountDocRef.set(subaccountDetails)
+
+        res.status(200).send({
+          success: true,
+          email: email,
+        })
+      } catch (error) {
+        console.error("Error creating subaccount: ", error)
+        res.status(500).send({ success: false, error: error.message })
+      }
+    } else {
+      res.status(403).send("Forbidden!")
+    }
+  })
+})

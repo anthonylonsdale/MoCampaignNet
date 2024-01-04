@@ -7,13 +7,15 @@ import {
 } from '@ant-design/icons'
 import { Layout, Menu } from 'antd'
 import React, { useState } from 'react'
-import PermissionsModal from '../modals/PermissionsModal.jsx'
+import AccountSettingsModal from '../auth/AccountSettingsModal.jsx'
+import PermissionsModal from '../modals/AccountInfoModal.jsx'
 
 const { Sider } = Layout
 
-function Sidebar({ isAdministrator }) {
+function Sidebar({ user }) {
   const [collapsed, setCollapsed] = useState(false)
   const [permissionsModalVisible, setPermissionsModalVisible] = useState(false)
+  const [settingsModalVisible, setSettingsModalVisible] = useState(false)
 
   return (
     <Sider
@@ -29,17 +31,21 @@ function Sidebar({ isAdministrator }) {
         <Menu.Item key="2" icon={<HomeOutlined />} onClick={() => window.scrollTo(0, 0)}>
           Home
         </Menu.Item>
-        <Menu.Item key="3" icon={<UserOutlined />}>
-          Profile
+        <Menu.Item key="3" icon={<UserOutlined />} onClick={() => setPermissionsModalVisible(!permissionsModalVisible)}>
+          Account
         </Menu.Item>
-        <Menu.Item key="4" icon={<SettingOutlined />} onClick={() => setPermissionsModalVisible(!permissionsModalVisible)}>
+        <Menu.Item key="4" icon={<SettingOutlined />} onClick={() => setSettingsModalVisible(!settingsModalVisible)}>
           Settings
         </Menu.Item>
       </Menu>
       <PermissionsModal
         visible={permissionsModalVisible}
         onClose={() => setPermissionsModalVisible(!permissionsModalVisible)}
-        userRole={isAdministrator ? 'administrator' : 'user'}
+        user={user}
+      />
+      <AccountSettingsModal
+        visible={settingsModalVisible}
+        onCancel={() => setSettingsModalVisible(!settingsModalVisible)}
       />
     </Sider>
   )
