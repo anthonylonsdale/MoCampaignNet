@@ -4,6 +4,7 @@ import { useForm } from 'antd/es/form/Form'
 import { sendPasswordResetEmail } from 'firebase/auth'
 import { collection, getDocs } from 'firebase/firestore'
 import React, { useEffect, useState } from 'react'
+import { getActiveSessions, markSessionAsInactive } from '../auth/LoginTracer.jsx'
 import { usePermissions } from '../auth/Permissions.jsx'
 import { auth, db } from '../auth/firebase.jsx'
 import './AccountInfoModal.css'
@@ -15,6 +16,7 @@ function AccountInfoModal({ visible, onClose }) {
   const [form] = useForm()
   const { user, permissions } = usePermissions()
   const [subaccounts, setSubaccounts] = useState([])
+  const [activeSessions, setActiveSessions] = useState([])
 
   const userInfo = {
     displayName: user?.displayName || 'N/A',
@@ -82,6 +84,23 @@ function AccountInfoModal({ visible, onClose }) {
     }
   }, [user, isAdmin, db])
 
+  useEffect(() => {
+    if (user) {
+      const fetchSessions = async () => {
+        const sessions = await getActiveSessions(user.uid)
+        setActiveSessions(sessions)
+      }
+
+      fetchSessions()
+    }
+  }, [user])
+
+  const handleTerminateSession = async (sessionId) => {
+    await markSessionAsInactive(user.uid, sessionId)
+    setActiveSessions(activeSessions.filter((session) => session.id !== sessionId))
+  }
+
+
   return (
     <Modal
       title="Account Information"
@@ -91,7 +110,6 @@ function AccountInfoModal({ visible, onClose }) {
       width={800}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', maxHeight: '400px' }}>
-        {/* Left half - Profile Details */}
         <div style={{ flex: '1 0 50%', overflowY: 'auto', paddingRight: '10px' }}>
           <Title level={4}>
             <UserOutlined className="admin-icon" /> Profile Details
@@ -104,8 +122,6 @@ function AccountInfoModal({ visible, onClose }) {
               For elevated privileges, please reach out to alonsdale@bernoullitechnologies.net
             </Paragraph>}
         </div>
-
-        {/* Right half - List of Subaccounts */}
         {isAdmin && (
           <div style={{ flex: '1 0 50%', overflowY: 'auto' }}>
             <Title level={4}>Subaccounts</Title>
@@ -130,6 +146,7 @@ function AccountInfoModal({ visible, onClose }) {
           </div>
         )}
       </div>
+
       <Tabs defaultActiveKey="1" >
         <TabPane tab="Permissions" key="1">
           <List
@@ -151,6 +168,7 @@ function AccountInfoModal({ visible, onClose }) {
             )}
           />
         </TabPane>
+
         {isAdmin && (
           <TabPane tab="Create Subaccount" key="2">
             <Form
@@ -187,6 +205,23 @@ function AccountInfoModal({ visible, onClose }) {
             </Form>
           </TabPane>
         )}
+
+        <TabPane tab="Sessions" key="3">
+          <List
+            dataSource={activeSessions}
+            renderItem={(session) => (
+              <List.Item
+                actions={[
+                  <Button type="link" key={`${session.id}`} onClick={() => handleTerminateSession(session.id)}>
+                    Terminate Session
+                  </Button>,
+                ]}
+              >
+                IP: {session.ip}, Browser: {session.browser}
+              </List.Item>
+            )}
+          />
+        </TabPane>
       </Tabs>
     </Modal>
   )

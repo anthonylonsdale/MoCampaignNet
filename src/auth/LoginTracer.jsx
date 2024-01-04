@@ -39,13 +39,25 @@ async function loginTracer(userId) {
   }
 }
 
-// Function to mark a session as inactive
 async function markSessionAsInactive(userId, sessionId) {
   const sessionRef = doc(db, 'userLogins', userId, 'sessions', sessionId)
 
-  await updateDoc(sessionRef, {
-    isActive: false, // Mark the session as inactive
-  })
+  try {
+    await deleteDoc(sessionRef)
+  } catch (error) {
+    console.error('Error deleting session: ', error)
+  }
 }
 
-export { loginTracer, markSessionAsInactive }
+async function getActiveSessions(userId) {
+  const userLoginCollectionRef = collection(db, 'userLogins', userId, 'sessions')
+  const activeSessionsQuery = query(userLoginCollectionRef, where('logins.isActive', '==', true))
+  const querySnapshot = await getDocs(activeSessionsQuery)
+
+  return querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data().logins,
+  }))
+}
+
+export { getActiveSessions, loginTracer, markSessionAsInactive }

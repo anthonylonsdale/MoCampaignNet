@@ -77,3 +77,9 @@
 .action-button:hover {
     background-color: #f0f0f0;
 }
+
+.divider {
+  height: 2px; /* Adjust the height for the thickness of the divider */
+  background-color: black;
+  margin: 0; /* No spacing around the divider */
+}
