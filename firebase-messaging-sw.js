@@ -15,8 +15,9 @@ self.addEventListener('fetch', (event) => {
 })
 
 self.addEventListener('message', (event) => {
-  console.log('Posting message to client', { type: 'CHECK_SESSION', validationId })
-
+  // Log the incoming message for debugging purposes
+  console.log('Received message in service worker:', event.data)
+  console.log('gubs')
   if (event.data && event.data.type === 'SESSION_VALIDATION_RESPONSE') {
     const { validationId, isValid } = event.data
     const resolve = pendingValidations.get(validationId)
@@ -33,15 +34,19 @@ function generateUniqueId() {
 
 function isAuthRequest(request) {
   const url = new URL(request.url)
-  return url.hostname.includes('identitytoolkit.googleapis.com')
+  const isLoginRequest = url.pathname.includes('/accounts:signInWithPassword')
+  return url.hostname.includes('identitytoolkit.googleapis.com') && !isLoginRequest
 }
 
 async function handleAuthRequest(request, clientId) {
+  console.log('TEST')
+  console.log('gibs')
   // Create a message channel for two-way communication
   const messageChannel = new MessageChannel()
-  const client = await clients.get(clientId)
+  const client = await self.clients.get(clientId)
 
   if (!client) {
+    console.log('No client found for clientId:', clientId)
     return fetch(request)
   }
 
@@ -57,8 +62,10 @@ async function handleAuthRequest(request, clientId) {
   // Wait for the response
   const isValidSession = await validationPromise
   if (!isValidSession) {
+    console.log('Session is not valid')
     return new Response('Invalid session', { status: 401 })
   }
 
+  console.log('Session is valid, proceeding with request')
   return fetch(request)
 }
