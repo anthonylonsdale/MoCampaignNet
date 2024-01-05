@@ -5,29 +5,40 @@ self.addEventListener('install', () => {
 })
 
 self.addEventListener('fetch', (event) => {
-  if (isAuthRequest(event.request)) {
-    // Handle Firebase Authentication requests
-    event.respondWith(handleAuthRequest(event.request, event.clientId))
-  } else {
-    // Non-auth requests
-    event.respondWith(fetch(event.request))
+  // Check if this is a POST request to the Firebase Authentication endpoint
+  if (isFirebaseAuthPostRequest(event.request)) {
+    // If it is, bypass the service worker and allow the request to go directly to the network
+    return
   }
 })
 
+
 self.addEventListener('message', (event) => {
-  // Log the incoming message for debugging purposes
+  // This log should only include data that is within the scope of this event.
   console.log('Received message in service worker:', event.data)
-  console.log('gubs')
   if (event.data && event.data.type === 'SESSION_VALIDATION_RESPONSE') {
     const { validationId, isValid } = event.data
     const resolve = pendingValidations.get(validationId)
     if (resolve) {
+      console.log(`Resolving validation for ID ${validationId} with result: ${isValid}`)
       resolve(isValid)
       pendingValidations.delete(validationId)
+    } else {
+      console.log(`No pending validation for ID ${validationId} found.`)
     }
   }
 })
 
+function isFirebaseAuthPostRequest(request) {
+  const url = new URL(request.url)
+  return (
+    request.method === 'POST' &&
+    url.hostname.includes('identitytoolkit.googleapis.com') &&
+    url.pathname.includes('/accounts:signInWithPassword')
+  )
+}
+
+/*
 function generateUniqueId() {
   return 'id-' + Math.random().toString(36).substr(2, 16)
 }
@@ -40,10 +51,11 @@ function isAuthRequest(request) {
 
 async function handleAuthRequest(request, clientId) {
   console.log('TEST')
-  console.log('gibs')
   // Create a message channel for two-way communication
   const messageChannel = new MessageChannel()
   const client = await self.clients.get(clientId)
+
+  console.log(client)
 
   if (!client) {
     console.log('No client found for clientId:', clientId)
@@ -69,3 +81,4 @@ async function handleAuthRequest(request, clientId) {
   console.log('Session is valid, proceeding with request')
   return fetch(request)
 }
+*/
