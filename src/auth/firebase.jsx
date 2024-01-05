@@ -42,8 +42,25 @@ function getUserDeviceInfo() {
   const parser = new UAParser()
   const result = parser.getResult()
 
-  return { result }
+  const deviceModel = result.device.model || 'unknown'
+  const browserName = result.browser.name || 'unknown'
+  const browserVersion = result.browser.version || 'unknown'
+  const osName = result.os.name || 'unknown'
+  const osVersion = result.os.version || 'unknown'
+  const fullUserAgent = navigator.userAgent
+  const screenResolution = window.screen ? `${window.screen.width}x${window.screen.height}` : 'unknown'
+
+  return {
+    deviceModel,
+    browserName,
+    browserVersion,
+    osName,
+    osVersion,
+    fullUserAgent,
+    screenResolution,
+  }
 }
+
 
 const db = getFirestore(FireBase)
 

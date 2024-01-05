@@ -83,30 +83,45 @@ exports.createSession = functions.https.onCall(async (data, context) => {
   const sessionId = uuidv4()
 
   const sessionsRef = admin.firestore().collection("sessions")
-
   await sessionsRef.doc(userId).set({
     sessionId: sessionId,
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
     isValid: true,
+    ip: data.ip,
+    device: data.device,
+    browser: data.browser,
+    os: data.os,
+    screenResolution: data.screenResolution,
+    userAgent: data.userAgent,
   })
 
   return { sessionId }
 })
 
 exports.validateSession = functions.https.onCall(async (data) => {
-  const userId = data.userId
-  const sessionId = data.sessionId
-  const sessionDoc = await admin.firestore().collection("sessions")
-      .doc(userId).get()
+  try {
+    const { userId, sessionId } = data
+    if (!userId || !sessionId) {
+      throw new functions.https.HttpsError("invalid-argument",
+          "Missing userId or sessionId")
+    }
 
-  if (!sessionDoc.exists) {
-    return { isValid: false }
+    const sessionDoc = await admin.firestore().collection("sessions")
+        .doc(userId).get()
+    if (!sessionDoc.exists) {
+      return { isValid: false }
+    }
+
+    const sessionData = sessionDoc.data()
+    return { isValid: sessionData.sessionId === sessionId &&
+      sessionData.isValid }
+  } catch (error) {
+    console.error("Error in validateSession:", error)
+    throw new functions.https.HttpsError("internal",
+        "Internal server error", error)
   }
-
-  const sessionData = sessionDoc.data()
-  return { isValid: sessionData.sessionId === sessionId &&
-    sessionData.isValid }
 })
+
 
 exports.invalidateSession = functions.https.onCall(async (data, context) => {
   if (!context.auth) {
@@ -114,19 +129,33 @@ exports.invalidateSession = functions.https.onCall(async (data, context) => {
         "The function must be called while authenticated.")
   }
 
-  const sessionId = data.sessionId
+  const { sessionId } = data
   if (!sessionId) {
     throw new functions.https.HttpsError("invalid-argument",
         "The function must be called with a session ID.")
   }
 
+  const userId = context.auth.uid
+  const sessionRef = admin.firestore().collection("sessions").doc(userId)
+
   try {
-    const sessionRef = admin.firestore().collection("sessions").doc(sessionId)
+    const doc = await sessionRef.get()
+    if (!doc.exists) {
+      throw new functions.https.HttpsError("not-found",
+          "The session document does not exist.")
+    }
+
+    const sessionData = doc.data()
+    if (sessionData.sessionId !== sessionId) {
+      throw new functions.https.HttpsError("permission-denied",
+          "The session ID does not match the current session.")
+    }
+
     await sessionRef.update({ isValid: false })
     return { success: true }
   } catch (error) {
     console.error("Error invalidating session:", error)
     throw new functions.https.HttpsError("unknown",
-        "Failed to invalidate session.")
+        "Failed to invalidate session.", error)
   }
 })

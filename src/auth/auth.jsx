@@ -3,7 +3,6 @@ import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import logo from '../images/logoblank.png'
-// import { loginTracer } from './LoginTracer.jsx'
 import './auth.css'
 
 const { Text } = Typography
@@ -18,7 +17,6 @@ function Auth() {
     try {
       await signInWithEmailAndPassword(auth, email, password)
 
-      // loginTracer(auth.currentUser.uid)
       history('/campaign-tools')
     } catch (error) {
       setError(error.message)

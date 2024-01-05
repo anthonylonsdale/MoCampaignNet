@@ -1,12 +1,11 @@
-import { UserOutlined } from '@ant-design/icons'
+import { DesktopOutlined, MobileOutlined, UserOutlined } from '@ant-design/icons'
 import { Button, Form, Input, List, Modal, Tabs, Tag, Typography, message } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { sendPasswordResetEmail } from 'firebase/auth'
 import { collection, getDocs } from 'firebase/firestore'
 import { getFunctions, httpsCallable } from 'firebase/functions'
 import React, { useEffect, useState } from 'react'
-import { getActiveSessions } from '../auth/LoginTracer.jsx'
-import { usePermissions } from '../auth/Permissions.jsx'
+import { getActiveSessions, usePermissions } from '../auth/Permissions.jsx'
 import { auth, db } from '../auth/firebase.jsx'
 import './AccountInfoModal.css'
 
@@ -91,22 +90,33 @@ function AccountInfoModal({ visible, onClose }) {
     if (visible && user) {
       const fetchSessions = async () => {
         const sessions = await getActiveSessions(user.uid)
-        setActiveSessions(sessions)
+        setActiveSessions(sessions.map((session) => ({
+          ...session,
+          icon: session.deviceType === 'mobile' ? <MobileOutlined /> : <DesktopOutlined />,
+        })))
       }
-
       fetchSessions()
     }
-  }, [user])
+  }, [visible, user])
 
-  const handleTerminateSession = async (sessionId) => {
+  const handleTerminateSession = async (session) => {
+    // Prevent terminating the current session
+    if (session.sessionId === localStorage.getItem('sessionId')) {
+      message.error('You cannot terminate the current active session.')
+      return
+    }
+
     const invalidateSessionFn = httpsCallable(functions, 'invalidateSession')
     try {
-      await invalidateSessionFn({ sessionId })
-      setActiveSessions(activeSessions.filter((session) => session.sessionId !== sessionId))
-      message.success('Session terminated successfully.')
+      const invalidateResponse = await invalidateSessionFn({ sessionId: session.sessionId })
+      if (invalidateResponse.data.success) {
+        setActiveSessions(activeSessions.filter((s) => s.sessionId !== session.sessionId))
+        message.success('Session terminated successfully.')
+      } else {
+        message.error('Could not terminate the session. Please try again.')
+      }
     } catch (error) {
-      console.error('Error terminating session:', error)
-      message.error('Failed to terminate session.')
+      message.error('Failed to terminate session. Error: ' + error.message)
     }
   }
 
@@ -221,12 +231,12 @@ function AccountInfoModal({ visible, onClose }) {
             renderItem={(session) => (
               <List.Item
                 actions={[
-                  <Button type="link" key={`${session.id}`} onClick={() => handleTerminateSession(session.id)}>
+                  <Button type="link" key={session.id} onClick={() => handleTerminateSession(session)}>
                     Terminate Session
                   </Button>,
                 ]}
               >
-                IP: {session.ip}, Browser: {session.browser}
+                {session.icon} IP: {session.ip}, Browser: {session.browser}
               </List.Item>
             )}
           />

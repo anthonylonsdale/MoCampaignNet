@@ -1,9 +1,8 @@
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
 import { getFunctions, httpsCallable } from 'firebase/functions'
-import React, { createContext, useContext, useEffect, useState } from 'react'
-import { loginTracer } from './LoginTracer.jsx'
-import { auth, db } from './firebase.jsx'
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
+import { auth, db, getUserDeviceInfo, getUserIP } from './firebase.jsx'
 
 export const PermissionsContext = createContext({
   user: null,
@@ -24,13 +23,39 @@ const adminPermissions = {
   'Build and Export Datasets': true,
 }
 
+export const getActiveSessions = async (userId) => {
+  const sessionDocRef = doc(db, 'sessions', userId)
+
+  try {
+    const docSnap = await getDoc(sessionDocRef)
+
+    if (docSnap.exists() && docSnap.data().isValid) {
+      // Construct the session object with required fields
+      const sessionData = docSnap.data()
+      return [{
+        sessionId: docSnap.id,
+        ...sessionData,
+        icon: sessionData.deviceType === 'mobile' ? 'mobile' : 'desktop',
+        lastActive: sessionData.lastActive?.toDate().toLocaleString() || 'Unknown',
+      }]
+    } else {
+      console.log('No active session or session is not valid')
+      return []
+    }
+  } catch (error) {
+    console.error('Error getting active sessions:', error)
+    return []
+  }
+}
+
+
 export const PermissionsProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [permissions, setPermissions] = useState({})
   const [sessionId, setSessionId] = useState(localStorage.getItem('sessionId') || '')
+  const intervalSetRef = useRef(false)
 
   const functions = getFunctions()
-
   const createSession = httpsCallable(functions, 'createSession')
   const validateSession = httpsCallable(functions, 'validateSession')
   const invalidateSession = httpsCallable(functions, 'invalidateSession')
@@ -39,79 +64,90 @@ export const PermissionsProvider = ({ children }) => {
   console.log(sessionId)
 
   const handleSignOut = async () => {
-    if (user) {
-      try {
-        if (sessionId) {
-          await invalidateSession({ sessionId })
-        }
-        await signOut(auth)
-        localStorage.removeItem('sessionId')
-        setSessionId('')
-        setUser(null)
-        setPermissions({})
-      } catch (error) {
-        console.error('Error during sign out:', error)
+    console.log('SIGNING OUT!!!')
+    try {
+      if (sessionId) {
+        await invalidateSession({ sessionId })
       }
+      await signOut(auth)
+      localStorage.removeItem('sessionId')
+      setSessionId('')
+      setUser(null)
+      setPermissions({})
+    } catch (error) {
+      console.error('Error during sign out:', error)
     }
   }
 
+  // this is to validate the session
   useEffect(() => {
-    if (user && !sessionId) {
-      createSession().then((result) => {
-        const newSessionId = result.data.sessionId
-        localStorage.setItem('sessionId', newSessionId)
-        setSessionId(newSessionId)
-      }).catch((error) => {
-        console.error('Error creating session:', error)
-      })
-    }
-  }, [user, sessionId, createSession])
+    if (sessionId && !intervalSetRef.current) {
+      console.log('VALIDATING SESSION')
+      const validate = async () => {
+        try {
+          const userId = auth.currentUser ? auth.currentUser.uid : null
+          if (userId && sessionId) {
+            const result = await validateSession({ userId, sessionId })
+            if (!result.data.isValid) {
+              console.error('Session is invalid')
+              handleSignOut()
+            }
+          }
+        } catch (error) {
+          console.error('Error validating session:', error)
+        }
+      }
 
-  useEffect(() => {
-    let intervalId
+      validate()
+      const intervalId = setInterval(validate, 600000) // 10 minutes is 600,000
+      intervalSetRef.current = true
 
-    if (sessionId) {
-      intervalId = setInterval(() => {
-        validateSession({ sessionId })
-            .then((result) => {
-              if (!result.data.isValid) {
-                handleSignOut()
-              }
-            })
-            .catch((error) => {
-              console.error('Error validating session:', error)
-            })
-      }, 3600000)
-    }
-
-    return () => {
-      if (intervalId) {
+      return () => {
         clearInterval(intervalId)
+        intervalSetRef.current = false
       }
     }
-  }, [sessionId, validateSession])
+  }, [sessionId, validateSession, handleSignOut])
+
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      console.log('AUTH STATE CHANGED')
       if (currentUser) {
-        const userDoc = doc(db, 'users', currentUser.uid)
-        const docSnap = await getDoc(userDoc)
+        const userDocRef = doc(db, 'users', currentUser.uid)
+        const docSnap = await getDoc(userDocRef)
 
         if (docSnap.exists()) {
-          setUser(currentUser)
           const userData = docSnap.data()
-          const userIsAdmin = userData.isAdministrator
+          const userIsAdmin = !!userData.isAdministrator
+
+          setUser(currentUser)
           setPermissions(userIsAdmin ? { ...defaultPermissions, ...adminPermissions } : defaultPermissions)
 
-          await loginTracer(currentUser.uid)
+          if (!sessionId) {
+            const deviceInfo = getUserDeviceInfo()
+            const ipAddress = await getUserIP()
+
+
+            const sessionData = {
+              ip: ipAddress,
+              device: deviceInfo.deviceModel,
+              browser: `${deviceInfo.browserName} ${deviceInfo.browserVersion}`,
+              os: `${deviceInfo.osName} ${deviceInfo.osVersion}`,
+              screenResolution: deviceInfo.screenResolution,
+              userAgent: deviceInfo.fullUserAgent,
+            }
+
+            const sessionResult = await createSession(sessionData)
+            const newSessionId = sessionResult.data.sessionId
+            localStorage.setItem('sessionId', newSessionId)
+            setSessionId(newSessionId)
+          }
         } else {
-          alert('Error with User...')
-          setUser(null)
-          setPermissions({})
+          handleSignOut()
         }
       } else {
-        setUser(null)
-        setPermissions({})
+        handleSignOut()
       }
     })
 
