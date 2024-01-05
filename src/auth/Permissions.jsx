@@ -128,20 +128,20 @@ export const PermissionsProvider = ({ children }) => {
             const deviceInfo = getUserDeviceInfo()
             const ipAddress = await getUserIP()
 
-
             const sessionData = {
-              ip: ipAddress,
               device: deviceInfo.deviceModel,
-              browser: `${deviceInfo.browserName} ${deviceInfo.browserVersion}`,
+              ip: ipAddress,
               os: `${deviceInfo.osName} ${deviceInfo.osVersion}`,
               screenResolution: deviceInfo.screenResolution,
               userAgent: deviceInfo.fullUserAgent,
+              browser: `${deviceInfo.browserName} ${deviceInfo.browserVersion}`,
             }
 
             const sessionResult = await createSession(sessionData)
             const newSessionId = sessionResult.data.sessionId
             localStorage.setItem('sessionId', newSessionId)
             setSessionId(newSessionId)
+            console.log(sessionId)
           }
         } else {
           handleSignOut()

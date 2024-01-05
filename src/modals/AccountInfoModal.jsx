@@ -90,6 +90,7 @@ function AccountInfoModal({ visible, onClose }) {
     if (visible && user) {
       const fetchSessions = async () => {
         const sessions = await getActiveSessions(user.uid)
+        console.log(sessions)
         setActiveSessions(sessions.map((session) => ({
           ...session,
           icon: session.deviceType === 'mobile' ? <MobileOutlined /> : <DesktopOutlined />,
