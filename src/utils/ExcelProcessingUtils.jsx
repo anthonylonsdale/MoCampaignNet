@@ -81,7 +81,6 @@ export const applyDataCleaning = (data, options) => {
   return newData
 }
 
-
 export const applySorting = (data, column, order) => {
   const columnLetter = column.match(/\(([^)]+)\)/)[1]
 
@@ -111,7 +110,6 @@ export const applySorting = (data, column, order) => {
   return sortedData
 }
 
-
 export const generateAndDownloadNewExcelFile = (newData) => {
   if (!newData || Object.keys(newData).length === 0) {
     return
@@ -139,7 +137,6 @@ export const generateAndDownloadNewExcelFile = (newData) => {
     console.error('Error generating file:', error)
   }
 }
-
 
 export const reformatData = (excelData, selected) => {
   const { data } = excelData

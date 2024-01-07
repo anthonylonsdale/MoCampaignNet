@@ -1,7 +1,7 @@
 import { Alert, Button, Checkbox, Input, Modal, Radio, Select, Slider, Switch, message } from 'antd'
 import React, { useEffect, useState } from 'react'
+import { applyDataCleaning, applySorting, generateAndDownloadNewExcelFile, readExcelFile, reformatData } from '../utils/ExcelProcessingUtils.jsx'
 import './ExcelColumnSelector.css'
-import { applyDataCleaning, applySorting, generateAndDownloadNewExcelFile, readExcelFile, reformatData } from './utils/ExcelFileProcessor.jsx'
 
 
 function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, setCurrentMapFile }) {
@@ -32,7 +32,6 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
 
     readExcelFile(droppedFile)
         .then((excelData) => {
-          console.log(excelData)
           setExcelData(excelData)
           const firstColumn = excelData.columns.length > 0 ? excelData.columns[0].match(/\(([^)]+)\)/)[1] : 'A'
           setMaxRows(excelData.data[firstColumn].length)

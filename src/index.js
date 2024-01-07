@@ -11,6 +11,7 @@ import { auth } from './auth/firebase.jsx'
 import ProtectedRoute from './auth/protectedRoute.jsx'
 import './index.css'
 import CampaignTools from './pages/CampaignTools.jsx'
+import DoorknockingApp from './pages/DoorknockingApp.jsx'
 import MappingApp from './pages/MappingApp.jsx'
 import Portfolio from './pages/Portfolio.jsx'
 
@@ -19,7 +20,7 @@ async function checkSessionValidity() {
   const sessionId = localStorage.getItem('sessionId')
 
   if (!user || !sessionId) {
-    return false // Return false or handle as needed if the user is not logged in
+    return false
   }
 
   const functions = getFunctions()
@@ -74,11 +75,16 @@ root.render(
               <CampaignTools />
             </PermissionsProvider>
           </ProtectedRoute>} />
-        {/* Add new routes here */}
         <Route path='/mapping' element={
           <ProtectedRoute>
             <PermissionsProvider>
               <MappingApp />
+            </PermissionsProvider>
+          </ProtectedRoute>} />
+        <Route path='/doorknocking' element={
+          <ProtectedRoute>
+            <PermissionsProvider>
+              <DoorknockingApp />
             </PermissionsProvider>
           </ProtectedRoute>} />
         {/* Repeat for other applications */}

@@ -1,8 +1,8 @@
 import { Button, Input, Modal, Space, Tabs, Typography, message } from 'antd'
 import { getAuth, sendPasswordResetEmail, updateEmail, updatePassword, updateProfile } from 'firebase/auth'
 import React, { useEffect, useState } from 'react'
+import PasswordRequirements from '../auth/components/PasswordRequirements.jsx'
 import './AccountSettingsModal.css'
-import PasswordRequirements from './components/PasswordRequirements.jsx'
 
 const { TabPane } = Tabs
 const { Text } = Typography

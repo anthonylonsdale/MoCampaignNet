@@ -147,8 +147,6 @@ const DemographicDataModal = ({ visible, onCancel, demographicData, setDemograph
       <Button type="dashed" onClick={addNewField} style={{ width: '100%', marginBottom: '1rem' }} >
         Add Demographic Field
       </Button>
-
-
     </Modal>
   )
 }

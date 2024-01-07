@@ -5,13 +5,13 @@ import {
 import { Alert, Button, Checkbox, Collapse, List, Select, Switch, Tooltip, Upload, message } from 'antd'
 import React, { useEffect, useRef, useState } from 'react'
 import * as XLSX from 'xlsx'
-import DemographicDataModal from '../modals/DemographicDataModal.jsx'
 import ExcelColumnSelector from '../modals/ExcelColumnSelector.jsx'
 import './ToolPanel.css'
+import DemographicDataModal from './modals/DemographicDataModal.jsx'
+import PartyAffiliationModal from './modals/PartyAffiliationModal.jsx'
 import PrecinctDataModal from './modals/PrecinctDataModal.jsx'
 import ElectoralResults from './utils/ElectoralResults.jsx'
 import { extractShapes } from './utils/ExtractShapes.jsx'
-import PartyAffiliationModal from './utils/PartyAffiliationModal.jsx'
 
 const { Panel } = Collapse
 const { Dragger } = Upload

@@ -7,8 +7,8 @@ import {
 } from '@ant-design/icons'
 import { Layout, Menu } from 'antd'
 import React, { useState } from 'react'
-import AccountSettingsModal from '../auth/AccountSettingsModal.jsx'
 import PermissionsModal from '../modals/AccountInfoModal.jsx'
+import AccountSettingsModal from '../modals/AccountSettingsModal.jsx'
 
 const { Sider } = Layout
 
