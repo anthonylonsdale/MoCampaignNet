@@ -254,8 +254,9 @@
 }
 
 .carousel-container {
-  max-width: 800px;
-  max-height: 600px;
+  max-width: 90vw;
+  height: auto;
+  margin: 20px auto;
   margin: 0 auto;
   align-items: center;
   justify-content: center;
@@ -285,7 +286,7 @@
 
 .maps-container .map-item h2 {
   text-align: center;
-  font-size: 20px;
+  font-size: 3vw; /* Adjust the value as needed for your design */
 }
 
 .map-item:last-child {
@@ -297,6 +298,8 @@
   display: block;
   width: 100%;
   max-height: 650px;
+  max-width: 100%;
+  height: auto;
   transition: transform 0.5s ease, opacity 0.5s ease;
 }
 
@@ -397,10 +400,30 @@
 @media (max-width: 768px) {
   .statistics-container {
     flex-direction: column;
+    padding: 10px;
   }
 
   .statistic-item {
+    /* Reset transforms and apply margin for spacing */
+    transform: none;
     margin-bottom: 20px;
-    transform: none; /* Remove transform on smaller screens for a standard column layout */
+  }
+  
+  .statistic-number {
+    font-size: 5vw; /* Adjust font size responsively */
+  }
+  
+  .offer-section {
+    flex-direction: column;
+  }
+
+  .offer-card, .image-container {
+    width: 100%; /* Full width on smaller screens */
+    margin-bottom: 20px; /* Add space between stacked elements */
+  }
+  .custom-list .custom-list-item {
+    padding-left: 5%; /* Use percentage for padding */
+    margin-bottom: 8px; /* Smaller margin */
+    transform: none; /* Disable scaling effect on smaller screens */
   }
 }

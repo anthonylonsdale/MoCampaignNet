@@ -11,6 +11,7 @@ import { auth } from './auth/firebase.jsx'
 import ProtectedRoute from './auth/protectedRoute.jsx'
 import './index.css'
 import CampaignTools from './pages/CampaignTools.jsx'
+import MappingApp from './pages/MappingApp.jsx'
 import Portfolio from './pages/Portfolio.jsx'
 
 async function checkSessionValidity() {
@@ -18,7 +19,6 @@ async function checkSessionValidity() {
   const sessionId = localStorage.getItem('sessionId')
 
   if (!user || !sessionId) {
-    console.log('No user or session ID found.')
     return false // Return false or handle as needed if the user is not logged in
   }
 
@@ -27,7 +27,6 @@ async function checkSessionValidity() {
 
   try {
     const result = await validateSessionFn({ userId: user.uid, sessionId })
-    console.log(result)
     return result.data.isValid
   } catch (error) {
     console.error('Error validating session:', error)
@@ -39,17 +38,16 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/firebase-messaging-sw.js')
         .then((registration) => {
-          console.log('Service Worker registered with scope:', registration.scope)
+          console.warn('Service Worker registered with scope:', registration.scope)
         }).catch((error) => {
-          console.log('Service Worker registration failed:', error)
+          console.error('Service Worker registration failed:', error)
         })
   })
 
   navigator.serviceWorker.addEventListener('message', async (event) => {
-    console.log('Received message from service worker', event.data)
+    console.warn('Received message from service worker', event.data)
 
     if (event.data && event.data.type === 'CHECK_SESSION') {
-      console.log('EVENT MESSAGE RECEIVED', event.data)
       const validationId = event.data.validationId
       const isValidSession = await checkSessionValidity()
 
@@ -76,6 +74,14 @@ root.render(
               <CampaignTools />
             </PermissionsProvider>
           </ProtectedRoute>} />
+        {/* Add new routes here */}
+        <Route path='/mapping' element={
+          <ProtectedRoute>
+            <PermissionsProvider>
+              <MappingApp />
+            </PermissionsProvider>
+          </ProtectedRoute>} />
+        {/* Repeat for other applications */}
       </Routes>
     </BrowserRouter>,
 )

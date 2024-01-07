@@ -42,14 +42,6 @@ const { Title, Text } = Typography
 function Homescreen() {
   const partnershipRef = useRef()
 
-  const goToPrev2 = () => {
-    partnershipRef.current.prev()
-  }
-
-  const goToNext2 = () => {
-    partnershipRef.current.next()
-  }
-
   return (
     <>
       <CustomHeader />
@@ -270,10 +262,10 @@ function Homescreen() {
                 <img className="carousel-image" src={logo3} />
                 <img className="carousel-image" src={logo4} />
               </Carousel>
-              <div className="custom-prev-arrow custom-arrow" onClick={goToPrev2}>
+              <div className="custom-prev-arrow custom-arrow" onClick={() => partnershipRef.current.prev()}>
                 <LeftOutlined />
               </div>
-              <div className="custom-next-arrow custom-arrow" onClick={goToNext2}>
+              <div className="custom-next-arrow custom-arrow" onClick={() => partnershipRef.current.next()}>
                 <RightOutlined />
               </div>
             </div>

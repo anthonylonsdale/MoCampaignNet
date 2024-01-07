@@ -24,6 +24,10 @@
   font-weight: bold;
   text-transform: uppercase;
   margin-left: 48px;
+  
+  white-space: nowrap; /* Keeps the text on a single line */
+  overflow: hidden; /* Ensures the overflow is not visible */
+  text-overflow: ellipsis; /* Adds an ellipsis (...) at the end of the truncated text */
 }
 
 .site-layout-background a {

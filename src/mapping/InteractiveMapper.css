@@ -1,15 +1,14 @@
 @import "leaflet.fullscreen/Control.FullScreen.css";
 
 .interactive-mapper-container {
-    display: flex;
-    height: 600px; /* Adjust the height as needed */
-    width: 100%;
-    position: relative;
+  display: flex;
+  width: 100%;
+  position: relative;
 }
 
 /* Ensure the MapContainer has a flex property */
 .leaflet-container {
-    flex: 1;
+  flex: 1;
 }
 
 .custom-tooltip + .leaflet-tooltip-left:before,

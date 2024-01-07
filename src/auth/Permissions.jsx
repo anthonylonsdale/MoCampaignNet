@@ -39,7 +39,7 @@ export const getActiveSessions = async (userId) => {
         lastActive: sessionData.lastActive?.toDate().toLocaleString() || 'Unknown',
       }]
     } else {
-      console.log('No active session or session is not valid')
+      console.warn('No active session or session is not valid')
       return []
     }
   } catch (error) {
@@ -60,11 +60,8 @@ export const PermissionsProvider = ({ children }) => {
   const validateSession = httpsCallable(functions, 'validateSession')
   const invalidateSession = httpsCallable(functions, 'invalidateSession')
 
-  console.log(user)
-  console.log(sessionId)
-
   const handleSignOut = async () => {
-    console.log('SIGNING OUT!!!')
+    console.warn('SIGNING OUT!!!')
     try {
       if (sessionId) {
         await invalidateSession({ sessionId })
@@ -82,7 +79,7 @@ export const PermissionsProvider = ({ children }) => {
   // this is to validate the session
   useEffect(() => {
     if (sessionId && !intervalSetRef.current) {
-      console.log('VALIDATING SESSION')
+      console.warn('VALIDATING SESSION')
       const validate = async () => {
         try {
           const userId = auth.currentUser ? auth.currentUser.uid : null
@@ -109,10 +106,9 @@ export const PermissionsProvider = ({ children }) => {
     }
   }, [sessionId, validateSession, handleSignOut])
 
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      console.log('AUTH STATE CHANGED')
+      console.warn('AUTH STATE CHANGED')
       if (currentUser) {
         const userDocRef = doc(db, 'users', currentUser.uid)
         const docSnap = await getDoc(userDocRef)
@@ -141,7 +137,6 @@ export const PermissionsProvider = ({ children }) => {
             const newSessionId = sessionResult.data.sessionId
             localStorage.setItem('sessionId', newSessionId)
             setSessionId(newSessionId)
-            console.log(sessionId)
           }
         } else {
           handleSignOut()

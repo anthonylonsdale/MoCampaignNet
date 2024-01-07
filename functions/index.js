@@ -18,25 +18,6 @@ const corsHandler = cors({
   },
 })
 
-// above is the config required, below is a sample request
-exports.addmessage = functions.https.onRequest((req, res) => {
-  corsHandler(req, res, () => {
-    if (req.method === "POST") {
-      const original = req.body.text // Make sure to use body-parser if needed
-      admin.firestore().collection("messages").add({ original: original })
-          .then((writeResult) => {
-            res.json({ result: `Message with ID: ${writeResult.id} added.` })
-          })
-          .catch((error) => {
-            console.error("Error writing document: ", error)
-            res.status(500).send(error)
-          })
-    } else {
-      res.status(403).send("Forbidden!")
-    }
-  })
-})
-
 exports.createSubaccount = functions.https.onRequest((req, res) => {
   corsHandler(req, res, async () => {
     if (req.method === "POST") {
