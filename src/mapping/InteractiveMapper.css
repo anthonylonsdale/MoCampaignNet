@@ -1,6 +1,6 @@
 @import "leaflet.fullscreen/Control.FullScreen.css";
 
-.interactive-mapper-container {
+.mapping-container {
   display: flex;
   width: 100%;
   position: relative;

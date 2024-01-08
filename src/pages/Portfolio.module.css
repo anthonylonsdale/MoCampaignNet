@@ -1,23 +1,23 @@
-.campaign-layout {
-    background-color: #f9f9f9; /* subtle background color */
+.campaignLayout {
+    background-color: #f9f9f9;
     min-height: 100vh;
     display: flex;
 }
 
-.portfolio-container {
+.portfolioContainer {
     display: flex;
     justify-content: space-between;
     padding: 20px;
     overflow: scroll;
 }
 
-.flex-container {
+.flexContainer {
     display: flex;
     align-items: center;
     justify-content: center;
 }
   
-.portfolio-item {
+.portfolioItem {
     flex: 1;
     padding: 10px;
     border: 1px solid #ddd;
@@ -34,4 +34,11 @@ pre {
     overflow: auto;
     white-space: pre-wrap;
     max-height: 50rem;
+}
+
+.sourceLink {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: 800;
 }

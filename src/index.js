@@ -3,7 +3,6 @@ import React from 'react'
 import 'react-app-polyfill/stable'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import App from './App.jsx'
 import { PermissionsProvider } from './auth/Permissions.jsx'
 import Signup from './auth/Signup.jsx'
 import Auth from './auth/auth.jsx'
@@ -12,6 +11,7 @@ import ProtectedRoute from './auth/protectedRoute.jsx'
 import './index.css'
 import CampaignTools from './pages/CampaignTools.jsx'
 import DoorknockingApp from './pages/DoorknockingApp.jsx'
+import Homescreen from './pages/Homescreen.jsx'
 import MappingApp from './pages/MappingApp.jsx'
 import Portfolio from './pages/Portfolio.jsx'
 
@@ -65,7 +65,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<App />} />
+        <Route path='/' element={<Homescreen />} />
         <Route path='/login' element={<Auth />} />
         <Route path='/signup' element={<Signup />} />
         <Route path='/portfolio' element={<Portfolio />} />

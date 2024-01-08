@@ -1,4 +1,4 @@
-.loading-screen {
+.loadingScreen {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -13,11 +13,11 @@
     visibility: visible; /* Make it visible */
   }
   
-  .loading-content {
+  .loadingContent {
     text-align: center;
   }
   
-  .loading-text {
+  .loadingText {
     display: block; /* Text should be on its own line */
     margin-top: 16px;
   }

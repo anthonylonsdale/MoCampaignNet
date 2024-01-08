@@ -1,0 +1,92 @@
+.knocking-panel {
+    width: 350px; /* Fixed width */
+    min-width: 250px; /* Minimum width */
+    max-width: 400px; /* Maximum width */
+    resize: horizontal;
+    background-color: #f8f9fa; /* Light gray background */
+    padding: 20px;
+    box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1); /* Right shadow */
+    z-index: 1;
+    border-right: 1px solid #eaeaea;
+    overflow-y: auto;
+  }
+  
+  .knocking-panel h3 {
+    color: #333;
+    font-size: 18px;
+    padding: 4px;
+  }
+  
+  .knocking-panel .section-container {
+    margin-top: 20px;
+  }
+  
+  .knocking-panel .upload-container {
+    background-color: rgba(0, 0, 0, 0.1);
+    border: 2px dashed #cccccc;
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .knocking-panel .upload-text {
+    margin: 0;
+    font-size: 12px;
+  }
+  
+  .knocking-panel .file-list {
+    margin-top: 10px;
+  }
+  
+  .knocking-panel .file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 5px;
+    border: 1px solid #ccc;
+    margin-top: 5px;
+    border-radius: 4px;
+  }
+  
+  .knocking-panel .file-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .knocking-panel .file-delete-icon {
+    color: red;
+    cursor: pointer;
+  }
+  
+  .knocking-panel .file-delete-icon:hover {
+    background-color: transparent;
+  }
+  
+  .knocking-panel .ant-btn-primary {
+    background-color: #0052cc;
+    border-color: #0052cc;
+  }
+  
+  .knocking-panel .ant-btn-primary:hover,
+  .knocking-panel .ant-btn-primary:focus {
+    background-color: #40a9ff;
+    border-color: #40a9ff;
+  }
+  
+  .knocking-panel::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .knocking-panel::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  .knocking-panel::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+  }
+  
+  .knocking-panel::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+  

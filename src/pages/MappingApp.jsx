@@ -10,7 +10,7 @@ import CustomHeader from '../components/CustomHeader.jsx'
 import AppFooter from '../components/Footer.jsx'
 import Sidebar from '../components/SideBar.jsx'
 import MappingContainer from '../mapping/MapContainer.jsx'
-import './MappingApp.css'
+import styles from './MappingApp.module.css'
 
 const { Content } = Layout
 const { Text } = Typography
@@ -41,34 +41,35 @@ function MappingApp() {
     )
   }
 
+
   return (
     <>
-      <Layout className="campaign-layout">
+      <Layout className={styles.campaignLayout}>
         <CustomHeader />
         <Layout>
           <Sidebar user={user} />
-          <Content className="content">
+          <Content className={styles.content}>
             {user ? (
-          <>
-            <div className="user-container">
-              <div className="text-container">
-                <Text className="welcome-text">Welcome, {user.displayName}</Text>
-              </div>
-              <div className="title-container">
-                <Text className="interactive-title" onClick={() => navigate('/campaign-tools')}>Interactive Mapping Client</Text>
-              </div>
-              <div className="button-container">
-                <Button className="action-button" onClick={handleSignOut}>
-                  Logout
-                </Button>
-              </div>
-            </div>
-            <div className="divider"></div>
-            <MappingContainer />
-          </>
-          ) : (
-            <Auth />
-          )}
+              <>
+                <div className={styles.userContainer}>
+                  <div className={styles.textContainer}>
+                    <Text className={styles.welcomeText}>Welcome, {user.displayName}</Text>
+                  </div>
+                  <div className={styles.titleContainer}>
+                    <Text className={styles.interactiveTitle} onClick={() => navigate('/campaign-tools')}>Interactive Mapping Client</Text>
+                  </div>
+                  <div>
+                    <Button className={styles.actionButton} onClick={handleSignOut}>
+                      Logout
+                    </Button>
+                  </div>
+                </div>
+                <div className={styles.divider}></div>
+                <MappingContainer />
+              </>
+            ) : (
+              <Auth />
+            )}
           </Content>
         </Layout>
       </Layout>

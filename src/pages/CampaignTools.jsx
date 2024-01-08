@@ -8,7 +8,7 @@ import Auth from '../auth/auth.jsx'
 import CustomHeader from '../components/CustomHeader.jsx'
 import AppFooter from '../components/Footer.jsx'
 import Sidebar from '../components/SideBar.jsx'
-import './CampaignTools.css'
+import styles from './CampaignTools.module.css'; // Import CSS module
 
 const { Content } = Layout
 const { Text } = Typography
@@ -40,14 +40,14 @@ const ApplicationCard = ({ app }) => {
     switch (app.type) {
       case 'mapping':
         return (
-          <div className="mapping-client-container">
-            <Text className="interactive-title">Interactive Mapping Client</Text>
+          <div className={styles.mappingClientContainer}>
+            <Text className={styles.interactiveTitle}>Interactive Mapping Client</Text>
           </div>
         )
       case 'doorknocking':
         return (
-          <div className="mapping-client-container">
-            <Text className="interactive-title">Doorknocking Client</Text>
+          <div className={styles.mappingClientContainer}>
+            <Text className={styles.interactiveTitle}>Doorknocking Client</Text>
           </div>
         )
     }
@@ -55,11 +55,11 @@ const ApplicationCard = ({ app }) => {
 
   return (
     <Col xs={24} sm={12} md={10} lg={8} xl={8}>
-      <Card hoverable onClick={() => navigate(app.route)} className="application-card">
+      <Card hoverable onClick={() => navigate(app.route)} className={styles.applicationCard}>
         <Card.Meta
           avatar={renderAvatar()}
           description={renderCardContent()}
-          className="card-meta"
+          className="card-meta" // If this is a custom class from antd, keep it as it is
         />
       </Card>
     </Col>
@@ -76,23 +76,23 @@ function CampaignTools() {
         <Sidebar user={user} />
         <Content>
           {user ? (
-          <>
-            <div className="user-container">
-              <div className="text-container">
-                <Text className="welcome-text">Welcome, {user.displayName}</Text>
-              </div>
-              <div className="button-container">
-                <Button className="action-button" onClick={handleSignOut}>
+            <>
+              <div className={styles.userContainer}>
+                <div className={styles.textContainer}>
+                  <Text className={styles.welcomeText}>Welcome, {user.displayName}</Text>
+                </div>
+                <div>
+                  <Button className={styles.actionButton} onClick={handleSignOut}>
                   Logout
-                </Button>
+                  </Button>
+                </div>
               </div>
-            </div>
-            <Row gutter={[16, 16]} className="row-padding">
-              {applications.map((app, index) => (
-                <ApplicationCard key={index} app={app} />
-              ))}
-            </Row>
-          </>
+              <Row gutter={[16, 16]} className={styles.rowPadding}>
+                {applications.map((app, index) => (
+                  <ApplicationCard key={index} app={app} />
+                ))}
+              </Row>
+            </>
           ) : (
             <Auth />
           )}

@@ -1,13 +1,13 @@
-import { DesktopOutlined, MobileOutlined, UserOutlined } from '@ant-design/icons'
+import { DeleteOutlined, DesktopOutlined, MobileOutlined, UserOutlined } from '@ant-design/icons'
 import { Button, Form, Input, List, Modal, Tabs, Tag, Typography, message } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { sendPasswordResetEmail } from 'firebase/auth'
-import { collection, getDocs } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs } from 'firebase/firestore'
 import { getFunctions, httpsCallable } from 'firebase/functions'
 import React, { useEffect, useState } from 'react'
 import { getActiveSessions, usePermissions } from '../auth/Permissions.jsx'
 import { auth, db } from '../auth/firebase.jsx'
-import './AccountInfoModal.css'
+import styles from './AccountInfoModal.module.css'
 
 const { TabPane } = Tabs
 const { Paragraph, Title } = Typography
@@ -29,68 +29,84 @@ function AccountInfoModal({ visible, onClose }) {
   const allPermissions = Object.keys(permissions).filter((key) => permissions[key])
   const isAdmin = permissions['Add Users']
 
-  const handleCreateSubaccount = (values) => {
-    const subaccountArgs = {
-      ...values,
-      parentUserUid: user.uid,
-    }
+  const handleDeleteSubaccount = async (subaccountDocId) => {
+    const deleteSubaccountFn = httpsCallable(functions, 'deleteSubaccount')
+    try {
+      const subaccountDocRef = doc(db, 'users', user.uid, 'subaccounts', subaccountDocId)
+      const subaccountDocSnapshot = await getDoc(subaccountDocRef)
 
-    fetch('https://us-central1-leaddrive-pro.cloudfunctions.net/createSubaccount', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(subaccountArgs),
-    })
-        .then((response) => response.json())
-        .then(async (data) => {
-          if (data.success) {
-            sendPasswordResetEmail(auth, values.email)
-                .then(() => {
-                  message.success('Subaccount created successfully. Password reset email sent.')
-                  form.resetFields()
-                })
-                .catch((error) => {
-                  message.error('Failed to send password reset email: ' + error.message)
-                })
-          } else {
-            message.error('Failed to create subaccount: ' + data.error)
-          }
-        })
-        .catch((error) => {
-          console.error('Error:', error)
-          message.error('Network error: ' + error.message)
-        })
+      if (!subaccountDocSnapshot.exists) {
+        throw new Error('Subaccount not found.')
+      }
+
+      const subaccountData = subaccountDocSnapshot.data()
+      const deleteResponse = await deleteSubaccountFn({ subaccountUid: subaccountData.uid, parentUserUid: user.uid })
+      if (deleteResponse.data.success) {
+        message.success('Subaccount deleted successfully.')
+        await fetchSubaccounts()
+      } else {
+        message.error('Failed to delete subaccount: ' + deleteResponse.data.error)
+      }
+    } catch (error) {
+      console.error('Error deleting subaccount:', error)
+      message.error('Failed to delete subaccount. Error: ' + error.message)
+    }
+  }
+
+  const handleCreateSubaccount = async (values) => {
+    const createSubaccountFn = httpsCallable(functions, 'createSubaccount')
+
+    try {
+      const subaccountArgs = {
+        ...values,
+        parentUserUid: user.uid,
+      }
+
+      const createResponse = await createSubaccountFn(subaccountArgs)
+
+      if (createResponse.data.success) {
+        try {
+          await sendPasswordResetEmail(auth, values.email)
+          message.success('Subaccount created successfully. Password reset email sent.')
+          form.resetFields()
+          await fetchSubaccounts()
+        } catch (error) {
+          message.error('Failed to send password reset email: ' + error.message)
+        }
+      } else {
+        message.error('Failed to create subaccount: ' + createResponse.data.error)
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      message.error('Failed to create subaccount. Error: ' + error.message)
+    }
+  }
+
+  const fetchSubaccounts = async () => {
+    if (!isAdmin) return
+
+    const subaccountsCollectionRef = collection(db, 'users', user.uid, 'subaccounts')
+    try {
+      const querySnapshot = await getDocs(subaccountsCollectionRef)
+      const subaccountsData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }))
+      setSubaccounts(subaccountsData)
+    } catch (error) {
+      console.error('Error fetching subaccounts:', error)
+      message.error('Failed to load subaccounts.')
+    }
   }
 
   useEffect(() => {
-    if (isAdmin) {
-      const fetchSubaccounts = async () => {
-        const subaccountsCollectionRef = collection(db, 'users', user.uid, 'subaccounts')
-
-        try {
-          const querySnapshot = await getDocs(subaccountsCollectionRef)
-
-          const subaccountsData = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }))
-          setSubaccounts(subaccountsData)
-        } catch (error) {
-          console.error('Error fetching subaccounts:', error)
-          message.error('Failed to load subaccounts.')
-        }
-      }
-
-      fetchSubaccounts()
-    }
-  }, [user, isAdmin, db])
+    fetchSubaccounts()
+  }, [visible, user, isAdmin])
 
   useEffect(() => {
     if (visible && user) {
       const fetchSessions = async () => {
         const sessions = await getActiveSessions(user.uid)
-        console.log(sessions)
         setActiveSessions(sessions.map((session) => ({
           ...session,
           icon: session.deviceType === 'mobile' ? <MobileOutlined /> : <DesktopOutlined />,
@@ -127,30 +143,40 @@ function AccountInfoModal({ visible, onClose }) {
       open={visible}
       onCancel={onClose}
       footer={null}
+      className={styles.modal}
       width={800}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', maxHeight: '400px' }}>
-        <div style={{ flex: '1 0 50%', overflowY: 'auto', paddingRight: '10px' }}>
+      <div className={styles.accountDetailsContainer}>
+        <div className={styles.accountSection}>
           <Title level={4}>
-            <UserOutlined className="admin-icon" /> Profile Details
+            <UserOutlined className={styles.adminIcon} /> Profile Details
           </Title>
           <Paragraph><strong>Display Name:</strong> {userInfo.displayName}</Paragraph>
           <Paragraph><strong>Email:</strong> {userInfo.email}</Paragraph>
           <Paragraph><strong>Date Created:</strong> {userInfo.accountCreationTime}</Paragraph>
-          {isAdmin ? <Tag color="gold">Admin</Tag> :
-            <Paragraph className="admin-contact-info">
+          {isAdmin ? <Tag color="gold">Admin</Tag> : (
+            <Paragraph className={styles.adminContactInfo}>
               For elevated privileges, please reach out to alonsdale@bernoullitechnologies.net
-            </Paragraph>}
+            </Paragraph>
+          )}
         </div>
         {isAdmin && (
-          <div style={{ flex: '1 0 50%', overflowY: 'auto' }}>
+          <div className={`${styles.subaccountsSection} ${styles.scrollbar}`}>
             <Title level={4}>Subaccounts</Title>
             <List
               size="small"
               bordered
               dataSource={subaccounts}
               renderItem={(item) => (
-                <List.Item>
+                <List.Item
+                  actions={[
+                    <DeleteOutlined
+                      key="delete"
+                      className={styles.deleteIcon}
+                      onClick={() => handleDeleteSubaccount(item.id)}
+                    />,
+                  ]}
+                >
                   <List.Item.Meta
                     title={item.displayName}
                     description={
@@ -170,7 +196,7 @@ function AccountInfoModal({ visible, onClose }) {
       <Tabs defaultActiveKey="1" >
         <TabPane tab="Permissions" key="1">
           <List
-            className="permissions-list"
+            className={`${styles.permissionsList} ${styles.scrollbar}`}
             size="large"
             header={<Title level={4}>Permissions</Title>}
             bordered

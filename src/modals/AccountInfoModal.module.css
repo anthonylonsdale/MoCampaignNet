@@ -1,0 +1,49 @@
+.accountDetailsContainer {
+  display: flex;
+  justify-content: space-between;
+  max-height: 400px;
+}
+
+.accountSection {
+  flex: 1 0 50%;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.subaccountsSection {
+  flex: 1 0 50%;
+  overflow-y: auto;
+  max-height: 15rem;
+}
+
+.permissionsList {
+  max-height: 25rem;
+  overflow-y: auto;
+}
+
+.permissionsListItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.adminIcon {
+  color: gold;
+  margin-right: 8px;
+}
+
+.scrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+.scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

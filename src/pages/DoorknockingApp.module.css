@@ -1,12 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 
-.user-info {
-  align-items: center;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.action-button {
+.actionButton {
   font-family: 'Roboto', sans-serif;
   font-size: .9rem;
   color: #fff;
@@ -18,39 +12,57 @@
   transition: background-color 0.3s ease;
 }
 
-.action-button:hover {
+.actionButton:hover {
   background-color: #0056b3;
 }
 
-.action-button:focus {
+.actionButton:focus {
   outline: none;
   box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
 }
 
-.action-button:active {
+.actionButton:active {
   background-color: #003885;
 }
 
-.action-button.icon {
+.actionButtonIcon {
   display: flex;
   align-items: center;
 }
 
-.action-button.icon:before {
+.actionButtonIcon:before {
   display: inline-block;
   margin-right: 8px;
 }
 
-.welcome-text, .interactive-title {
+.userContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 0;
+  background-color: #fff;
+  min-height: 50px;
+  max-height: 50px;
+}
+
+.welcomeText {
+  font-weight: 500;
   font-family: 'Roboto', sans-serif;
   color: #333;
   margin: 0;
   padding: 2px 0;
   font-size: 12pt;
-  font-weight: 500;
 }
 
-.interactive-title {
+.textContainer {
+  flex: 1; /* Allows the text container to grow and shrink as needed */
+  display: flex;
+  justify-content: flex-start; /* Aligns the welcome text to the start of the flex container */
+}
+
+.interactiveTitle  {
   font-weight: 500;
   font-size: 1.5rem; /* Adjust size as needed */
   color: #0052cc; /* Ant Design primary color for the text */
@@ -67,25 +79,29 @@
   text-overflow: ellipsis; /* Adds an ellipsis (...) at the end of the truncated text */
 }
 
-.interactive-title:hover {
+.interactiveTitle:hover {
   color: #40a9ff; /* Lighter shade on hover */
   border-color: #40a9ff; /* Matching border color for consistency */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* More pronounced shadow on hover */
 }
 
 /* Add padding around the row that contains the cards */
-.row-padding {
+.rowPadding {
   padding: 1rem;
 }
 
-.application-card {
+.titleContainer {
+  flex-grow: 1; /* allows the title container to grow and fill space */
+}
+
+.applicationCard {
   height: auto; /* Adjust the height automatically based on content */
   display: flex;
   flex-direction: column;
   justify-content: space-between; /* This will create space between the items */
 }
 
-.mapping-client-container {
+.mappingClientContainer  {
   display: flex;
   align-items: center; /* This will vertically center the content */
   justify-content: center; /* This will horizontally center the content */

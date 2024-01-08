@@ -1,13 +1,17 @@
+/* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const functions = require("firebase-functions")
 const admin = require("firebase-admin")
-const cors = require("cors")
+// const cors = require("cors")
 const { v4: uuidv4 } = require("uuid")
 
 admin.initializeApp()
 
-const allowedOrigins = ["https://bernoullitechnologies.net", "http://localhost:3000"]
+// the cors handler is mostly for if we want to make barebones http requests,
+// we can just use onCall to avoid this messiness
+// const allowedOrigins = ["https://bernoullitechnologies.net", "http://localhost:3000"]
 
+/*
 const corsHandler = cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
@@ -17,41 +21,63 @@ const corsHandler = cors({
     }
   },
 })
+*/
 
-exports.createSubaccount = functions.https.onRequest((req, res) => {
-  corsHandler(req, res, async () => {
-    if (req.method === "POST") {
-      const { email, displayName, role, parentUserUid } = req.body
-      const subaccountDetails = {
-        email: email,
-        displayName: displayName,
-        role: role,
-      }
-      try {
-        await admin.auth().createUser({
-          email: email,
-          displayName: displayName,
-          emailVerified: false,
-        })
+exports.deleteSubaccount = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError("unauthenticated", "The function must be called while authenticated.")
+  }
 
-        const userDocRef = admin.firestore().collection("users")
-            .doc(parentUserUid)
+  const { subaccountUid, parentUserUid } = data
 
-        const subaccountDocRef = userDocRef.collection("subaccounts").doc()
-        await subaccountDocRef.set(subaccountDetails)
+  try {
+    await admin.auth().deleteUser(subaccountUid)
+    const userDocRef = admin.firestore().collection("users").doc(parentUserUid)
+    const subaccountDocRef = userDocRef.collection("subaccounts").where("uid", "==", subaccountUid)
+    const subaccountsSnapshot = await subaccountDocRef.get()
 
-        res.status(200).send({
-          success: true,
-          email: email,
-        })
-      } catch (error) {
-        console.error("Error creating subaccount: ", error)
-        res.status(500).send({ success: false, error: error.message })
-      }
-    } else {
-      res.status(403).send("Forbidden!")
+    subaccountsSnapshot.forEach(async (doc) => {
+      await doc.ref.delete()
+    })
+
+    return { success: true, subaccountUid: subaccountUid }
+  } catch (error) {
+    console.error("Error deleting subaccount: ", error)
+    throw new functions.https.HttpsError("internal", error.message)
+  }
+})
+
+exports.createSubaccount = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError("unauthenticated",
+        "The function must be called while authenticated.")
+  }
+
+  const { email, displayName, role, parentUserUid } = data
+
+  try {
+    const subaccountAuthUser = await admin.auth().createUser({
+      email: email,
+      displayName: displayName,
+      emailVerified: false,
+    })
+
+    const subaccountDetails = {
+      uid: subaccountAuthUser.uid, // Store the Firebase Auth UID here for reference
+      email: email,
+      displayName: displayName,
+      role: role,
     }
-  })
+
+    const userDocRef = admin.firestore().collection("users").doc(parentUserUid)
+    const subaccountDocRef = userDocRef.collection("subaccounts").doc()
+    await subaccountDocRef.set(subaccountDetails)
+
+    return { success: true, email: email }
+  } catch (error) {
+    console.error("Error creating subaccount: ", error)
+    throw new functions.https.HttpsError("internal", error.message)
+  }
 })
 
 exports.createSession = functions.https.onCall(async (data, context) => {
@@ -79,7 +105,12 @@ exports.createSession = functions.https.onCall(async (data, context) => {
   return { sessionId }
 })
 
-exports.validateSession = functions.https.onCall(async (data) => {
+exports.validateSession = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError("unauthenticated",
+        "The function must be called while authenticated.")
+  }
+
   try {
     const { userId, sessionId } = data
     if (!userId || !sessionId) {

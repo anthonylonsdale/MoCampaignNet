@@ -2,7 +2,7 @@ import { Button, Input, Modal, Space, Tabs, Typography, message } from 'antd'
 import { getAuth, sendPasswordResetEmail, updateEmail, updatePassword, updateProfile } from 'firebase/auth'
 import React, { useEffect, useState } from 'react'
 import PasswordRequirements from '../auth/components/PasswordRequirements.jsx'
-import './AccountSettingsModal.css'
+import styles from './AccountSettingsModal.module.css'
 
 const { TabPane } = Tabs
 const { Text } = Typography
@@ -70,43 +70,44 @@ function AccountSettingsModal({ visible, onCancel }) {
     }
   }
 
+
   return (
     <Modal
       title="Account Settings"
       open={visible}
       onCancel={onCancel}
       footer={[
-        <Button key="back" onClick={onCancel}>
+        <Button key="back" onClick={onCancel} className={styles.accountSettingsModalAntBtn}>
           Close
         </Button>,
       ]}
-      className="account-settings-modal"
+      className={styles.accountSettingsModal}
     >
-      <Space direction="vertical" className="space-container">
-        <Tabs activeKey={activeTab} onChange={setActiveTab} className="tabs-container">
-          <TabPane tab="Change Email" key="changeEmail" className="change-tab">
-            <div className="container">
+      <Space direction="vertical" className={styles.spaceContainer}>
+        <Tabs activeKey={activeTab} onChange={setActiveTab} className={styles.tabsContainerAntTabsNav}>
+          <TabPane tab="Change Email" key="changeEmail" className={styles.changeTab}>
+            <div className={styles.container}>
               <Text>Enter your new email address:</Text>
               <Input
                 type="email"
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
-                className="input"
+                className={styles.input}
                 placeholder="New Email"
                 required
               />
-              <Button onClick={handleChangeEmail} className="submit-button">
+              <Button onClick={handleChangeEmail} className={styles.submitButton}>
                 Change Email
               </Button>
             </div>
           </TabPane>
-          <TabPane tab="Change Password" key="changePassword" className="change-password-tab">
-            <div className="container">
+          <TabPane tab="Change Password" key="changePassword" className={styles.changePasswordTab}>
+            <div className={styles.container}>
               <Text>Enter your new password:</Text>
               <Input.Password
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="input"
+                className={styles.input}
                 placeholder="New Password"
                 required
                 visibilityToggle
@@ -116,28 +117,28 @@ function AccountSettingsModal({ visible, onCancel }) {
               <PasswordRequirements password={newPassword} visible={showPasswordRequirements} />
               <Button
                 onClick={handleChangePassword}
-                className="submit-button"
+                className={styles.submitButton}
                 disabled={isSubmitDisabled}
               >
                 Change Password
               </Button>
             </div>
-            <Button type="primary" onClick={sendPasswordReset} className="password-reset-button">
+            <Button type="primary" onClick={sendPasswordReset} className={styles.changePasswordTabPasswordResetButton}>
               Send Password Reset Email
             </Button>
           </TabPane>
-          <TabPane tab="Change Display Name" key="changeDisplayName" className="change-tab">
-            <div className="container">
+          <TabPane tab="Change Display Name" key="changeDisplayName" className={styles.changeTab}>
+            <div className={styles.container}>
               <Text>Enter your new display name:</Text>
               <Input
                 type="text"
                 value={newDisplayName}
                 onChange={(e) => setNewDisplayName(e.target.value)}
-                className="input"
+                className={styles.input}
                 placeholder="New Display Name"
                 required
               />
-              <Button onClick={handleChangeDisplayName} className="submit-button">
+              <Button onClick={handleChangeDisplayName} className={styles.submitButton}>
                 Change Display Name
               </Button>
             </div>

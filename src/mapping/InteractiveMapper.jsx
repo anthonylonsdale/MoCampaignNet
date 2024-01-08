@@ -446,7 +446,7 @@ const InteractiveMapper = ({ mapData, setMapData, precinctData, clearMarkerData,
       {isStatisticsPanelVisible && (
         <StatisticsPanel />
       )}
-      <div className="interactive-mapper-container">
+      <div className="mapping-container">
         <MapContainer center={[38.573936, -92.603760]} zoom={13} fullscreenControl={true}>
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

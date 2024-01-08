@@ -1,0 +1,70 @@
+.accountSettingsModalAntModalFooter {
+  border-top: none;
+  padding: 0 16px;
+  text-align: right;
+}
+
+.accountSettingsModalAntBtn {
+  border-radius: 6px;
+  padding: 2px 20px;
+  font-weight: 400;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.spaceContainer {
+  width: 100%;
+}
+
+.tabsContainerAntTabsNav {
+  margin-bottom: 1rem;
+}
+
+.container {
+  padding: 24px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  max-width: 480px;
+  margin: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.submitButton {
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: 1px solid #d9d9d9;
+  transition: border-color 0.2s;
+}
+
+.input {
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: 1px solid #d9d9d9;
+  transition: border-color 0.2s;
+  font-size: 16px;
+}
+
+.inputFocus {
+  border-color: #1890ff;
+}
+
+.changePasswordTabPasswordResetButton {
+  background-color: #0052cc;
+  color: white;
+  display: block;
+  margin: 20px auto;
+  width: fit-content;
+  margin-top: 20px;
+}
+
+.changePasswordTabPasswordResetButtonHover {
+  background-color: #4a90e2;
+  border-color: #4a90e2;
+}
+
+.changePasswordTabMessage {
+  font-size: 14px;
+  color: #faad14;
+  margin-top: 16px;
+  text-align: center;
+  transition: color 0.2s;
+}
