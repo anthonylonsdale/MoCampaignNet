@@ -11,16 +11,18 @@ export const PermissionsContext = createContext({
 })
 
 const defaultPermissions = {
-  'View Generic Maps': true,
+  'View Doorknocking Client': true,
   'Edit Profile': true,
   'Edit User Settings': true,
 }
 
 const adminPermissions = {
-  'Add Users': true,
-  'Remove Users': true,
+  'View Mapping Client': true,
+  'Create Subaccounts': true,
+  'Remove Subaccounts': true,
   'View Premium Data': true,
   'Build and Export Datasets': true,
+  'View Election Simulator': true,
 }
 
 export const getActiveSessions = async (userId) => {
@@ -30,7 +32,6 @@ export const getActiveSessions = async (userId) => {
     const docSnap = await getDoc(sessionDocRef)
 
     if (docSnap.exists() && docSnap.data().isValid) {
-      // Construct the session object with required fields
       const sessionData = docSnap.data()
       return [{
         sessionId: docSnap.id,
@@ -66,13 +67,14 @@ export const PermissionsProvider = ({ children }) => {
       if (sessionId) {
         await invalidateSession({ sessionId })
       }
+    } catch (error) {
+      console.error('Error during sign out:', error)
+    } finally {
       await signOut(auth)
       localStorage.removeItem('sessionId')
       setSessionId('')
       setUser(null)
       setPermissions({})
-    } catch (error) {
-      console.error('Error during sign out:', error)
     }
   }
 
@@ -104,7 +106,7 @@ export const PermissionsProvider = ({ children }) => {
         intervalSetRef.current = false
       }
     }
-  }, [sessionId, validateSession, handleSignOut])
+  }, [auth])
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -141,8 +143,6 @@ export const PermissionsProvider = ({ children }) => {
         } else {
           handleSignOut()
         }
-      } else {
-        handleSignOut()
       }
     })
 

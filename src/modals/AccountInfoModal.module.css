@@ -32,6 +32,17 @@
   margin-right: 8px;
 }
 
+.deleteIcon {
+  color: #ff4d4f; /* Example: red color for delete icon */
+  cursor: pointer; /* Change cursor to pointer on hover */
+  font-size: 16px; /* Icon size */
+  transition: color 0.3s ease; /* Smooth transition for color change */
+}
+
+.deleteIcon:hover {
+  color: #d11a2a; /* Darker shade of red on hover */
+}
+
 .scrollbar::-webkit-scrollbar {
   width: 10px;
 }

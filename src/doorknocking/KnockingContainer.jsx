@@ -9,8 +9,8 @@ const KnockingContainer = () => {
   const {
     knockingData,
     setKnockingData,
+    clearKnockingData,
   } = useKnockingData()
-
   const {
     fileData,
     setFileData,
@@ -19,13 +19,13 @@ const KnockingContainer = () => {
   return (
     <div className={styles.interactiveMapperContainer}>
       <DoorknockingToolPanel
-        knockingData={knockingData}
         setKnockingData={setKnockingData}
         fileData={fileData}
         setFileData={setFileData}
       />
       <KnockingMap
         knockingData={knockingData}
+        clearKnockingData={clearKnockingData}
       />
     </div>
   )

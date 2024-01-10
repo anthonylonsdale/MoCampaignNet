@@ -1,10 +1,11 @@
 import { Alert, Button, Checkbox, Input, Modal, Radio, Select, Slider, Switch, message } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { applyDataCleaning, applySorting, generateAndDownloadNewExcelFile, readExcelFile, reformatData } from '../utils/ExcelProcessingUtils.jsx'
-import './ExcelColumnSelector.css'
+import styles from './ExcelColumnSelector.module.css'
 
 
-function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, setCurrentMapFile }) {
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, setCurrentMapFile = () => {} }) {
   const [excelData, setExcelData] = useState(null)
   const [actionType, setActionType] = useState(null)
   const [error, setError] = useState(false)
@@ -161,49 +162,49 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
       open={visible}
       title="Excel Data Options"
       onCancel={onCancel}
-      className="excel-column-selector-modal"
+      className={styles.excelColumnSelectorModal}
       footer={[
-        <Button key="cancel" onClick={onCancel}>
-        Cancel
+        <Button key="cancel" onClick={onCancel} className={styles.marginBottom20}>
+          Cancel
         </Button>,
-        <Button key="confirm" type="primary" onClick={handleConfirm} disabled={!actionType}>
-        Confirm
+        <Button key="confirm" type="primary" onClick={handleConfirm} disabled={!actionType} className={styles.marginBottom20}>
+          Confirm
         </Button>,
       ]}
     >
-      <Radio.Group onChange={(e) => setActionType(e.target.value)} value={actionType}>
+      <Radio.Group onChange={(e) => setActionType(e.target.value)} value={actionType} className={styles.margins}>
         <Radio value="format">Data Cleaning</Radio>
         <Radio value="map">Display on Map</Radio>
       </Radio.Group>
       {excelData && actionType === 'format' && (
         <>
-          <div>
-            <h3>Select Columns to Keep:</h3>
+          <div className={styles.marginBottom20}>
+            <h3 className={styles.excelColumnSelectorModalH3}>Select Columns to Keep:</h3>
             <Input
               type="text"
               placeholder="Search columns..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value.toLowerCase())}
-              style={{ marginBottom: '10px', padding: '5px', width: '100%' }}
+              className={styles.inputSearch}
             />
-            <div className="select-all-container" style={{ marginBottom: '10px' }}>
+            <div className={styles.selectAllContainer}>
               <Button
-                type={selectAll ? 'primary' : 'default'} // Style based on whether all are selected or not
+                type={selectAll ? 'primary' : 'default'}
                 onClick={toggleSelectAll}
               >
                 {selectAll ? 'Deselect All' : 'Select All'}
               </Button>
             </div>
-            <div className="column-container">
+            <div className={styles.columnContainer}>
               {excelData.columns
                   .filter((column) => column.toLowerCase().includes(searchQuery))
                   .map((column, index) => (
-                    <div key={column} className="checkbox-label">
-                      <span className="column-prefix">
+                    <div key={column} className={styles.checkboxLabel}>
+                      <span className={styles.columnPrefix}>
                         {index < 26 ? String.fromCharCode(65 + index) : (
-                          String.fromCharCode(64 + Math.floor(index / 26)) +
-                          String.fromCharCode(65 + (index % 26))
-                        )}
+                                            String.fromCharCode(64 + Math.floor(index / 26)) +
+                                            String.fromCharCode(65 + (index % 26))
+                                        )}
                       </span>
                       <Checkbox
                         onChange={() => handleCheckboxChange(column)}
@@ -215,15 +216,15 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
                   ))}
             </div>
           </div>
-          <div style={{ marginBottom: 20 }}>
-            <h3>Data Cleaning Options:</h3>
+          <div className={styles.marginBottom20}>
+            <h3 className={styles.excelColumnSelectorModalH3}>Data Cleaning Options:</h3>
             <div>
               <Switch
                 checkedChildren="Trim"
                 unCheckedChildren="No Trim"
                 onChange={(checked) => handleDataCleaningSwitch(checked, 'trimWhitespace')}
               />
-              <span style={{ marginLeft: 8 }}>Trim Whitespace</span>
+              <span className={styles.dataCleaningSwitch}>Trim Whitespace</span>
             </div>
             <div>
               <Switch
@@ -231,11 +232,11 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
                 unCheckedChildren="No Upper"
                 onChange={(checked) => handleDataCleaningSwitch(checked, 'toUpperCase')}
               />
-              <span style={{ marginLeft: 8 }}>Convert Text to Uppercase</span>
+              <span className={styles.dataCleaningSwitch}>Convert Text to Uppercase</span>
             </div>
           </div>
-          <div style={{ marginBottom: 20 }}>
-            <h3>Sorting Options:</h3>
+          <div className={styles.marginBottom20}>
+            <h3 className={styles.excelColumnSelectorModalH3}>Sorting Options:</h3>
             <Switch
               checkedChildren="Ascending"
               unCheckedChildren="Descending"
@@ -243,8 +244,8 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
             />
             <Select
               placeholder="Select Column to Sort"
-              style={{ width: 200, marginRight: 10 }}
               onChange={(value) => setSortColumn(value)}
+              className={styles.sortSelectContainer}
             >
               {selectedColumns.map((column) => (
                 <Select.Option key={column} value={column}>
@@ -253,8 +254,8 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
               ))}
             </Select>
           </div>
-          <div style={{ marginBottom: 20 }}>
-            <h3>Number of Rows to Keep:</h3>
+          <div className={styles.marginBottom20}>
+            <h3 className={styles.excelColumnSelectorModalH3}>Number of Rows to Keep:</h3>
             <Slider
               min={1}
               max={maxRows}
@@ -268,19 +269,21 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
           </div>
         </>
       )}
+
       {excelData && actionType === 'map' && (
         <>
-          <div className="select-group">
+          <div className={styles.selectGroup}>
             {['Latitude', 'Longitude', 'Marker Name'].map((placeholder, index) => (
               <Select
                 key={placeholder}
-                className={`select-column ${error && 'error-select'}`}
+                className={`${styles.selectColumn} ${error && styles.errorSelect}`}
                 placeholder={`Select ${placeholder} Column`}
                 onChange={(value) => {
                   if (index === 0) setLatitudeColumn(value)
                   if (index === 1) setLongitudeColumn(value)
                   if (index === 2) setNameColumn(value)
-                }}>
+                }}
+              >
                 {excelData.columns.map((column) => (
                   <Select.Option key={column} value={column}>
                     {column}
@@ -290,13 +293,13 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
             ))}
           </div>
           <Alert
-            className="alert-warning"
+            className={styles.alertWarning}
             message="Note"
             description={
               <>
-                Ensure your data is geocoded (has latitude and longitude data).
+                Ensure your data is geocoded (has coordinates).
                 <br />
-                Contact <a href="mailto:alonsdale@bernoullitechnologies.net">alonsdale@bernoullitechnologies.net</a> if you need this for your data.
+                Contact <a href="mailto:alonsdale@bernoullitechnologies.net">alonsdale@bernoullitechnologies.net</a> if you need this.
               </>
             }
             type="info"
@@ -304,7 +307,7 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
           />
           {Object.keys(excelData.data).some((key) => excelData.data[key].length > 10000) && (
             <Alert
-              className="alert-warning"
+              className={styles.alertWarning}
               message="Warning"
               description="Large datasets may result in slow performance."
               type="warning"
@@ -313,7 +316,6 @@ function ExcelColumnSelector({ visible, onCancel, droppedFile, setMapPoints, set
           )}
         </>
       )}
-
     </Modal>
   )
 }

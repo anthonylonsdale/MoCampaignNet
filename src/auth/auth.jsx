@@ -1,35 +1,48 @@
-import { Button, Form, Input, Typography } from 'antd'
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+import { Button, Form, Input, Typography, message } from 'antd'
+import { signInWithEmailAndPassword } from 'firebase/auth'
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import logo from '../images/logoblank.png'
-import './auth.css'
+import styles from './auth.module.css'
+import { auth } from './firebase.jsx'
 
 const { Text } = Typography
 
 function Auth() {
   const [error, setError] = useState('')
+  const [email, setEmail] = useState('')
   const history = useNavigate()
 
   const onFinish = async (values) => {
-    const { email, password } = values
-    const auth = getAuth()
     try {
-      await signInWithEmailAndPassword(auth, email, password)
-
+      await signInWithEmailAndPassword(auth, values.email, values.password)
       history('/campaign-tools')
     } catch (error) {
       setError(error.message)
     }
   }
 
+  const handlePasswordReset = async () => {
+    if (!email) {
+      message.error('Please enter your email address.')
+      return
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, email)
+      message.success('Password reset email sent. Please check your inbox.')
+    } catch (error) {
+      message.error(error.message)
+    }
+  }
+
   return (
-    <div className="auth-page">
-      <div className="auth-header">
-        <img src={logo} alt="Bernoulli Technologies Logo" className="auth-logo"/>
-        <span className="auth-title">Account Login</span>
+    <div className={styles.authPage}>
+      <div className={styles.authHeader}>
+        <img src={logo} alt="Bernoulli Technologies Logo" className={styles.authLogo} />
+        <span className={styles.authTitle}>Account Login</span>
       </div>
-      <div className="auth-container">
+      <div className={styles.authContainer}>
         <Form
           name="signin"
           onFinish={onFinish}
@@ -38,15 +51,9 @@ function Auth() {
           <Form.Item
             label="Email"
             name="email"
-            rules={[
-              {
-                required: true,
-                type: 'email',
-                message: 'Please enter a valid email address!',
-              },
-            ]}
+            rules={[{ required: true, type: 'email', message: 'Please enter a valid email address!' }]}
           >
-            <Input autoComplete="on" name='email' />
+            <Input autoComplete="on" onChange={(e) => setEmail(e.target.value)} />
           </Form.Item>
           <Form.Item
             label="Password"
@@ -60,15 +67,18 @@ function Auth() {
           >
             <Input.Password autoComplete="" name='password' />
           </Form.Item>
-          {error && <div className="error">{error}</div>}
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-            Sign In
+          {error && <div className={styles.error}>{error}</div>}
+          <div>
+            <Button type="link" onClick={handlePasswordReset} className={styles.authLink}>
+              Forgot Password?
             </Button>
+          </div>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">Sign In</Button>
           </Form.Item>
         </Form>
         <Text>
-        Don&apos;t have an account? <Link to="/signup" className="auth-link">Sign Up</Link>
+        Don&apos;t have an account? <Link to="/signup" className={styles.authLink}>Sign Up</Link>
         </Text>
       </div>
     </div>

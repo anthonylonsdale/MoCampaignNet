@@ -1,0 +1,119 @@
+
+  .modalHeader {
+    background-color: #f7f7f7;
+    padding: 16px 24px;
+    border-bottom: 1px solid #e8e8e8;
+  }
+  
+  .modalBody {
+    padding: 24px;
+  }
+  
+  .modalFooter {
+    border-top: 1px solid #e8e8e8;
+    padding: 10px 16px;
+    text-align: right;
+    background-color: #f7f7f7;
+  }
+  
+  .modalTitle {
+    color: #323232;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+  
+  .modalFooterButton {
+    margin: 0 8px;
+  }
+  
+  .selectGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  
+  .selectColumn {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+  
+  .errorSelect {
+    border-color: #ff4d4f;
+    color: #ff4d4f;
+  }
+  
+  .alertWarning {
+    margin-top: 16px;
+    padding: 8px 15px;
+    background-color: #fff3e6;
+    border: 1px solid #ffedd8;
+    border-radius: 4px;
+    color: #8c6a0a;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  .alertInfo {
+    background-color: #e6f7ff;
+    border-color: #91d5ff;
+    color: #004085;
+  }
+  
+  /* Ant Design Overrides */
+  .ant-modal-content {
+    border-radius: 4px;
+  }
+  
+  .ant-modal-header {
+    border-bottom: none;
+  }
+  
+  .ant-modal-title {
+    font-size: 20px;
+    color: #333;
+  }
+  
+  .ant-modal-footer {
+    border-top: none;
+  }
+  
+  .ant-modal-body {
+    padding: 24px;
+  }
+  
+  .ant-btn-primary {
+    background-color: #0050b3;
+    border-color: #0050b3;
+    color: #fff;
+    /* Remove focus effect */
+    box-shadow: none;
+  }
+  
+  .ant-btn-primary:hover,
+  .ant-btn-primary:focus {
+    background-color: #003a8c;
+    border-color: #003a8c;
+  }
+  
+  /* Add responsive behavior */
+  @media (max-width: 768px) {
+    .modalBody {
+      padding: 16px;
+    }
+  
+    .modalFooter {
+      padding: 10px 16px;
+    }
+  
+    .modalTitle {
+      font-size: 16px;
+    }
+  
+    .alertWarning,
+    .alertInfo {
+      padding: 8px;
+    }
+  }
+  

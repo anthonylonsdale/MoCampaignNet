@@ -103,3 +103,8 @@
   justify-content: center; /* This will horizontally center the content */
   height: 100%; /* Take full height of parent */
 }
+
+.blurredCard {
+  filter: blur(2px);
+  cursor: not-allowed;
+}

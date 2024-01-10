@@ -15,9 +15,13 @@ const useKnockingFileData = () => {
   }
 
   return {
-    voterDataFiles,
-    handleAddVoterDataFile,
-    handleRemoveVoterDataFile,
+    fileData: {
+      voterDataFiles,
+    },
+    setFileData: {
+      handleAddVoterDataFile,
+      handleRemoveVoterDataFile,
+    },
   }
 }
 

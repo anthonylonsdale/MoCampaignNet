@@ -1,0 +1,67 @@
+.knockingPanel {
+  width: 350px;
+  min-width: 250px;
+  max-width: 400px;
+  resize: horizontal;
+  background-color: #f8f9fa;
+  padding: 20px;
+  box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  border-right: 1px solid #eaeaea;
+  overflow-y: auto;
+}
+
+.sectionContainer {
+  margin-top: 20px;
+}
+
+.uploadContainer {
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 2px dashed #cccccc;
+  text-align: center;
+  padding: 20px;
+}
+
+.uploadText {
+  margin: 0;
+  font-size: 12px;
+}
+
+.fileList {
+  margin-top: 10px;
+}
+
+.fileItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 5px;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+  border-radius: 4px;
+}
+
+.fileItem:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.fileDeleteIcon {
+  color: red;
+  cursor: pointer;
+}
+
+.fileDeleteIcon:hover {
+  background-color: transparent;
+}
+
+.antBtnPrimary {
+  background-color: #0052cc;
+  border-color: #0052cc;
+}
+
+.antBtnPrimary:hover,
+.antBtnPrimary:focus {
+  background-color: #40a9ff;
+  border-color: #40a9ff;
+}

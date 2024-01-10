@@ -27,7 +27,7 @@ function AccountInfoModal({ visible, onClose }) {
   }
 
   const allPermissions = Object.keys(permissions).filter((key) => permissions[key])
-  const isAdmin = permissions['Add Users']
+  const isAdmin = permissions['Create Subaccounts']
 
   const handleDeleteSubaccount = async (subaccountDocId) => {
     const deleteSubaccountFn = httpsCallable(functions, 'deleteSubaccount')
@@ -149,7 +149,7 @@ function AccountInfoModal({ visible, onClose }) {
       <div className={styles.accountDetailsContainer}>
         <div className={styles.accountSection}>
           <Title level={4}>
-            <UserOutlined className={styles.adminIcon} /> Profile Details
+            <UserOutlined className={isAdmin ? styles.adminIcon : ''} /> Profile Details
           </Title>
           <Paragraph><strong>Display Name:</strong> {userInfo.displayName}</Paragraph>
           <Paragraph><strong>Email:</strong> {userInfo.email}</Paragraph>

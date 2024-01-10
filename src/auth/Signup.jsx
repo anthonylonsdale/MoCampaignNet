@@ -1,13 +1,13 @@
 import { Button, Form, Input, Typography, message } from 'antd'
 import { useForm } from 'antd/es/form/Form'
-import { createUserWithEmailAndPassword, getAuth, updateProfile } from 'firebase/auth'
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import { collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore'
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import logo from '../images/logoblank.png'
-import './Signup.css'
+import styles from './Signup.module.css'
 import PasswordRequirements from './components/PasswordRequirements.jsx'
-import { db } from './firebase.jsx'
+import { auth, db } from './firebase.jsx'
 
 const { Text } = Typography
 
@@ -22,8 +22,6 @@ function Signup() {
 
   const onFinish = async (values) => {
     const { email, password, displayName } = values
-    const auth = getAuth()
-
     const q = query(
         collection(db, 'users'),
         where('username', '==', displayName),
@@ -39,7 +37,6 @@ function Signup() {
       const userCredentials = await createUserWithEmailAndPassword(auth, email, password)
       message.success('Account created successfully')
 
-      // Save user info to Firestore
       const docRef = doc(db, 'users', userCredentials.user.uid)
       await setDoc(docRef, {
         email: email,
@@ -81,63 +78,59 @@ function Signup() {
   }, [form, newPassword, displayName])
 
   return (
-    <div className="auth-page">
-      <div className="auth-header">
-        <img src={logo} alt="Bernoulli Technologies Logo" className="auth-logo"/>
-        <span className="auth-title">Account Signup</span>
+    <div className={styles.authPage}>
+      <div className={styles.authHeader}>
+        <img src={logo} alt="Bernoulli Technologies Logo" className={styles.authLogo}/>
+        <span className={styles.authTitle}>Account Signup</span>
       </div>
-      <div className="auth-container">
+      <div className={styles.authContainer}>
         <Form
           name="signup"
           onFinish={onFinish}
           layout="vertical"
           form={form}
-          className="auth-form"
+          className={styles.authForm}
         >
           <Form.Item
             label="Email"
             name="email"
-            className="auth-form-item"
+            className={styles.authFormItem}
             rules={[
               { required: true, type: 'email', message: 'Please enter a valid email address!' },
             ]}
           >
-            <Input placeholder="Email" className="auth-input" />
+            <Input placeholder="Email" className={styles.authInput} />
           </Form.Item>
 
           <Form.Item
             label="Password"
             name="password"
-            className="auth-form-item"
+            className={styles.authFormItem}
             rules={[
               { required: true, message: 'Please enter your password!' },
             ]}
           >
             <Input.Password
               placeholder="Password"
-              className="auth-input"
+              className={styles.authInput}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              onFocus={() => {
-                setShowRequirements(true)
-              }}
-              onBlur={() => {
-                setShowRequirements(false)
-              }}
+              onFocus={() => setShowRequirements(true)}
+              onBlur={() => setShowRequirements(false)}
             />
           </Form.Item>
 
           <Form.Item
             label="Display Name"
             name="displayName"
-            className="auth-form-item"
+            className={styles.authFormItem}
             rules={[
               { required: true, message: 'Please enter your display name!' },
             ]}
           >
             <Input
               placeholder="Display Name"
-              className="auth-input"
+              className={styles.authInput}
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
             />
@@ -145,20 +138,20 @@ function Signup() {
 
           <PasswordRequirements password={newPassword} visible={showRequirements} />
 
-          {error && <div className="error-text">{error}</div>}
+          {error && <div className={styles.errorText}>{error}</div>}
           <Form.Item>
             <Button
               type="primary"
               htmlType="submit"
               disabled={isSubmitDisabled}
-              className="auth-submit-button"
+              className={styles.authSubmitButton}
             >
-            Sign Up
+              Sign Up
             </Button>
           </Form.Item>
         </Form>
-        <Text className="auth-footer-text"> {/* New class for footer text */}
-        Already have an account? <Link to="/login" className="auth-link">Sign In</Link>
+        <Text className={styles.authFooterText}>
+          Already have an account? <Link to="/login" className={styles.authLink}>Sign In</Link>
         </Text>
       </div>
     </div>

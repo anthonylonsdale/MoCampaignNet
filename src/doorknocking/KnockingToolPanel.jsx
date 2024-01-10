@@ -1,24 +1,17 @@
 import { DatabaseOutlined, DeleteOutlined, EnvironmentOutlined, GlobalOutlined, IdcardOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import { Collapse, Tooltip, Upload, message } from 'antd'
 import React, { useState } from 'react'
-import ExcelColumnSelector from '../modals/ExcelColumnSelector.jsx'
-import './KnockingToolPanel.css'
-import useKnockingData from './hooks/useKnockingDataHook.jsx'
-import useKnockingFileData from './hooks/useKnockingFileDataHook.jsx'
+import styles from './KnockingToolPanel.module.css'
+import ExcelDataPlotModal from './modals/ExcelDataPlotModal.jsx'
 
 const { Panel } = Collapse
 const { Dragger } = Upload
 
-const DoorknockingToolPanel = ({ }) => {
-  const {
-    setKnockingPoints,
-  } = useKnockingData()
 
-  const {
-    voterDataFiles,
-    handleAddVoterDataFile,
-    handleRemoveVoterDataFile,
-  } = useKnockingFileData()
+const DoorknockingToolPanel = ({ setKnockingData, fileData, setFileData }) => {
+  const { setKnockingPoints } = setKnockingData
+  const { voterDataFiles } = fileData
+  const { handleAddVoterDataFile, handleRemoveVoterDataFile } = setFileData
 
   const [voterDataModalVisible, setVoterDataModalVisible] = useState(false)
   const [currentVoterDataFile, setCurrentVoterDataFile] = useState(null)
@@ -71,18 +64,18 @@ const DoorknockingToolPanel = ({ }) => {
         title={<span style={{ fontWeight: 600, color: 'white' }}>{tooltipText}</span>}
         color="#0052cc"
       >
-        <InfoCircleOutlined style={{ marginLeft: 8 }} />
+        <InfoCircleOutlined style={{ marginLeft: '1rem' }} />
       </Tooltip>
     )
   }
 
   return (
-    <div className="knocking-panel">
-      <div className="section-container">
+    <div className={styles.knockingPanel}>
+      <div className={styles.sectionContainer}>
         <h3>DATA ENTRY</h3>
         <Collapse expandIconPosition="right">
           <Panel header={<span>Voter Data Import {renderImportTooltip(1)}</span>} key="1" extra={genIcons('voterId')}>
-            <div className="upload-container">
+            <div className={styles.uploadContainer}>
               <Dragger
                 accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.csv"
                 beforeUpload={(file) => {
@@ -104,17 +97,17 @@ const DoorknockingToolPanel = ({ }) => {
                 <p className="ant-upload-drag-icon">
                   <IdcardOutlined />
                 </p>
-                <p className="upload-text">Drag in Excel File</p>
-                <p className="upload-text">or</p>
-                <p className="upload-text">Click to Browse Files</p>
+                <p className={styles.uploadText}>Drag in Excel File</p>
+                <p className={styles.uploadText}>or</p>
+                <p className={styles.uploadText}>Click to Browse Files</p>
               </Dragger>
-              <div className="file-list">
+              <div className={styles.fileList}>
                 {voterDataFiles.map((file, index) => (
-                  <div key={index} className="file-item">
+                  <div key={index} className={styles.fileItem}>
                     <span onClick={() => handleVoterData(file)}>
                       {file.name}
                     </span>
-                    <DeleteOutlined onClick={() => handleRemoveVoterDataFile(file)} className="file-delete-icon" />
+                    <DeleteOutlined onClick={() => handleRemoveVoterDataFile(file.name)} className={styles.fileDeleteIcon} />
                   </div>
                 ))}
               </div>
@@ -123,11 +116,11 @@ const DoorknockingToolPanel = ({ }) => {
         </Collapse>
       </div>
 
-      <ExcelColumnSelector
+      <ExcelDataPlotModal
         visible={voterDataModalVisible}
         onCancel={() => setVoterDataModalVisible(false)}
         droppedFile={currentVoterDataFile}
-        setMapPoints={setKnockingPoints}
+        setKnockingPoints={setKnockingPoints} // Passed correctly here
       />
     </div>
   )

@@ -1,0 +1,168 @@
+.excelColumnSelectorModalAntModalBody {
+  padding: 24px;
+  background-color: #fff; /* Cleaner look */
+}
+
+.excelColumnSelectorModalAntModalFooter {
+  border-top: 1px solid #f0f0f0;
+  padding: 10px 16px;
+  background-color: #fff; /* Consistency */
+}
+
+.excelColumnSelectorModalH3 {
+  margin-bottom: 10px;
+  font-size: 20px; /* Modern look */
+  font-weight: 600; /* Bolder title */
+  color: #333;
+}
+
+.excelColumnSelectorModalAntSwitch {
+  margin-right: 8px;
+}
+
+.excelColumnSelectorModalAntSelect,
+.excelColumnSelectorModalAntBtn,
+.excelColumnSelectorModalAntInput {
+  border-radius: 4px; /* Unified border radius */
+}
+
+.excelColumnSelectorModalAntBtnPrimary {
+  background-color: #0052cc;
+  color: #fff;
+  border-color: #0052cc;
+  box-shadow: none;
+}
+
+.excelColumnSelectorModalAntBtnNotPrimary {
+  background-color: #f0f0f0;
+  color: #333;
+  border-color: #d9d9d9;
+}
+
+.columnContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 10px;
+}
+
+.columnPrefix {
+  display: inline-block;
+  min-width: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-right: 5px;
+  text-align: center;
+  background-color: #f0f0f0;
+  border-radius: 3px;
+  padding: 2px 0;
+}
+
+/* Custom Scrollbar styles */
+.columnContainerWebkitScrollbarTrack {
+  background-color: #f1f1f1;
+  border-radius: 10px;
+}
+
+.columnContainerWebkitScrollbarThumb {
+  background-color: #888;
+  border-radius: 10px;
+}
+
+.columnContainerWebkitScrollbarThumb:hover {
+  background: #555;
+}
+
+.columnContainerWebkitScrollbar {
+  width: 8px;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.checkboxLabelAntCheckboxWrapper {
+  flex-shrink: 0;
+  margin-right: 5px;
+}
+
+.checkboxLabelSpan {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 9rem;
+}
+
+@media (max-width: 768px) {
+  .excelColumnSelectorModalAntModalBody {
+    padding: 16px;
+  }
+
+  .excelColumnSelectorModalAntModalFooter {
+    padding: 8px 16px;
+  }
+
+  .columnContainer {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+}
+
+.excelColumnSelectorModalAntModalHeader {
+  background-color: #fff;
+  padding: 16px 24px;
+  border-bottom: 1px solid #ececec;
+}
+
+.excelColumnSelectorModalAntModalTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.selectGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.selectColumn {
+  width: 100%;
+}
+
+.errorSelect {
+  border-color: red;
+}
+
+.alertWarning {
+  margin-top: 1rem;
+  border-radius: 4px;
+}
+
+.inputSearch {
+  margin-bottom: 10px;
+  padding: 5px;
+  width: 100%;
+}
+
+.selectAllContainer {
+  margin-bottom: 10px;
+}
+
+.dataCleaningSwitch {
+  margin-left: 8px; /* Adjusted for better alignment with the switch */
+}
+
+.sortSelectContainer {
+  margin-right: 10px; /* To separate the Select from anything to its right */
+  width: 200px; /* Fixed width for the Select component */
+}
+
+.margins {
+  padding: 10px;
+}

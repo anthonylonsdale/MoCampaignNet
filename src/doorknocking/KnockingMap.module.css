@@ -3,3 +3,29 @@
     width: 100%;
     position: relative;
 }
+  
+.searchBoxContainer {
+    position: absolute;
+    top: 5px; /* Adjust as necessary */
+    left: 50%;
+    transform: translateX(-100%);
+    z-index: 1000; /* Ensure it's above the map layers */
+}
+
+.searchInput {
+    width: 200px;
+    border-radius: 20px;
+    padding: 5px 10px;
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.coordinatesDisplay {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 5px 10px;
+    border-radius: 20px;
+    z-index: 1000; /* Ensure it's above the map layers */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}

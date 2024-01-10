@@ -1,4 +1,4 @@
-import { DeploymentUnitOutlined, HomeOutlined } from '@ant-design/icons'
+import { DeploymentUnitOutlined, HomeOutlined, NodeCollapseOutlined } from '@ant-design/icons'
 import { Button, Card, Col, Layout, Row, Typography } from 'antd'
 import 'leaflet/dist/leaflet.css'
 import React from 'react'
@@ -17,15 +17,30 @@ const applications = [
   {
     route: '/mapping',
     type: 'mapping',
+    permissionKey: 'View Mapping Client',
   },
   {
     route: '/doorknocking',
     type: 'doorknocking',
+    permissionKey: 'View Doorknocking Client',
+  },
+  {
+    route: '/electionsim',
+    type: 'electionsim',
+    permissionKey: 'View Election Simulator',
   },
 ]
 
 const ApplicationCard = ({ app }) => {
   const navigate = useNavigate()
+  const { permissions } = usePermissions()
+  const hasPermission = permissions[app.permissionKey]
+
+  const handleClick = () => {
+    if (hasPermission) {
+      navigate(app.route)
+    }
+  }
 
   const renderAvatar = () => {
     switch (app.type) {
@@ -33,6 +48,8 @@ const ApplicationCard = ({ app }) => {
         return <DeploymentUnitOutlined style={{ fontSize: '350%' }} />
       case 'doorknocking':
         return <HomeOutlined style={{ fontSize: '350%' }} />
+      case 'electionsim':
+        return <NodeCollapseOutlined style={{ fontSize: '350%' }} />
     }
   }
 
@@ -50,21 +67,32 @@ const ApplicationCard = ({ app }) => {
             <Text className={styles.interactiveTitle}>Doorknocking Client</Text>
           </div>
         )
+      case 'electionsim':
+        return (
+          <div className={styles.mappingClientContainer}>
+            <Text className={styles.interactiveTitle}>Election Simulator</Text>
+          </div>
+        )
     }
   }
 
   return (
     <Col xs={24} sm={12} md={10} lg={8} xl={8}>
-      <Card hoverable onClick={() => navigate(app.route)} className={styles.applicationCard}>
+      <Card
+        hoverable={hasPermission}
+        onClick={handleClick}
+        className={hasPermission ? styles.applicationCard : styles.blurredCard}
+      >
         <Card.Meta
           avatar={renderAvatar()}
           description={renderCardContent()}
-          className="card-meta" // If this is a custom class from antd, keep it as it is
+          className="card-meta"
         />
       </Card>
     </Col>
   )
 }
+
 
 function CampaignTools() {
   const { user, handleSignOut } = usePermissions()
