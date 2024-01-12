@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import styles from './KnockingContainer.module.css'
 import KnockingMap from './KnockingMap.jsx'
 import DoorknockingToolPanel from './KnockingToolPanel.jsx'
@@ -9,23 +9,29 @@ const KnockingContainer = () => {
   const {
     knockingData,
     setKnockingData,
-    clearKnockingData,
+    clearData,
   } = useKnockingData()
   const {
     fileData,
     setFileData,
   } = useKnockingFileData()
 
+  const featureGroupRef = useRef(null)
+
   return (
     <div className={styles.interactiveMapperContainer}>
       <DoorknockingToolPanel
+        knockingData={knockingData}
         setKnockingData={setKnockingData}
         fileData={fileData}
         setFileData={setFileData}
+        featureGroupRef={featureGroupRef}
       />
       <KnockingMap
         knockingData={knockingData}
-        clearKnockingData={clearKnockingData}
+        setKnockingData={setKnockingData}
+        clearData={clearData}
+        featureGroupRef={featureGroupRef}
       />
     </div>
   )

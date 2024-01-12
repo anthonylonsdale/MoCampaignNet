@@ -65,3 +65,39 @@
   background-color: #40a9ff;
   border-color: #40a9ff;
 }
+
+.actionContainer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* This aligns your icons to the right */
+}
+
+.actionIcons {
+  display: inline-flex; /* This allows for inline display of your icons with flex properties */
+  align-items: center; /* This vertically centers the icons in the actionIcons div */
+}
+
+.applyButton {
+  margin-left: 8px; /* This gives some space between the last icon and the button */
+}
+
+.iconSeparator {
+  border-left: 1px solid #d9d9d9; /* Adjust the color as needed */
+  margin: 0 8px; /* Adjust the spacing as needed */
+  height: 24px; /* Adjust to the height of your icons */
+  display: inline-block;
+  vertical-align: middle; /* This ensures it aligns nicely with the icons */
+}
+
+.listItem {
+  border-bottom: 1px solid #f0f0f0; /* Adds a separator between list items */
+  padding: 16px 24px; /* Adjust padding as needed */
+}
+
+.listItem:last-child {
+  border-bottom: none; /* Removes separator from the last item */
+}
+
+.listItemMeta {
+  margin-right: 16px; /* Ensures space between the meta and the actions */
+}

@@ -1,6 +1,6 @@
-import { DatabaseOutlined, DeleteOutlined, EnvironmentOutlined, GlobalOutlined, IdcardOutlined, InfoCircleOutlined } from '@ant-design/icons'
-import { Collapse, Tooltip, Upload, message } from 'antd'
-import React, { useState } from 'react'
+import { DatabaseOutlined, DeleteOutlined, EditOutlined, EnvironmentOutlined, EyeInvisibleOutlined, EyeOutlined, GlobalOutlined, IdcardOutlined, InfoCircleOutlined } from '@ant-design/icons'
+import { Button, Collapse, List, Popconfirm, Tooltip, Upload, message } from 'antd'
+import React, { useEffect, useState } from 'react'
 import styles from './KnockingToolPanel.module.css'
 import ExcelDataPlotModal from './modals/ExcelDataPlotModal.jsx'
 
@@ -8,13 +8,15 @@ const { Panel } = Collapse
 const { Dragger } = Upload
 
 
-const DoorknockingToolPanel = ({ setKnockingData, fileData, setFileData }) => {
-  const { setKnockingPoints } = setKnockingData
+const DoorknockingToolPanel = ({ knockingData, setKnockingData, fileData, setFileData, featureGroupRef }) => {
+  const { drawnShape, selectedShapeForEditing } = knockingData
+  const { setKnockingPoints, setSelectedShapeForEditing } = setKnockingData
   const { voterDataFiles } = fileData
   const { handleAddVoterDataFile, handleRemoveVoterDataFile } = setFileData
 
   const [voterDataModalVisible, setVoterDataModalVisible] = useState(false)
   const [currentVoterDataFile, setCurrentVoterDataFile] = useState(null)
+  const [drawnShapeList, setDrawnShapeList] = useState([])
 
   const handleVoterData = (file) => {
     setCurrentVoterDataFile(file)
@@ -69,6 +71,58 @@ const DoorknockingToolPanel = ({ setKnockingData, fileData, setFileData }) => {
     )
   }
 
+  useEffect(() => {
+    if (drawnShape) {
+      if (!drawnShapeList.some((shape) => shape.id === drawnShape.id)) {
+        setDrawnShapeList((prevShapes) => [...prevShapes, drawnShape])
+      }
+    }
+  }, [drawnShape])
+
+  const confirmDelete = (shapeId) => {
+    const shapeToDelete = drawnShapeList.find((s) => s.id === shapeId)
+    if (shapeToDelete && featureGroupRef.current) {
+      featureGroupRef.current.removeLayer(shapeToDelete.layer)
+    }
+    setDrawnShapeList((prevShapes) => prevShapes.filter((s) => s.id !== shapeId))
+  }
+
+  const startEditingShape = (shapeId) => {
+    const shapeToEdit = drawnShapeList.find((s) => s.id === shapeId)
+    if (shapeToEdit) {
+      setSelectedShapeForEditing(shapeToEdit)
+    }
+  }
+
+  const stopEditingShape = (shapeId) => {
+    setSelectedShapeForEditing(null)
+
+    const shapeToStopEditing = drawnShapeList.find((s) => s.id === shapeId)
+    if (shapeToStopEditing && shapeToStopEditing.layer) {
+      shapeToStopEditing.layer.editing.disable()
+    }
+  }
+
+  const toggleVisibility = (shapeId) => {
+    setDrawnShapeList((prevShapes) => {
+      const shapeIndex = prevShapes.findIndex((shape) => shape.id === shapeId)
+      if (shapeIndex === -1) return prevShapes
+
+      const newShapes = [...prevShapes]
+      const shapeToToggle = newShapes[shapeIndex]
+      shapeToToggle.visible = !shapeToToggle.visible
+
+      if (shapeToToggle.visible) {
+        featureGroupRef.current.addLayer(shapeToToggle.layer)
+      } else {
+        featureGroupRef.current.removeLayer(shapeToToggle.layer)
+      }
+
+      return newShapes
+    })
+  }
+
+
   return (
     <div className={styles.knockingPanel}>
       <div className={styles.sectionContainer}>
@@ -115,6 +169,46 @@ const DoorknockingToolPanel = ({ setKnockingData, fileData, setFileData }) => {
           </Panel>
         </Collapse>
       </div>
+      <div className={styles.sectionContainer}>
+        <h3>SHAPES</h3>
+        <List
+          itemLayout="horizontal"
+          dataSource={drawnShapeList}
+          renderItem={(shape) => (
+            <List.Item key={shape.id}>
+              <List.Item.Meta
+                title={shape.name}
+                description={`ID: ${shape.id}`}
+              />
+              <div className={styles.actionContainer}>
+                {shape.visible ? (
+                  <EyeOutlined onClick={() => toggleVisibility(shape.id)} />
+                ) : (
+                  <EyeInvisibleOutlined onClick={() => toggleVisibility(shape.id)} />
+                )}
+                <span className={styles.iconSeparator}></span>
+                <EditOutlined onClick={() => startEditingShape(shape.id)} />
+                <span className={styles.iconSeparator}></span>
+                <Popconfirm
+                  title="Are you sure you want to delete this shape?"
+                  onConfirm={() => confirmDelete(shape.id)}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <DeleteOutlined />
+                </Popconfirm>
+                {selectedShapeForEditing && selectedShapeForEditing.id === shape.id && (
+                  <>
+                    <span className={styles.iconSeparator}></span>
+                    <Button type="primary" size="small" onClick={() => stopEditingShape(shape.id)}>Apply</Button>
+                  </>
+                )}
+              </div>
+            </List.Item>
+          )}
+        />
+      </div>
+
 
       <ExcelDataPlotModal
         visible={voterDataModalVisible}

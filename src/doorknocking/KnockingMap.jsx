@@ -1,5 +1,5 @@
 import * as turf from '@turf/turf'
-import { AutoComplete, message } from 'antd'
+import { AutoComplete, Input, Modal, message } from 'antd'
 import L from 'leaflet'
 import 'leaflet-draw/dist/leaflet.draw.css'
 import 'leaflet.fullscreen'
@@ -90,11 +90,16 @@ const SetViewToBounds = ({ points }) => {
   return null
 }
 
-const KnockingMap = ({ knockingData, clearKnockingData }) => {
-  const { knockingPoints } = knockingData
+const KnockingMap = ({ knockingData, setKnockingData, clearData, featureGroupRef }) => {
+  const { knockingPoints, selectedShapeForEditing } = knockingData
+  const { setDrawnShape } = setKnockingData
+  const { clearKnockingData } = clearData
+
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [newShapeName, setNewShapeName] = useState('')
+  const [tempShape, setTempShape] = useState(null)
 
   const mapPointsRef = useRef(knockingPoints)
-  const featureGroupRef = useRef()
 
   useEffect(() => {
     mapPointsRef.current = knockingPoints
@@ -102,8 +107,19 @@ const KnockingMap = ({ knockingData, clearKnockingData }) => {
 
   const onCreated = (e) => {
     const layer = e.layer
+    featureGroupRef.current.addLayer(layer)
     const drawnPolygon = layer.toGeoJSON()
     const currentMapPoints = mapPointsRef.current
+
+    const tempNewShape = {
+      id: Math.random().toString(36).substring(2, 9),
+      layer: e.layer,
+      bounds: e.layer.getBounds(),
+      name: '',
+      visible: true,
+    }
+    setTempShape(tempNewShape)
+    setIsModalVisible(true)
 
     if (Array.isArray(currentMapPoints)) {
       const pointsSelected = currentMapPoints.filter((point) => {
@@ -111,10 +127,29 @@ const KnockingMap = ({ knockingData, clearKnockingData }) => {
         return turf.booleanPointInPolygon(pointToCheck, drawnPolygon)
       })
 
-      setSelectedHouses(pointsSelected)
       message.info(`${pointsSelected.length} points have been selected.`)
     }
   }
+
+  const handleOk = () => {
+    if (newShapeName.trim() === '') {
+      message.error('Please enter a name for the shape.')
+      return
+    }
+
+    setDrawnShape({ ...tempShape, name: newShapeName })
+    setIsModalVisible(false)
+    setNewShapeName('')
+    setTempShape(null)
+  }
+
+  const handleCancel = () => {
+    setIsModalVisible(false)
+    setNewShapeName('')
+    setTempShape(null)
+    setDrawnShape(null)
+  }
+
 
   const onDeleted = (e) => {
     const { layers: { _layers } } = e
@@ -207,10 +242,44 @@ const KnockingMap = ({ knockingData, clearKnockingData }) => {
     })
   }, [knockingPoints])
 
+  useEffect(() => {
+    if (selectedShapeForEditing && selectedShapeForEditing.layer) {
+      selectedShapeForEditing.layer.editing.enable()
+    }
+  }, [selectedShapeForEditing])
+
+  useEffect(() => {
+    if (featureGroupRef.current) {
+      const map = featureGroupRef.current
+
+      const handleEdit = (e) => {
+        const layers = e.layers
+        layers.eachLayer((layer) => {
+          if (selectedShapeForEditing && layer === selectedShapeForEditing.layer) {
+            const newGeometry = layer.toGeoJSON()
+
+            setDrawnShape(newGeometry)
+            updateSelectedShapeGeometry(selectedShapeForEditing.id, newGeometry)
+          }
+        })
+      }
+
+      map.on('draw:edited', handleEdit)
+      return () => {
+        map.off('draw:edited', handleEdit)
+      }
+    }
+  }, [featureGroupRef])
+
+  console.log(selectedShapeForEditing)
 
   return (
     <div className={styles.mappingContainer}>
-      <MapContainer center={[38.573936, -92.603760]} zoom={13} fullscreenControl={true}>
+      <MapContainer
+        center={[38.573936, -92.603760]}
+        zoom={13}
+        fullscreenControl={true}
+      >
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"
           attribution='Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
@@ -241,6 +310,14 @@ const KnockingMap = ({ knockingData, clearKnockingData }) => {
 
         <SetViewToBounds points={knockingPoints} />
       </MapContainer>
+      <Modal title="Name Your Shape" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+        <Input
+          value={newShapeName}
+          onChange={(e) => setNewShapeName(e.target.value)}
+          placeholder="Enter shape name"
+          onPressEnter={handleOk} // Allows pressing Enter to submit
+        />
+      </Modal>
     </div>
   )
 }
