@@ -15,6 +15,12 @@
   margin-top: 20px;
 }
 
+.shapeContainer {
+  margin-top: 20px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
 .uploadContainer {
   background-color: rgba(0, 0, 0, 0.1);
   border: 2px dashed #cccccc;

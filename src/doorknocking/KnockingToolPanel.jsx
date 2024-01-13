@@ -1,5 +1,6 @@
-import { DatabaseOutlined, DeleteOutlined, EditOutlined, EnvironmentOutlined, EyeInvisibleOutlined, EyeOutlined, GlobalOutlined, IdcardOutlined, InfoCircleOutlined } from '@ant-design/icons'
+import { CarOutlined, DeleteOutlined, EditOutlined, EyeInvisibleOutlined, EyeOutlined, IdcardOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import { Button, Collapse, List, Popconfirm, Tooltip, Upload, message } from 'antd'
+import { getFunctions, httpsCallable } from 'firebase/functions'
 import React, { useEffect, useState } from 'react'
 import styles from './KnockingToolPanel.module.css'
 import ExcelDataPlotModal from './modals/ExcelDataPlotModal.jsx'
@@ -17,6 +18,10 @@ const DoorknockingToolPanel = ({ knockingData, setKnockingData, fileData, setFil
   const [voterDataModalVisible, setVoterDataModalVisible] = useState(false)
   const [currentVoterDataFile, setCurrentVoterDataFile] = useState(null)
   const [drawnShapeList, setDrawnShapeList] = useState([])
+  // const [selectedTrafficShape, setSelectedTrafficShape] = useState(null)
+
+  const functions = getFunctions()
+  const getRoadMap = httpsCallable(functions, 'getStreetDataFromPolygon')
 
   const handleVoterData = (file) => {
     setCurrentVoterDataFile(file)
@@ -37,9 +42,7 @@ const DoorknockingToolPanel = ({ knockingData, setKnockingData, fileData, setFil
 
   const iconComponents = {
     voterId: IdcardOutlined,
-    distInfo: EnvironmentOutlined,
-    shapefile: GlobalOutlined,
-    precinct: DatabaseOutlined,
+    traffic: CarOutlined,
   }
 
   const renderImportTooltip = (tooltipCode) => {
@@ -122,6 +125,34 @@ const DoorknockingToolPanel = ({ knockingData, setKnockingData, fileData, setFil
     })
   }
 
+  const handleRetrieveRoadMap = async (shapeId) => {
+    const shapeToRetrieve = drawnShapeList.find((s) => s.id === shapeId)
+    if (!shapeToRetrieve) {
+      console.error('Shape not found.')
+      return
+    }
+
+    console.log(shapeToRetrieve)
+
+    const ne = shapeToRetrieve.bounds._northEast
+    const sw = shapeToRetrieve.bounds._southWest
+
+    const bboxData = {
+      north: ne.lat,
+      south: sw.lat,
+      east: ne.lng,
+      west: sw.lng,
+    }
+
+    try {
+      const result = await getRoadMap(bboxData)
+      console.log(result)
+      console.log(typeof result)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
 
   return (
     <div className={styles.knockingPanel}>
@@ -169,7 +200,7 @@ const DoorknockingToolPanel = ({ knockingData, setKnockingData, fileData, setFil
           </Panel>
         </Collapse>
       </div>
-      <div className={styles.sectionContainer}>
+      <div className={styles.shapeContainer}>
         <h3>SHAPES</h3>
         <List
           itemLayout="horizontal"
@@ -208,7 +239,30 @@ const DoorknockingToolPanel = ({ knockingData, setKnockingData, fileData, setFil
           )}
         />
       </div>
-
+      <div className={styles.sectionContainer}>
+        <h3>TRAFFIC</h3>
+        <Collapse expandIconPosition="right">
+          <Panel header={<span>Traffic Data {renderImportTooltip(5)}</span>} key="5" extra={genIcons('traffic')}>
+            <List
+              itemLayout="horizontal"
+              dataSource={drawnShapeList}
+              renderItem={(shape) => (
+                <List.Item key={shape.id}>
+                  <List.Item.Meta
+                    title={shape.name}
+                    description={`ID: ${shape.id}`}
+                  />
+                  <div className={styles.actionContainer}>
+                    <Button type="primary" size="small" onClick={() => handleRetrieveRoadMap(shape.id)}>
+                      Retrieve Road Map
+                    </Button>
+                  </div>
+                </List.Item>
+              )}
+            />
+          </Panel>
+        </Collapse>
+      </div>
 
       <ExcelDataPlotModal
         visible={voterDataModalVisible}

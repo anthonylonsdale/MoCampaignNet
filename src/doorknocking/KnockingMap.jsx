@@ -118,8 +118,8 @@ const KnockingMap = ({ knockingData, setKnockingData, clearData, featureGroupRef
       name: '',
       visible: true,
     }
-    setTempShape(tempNewShape)
     setIsModalVisible(true)
+    setTempShape(tempNewShape)
 
     if (Array.isArray(currentMapPoints)) {
       const pointsSelected = currentMapPoints.filter((point) => {
@@ -310,7 +310,7 @@ const KnockingMap = ({ knockingData, setKnockingData, clearData, featureGroupRef
 
         <SetViewToBounds points={knockingPoints} />
       </MapContainer>
-      <Modal title="Name Your Shape" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+      <Modal title="Name Your Shape" open={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
         <Input
           value={newShapeName}
           onChange={(e) => setNewShapeName(e.target.value)}
