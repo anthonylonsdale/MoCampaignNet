@@ -29,7 +29,7 @@ exports.getStreetDataFromPolygon = functions.https.onCall(async (data, context) 
     throw new functions.https.HttpsError("unauthenticated", "The function must be called while authenticated.")
   }
 
-  const serviceUrl = "https://pythonfunctions-bgx3wjt2ea-uc.a.run.app/get_graph"
+  const serviceUrl = "https://mocampaignnet-bgx3wjt2ea-uc.a.run.app/get_graph"
 
   const payload = {
     north: data.north,
