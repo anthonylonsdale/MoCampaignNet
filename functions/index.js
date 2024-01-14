@@ -4,7 +4,7 @@ const functions = require("firebase-functions")
 const admin = require("firebase-admin")
 // const cors = require("cors")
 const { v4: uuidv4 } = require("uuid")
-const { spawn } = require("child_process")
+const axios = require("axios")
 
 admin.initializeApp()
 
@@ -24,41 +24,27 @@ const corsHandler = cors({
 })
 */
 
-exports.getStreetDataFromPolygon = functions.https.onCall((data, context) => {
+exports.getStreetDataFromPolygon = functions.https.onCall(async (data, context) => {
   if (!context.auth) {
-    throw new functions.https.HttpsError("unauthenticated", "You must be authenticated to call this function.")
+    throw new functions.https.HttpsError("unauthenticated", "The function must be called while authenticated.")
   }
 
-  const { north, south, east, west } = data
+  const serviceUrl = "https://pythonfunctions-bgx3wjt2ea-uc.a.run.app/get_graph"
 
+  const payload = {
+    north: data.north,
+    south: data.south,
+    east: data.east,
+    west: data.west,
+  }
 
-  return new Promise((resolve, reject) => {
-    const pythonProcess = spawn("python", ["./streetmap.py", north, south, east, west])
-
-
-    let scriptOutput = ""
-    pythonProcess.stdout.on("data", (data) => {
-      scriptOutput += data.toString()
-      console.log(scriptOutput)
-    })
-
-    pythonProcess.on("close", (code) => {
-      if (code !== 0) {
-        return reject(new functions.https.HttpsError("internal", "The Python script ended with an error."))
-      }
-      try {
-        const output = JSON.parse(scriptOutput)
-        resolve(output)
-      } catch (error) {
-        reject(new functions.https.HttpsError("data-loss", "Unable to parse the output of the Python script."))
-      }
-    })
-
-    pythonProcess.on("error", (error) => {
-      console.error("Failed to start Python script.", error)
-      reject(new functions.https.HttpsError("internal", "Failed to start the Python script."))
-    })
-  })
+  try {
+    const response = await axios.post(serviceUrl, payload)
+    return response.data
+  } catch (error) {
+    console.error("Error calling Python service:", error)
+    throw new functions.https.HttpsError("internal", "Failed to call the Python service.")
+  }
 })
 
 exports.deleteSubaccount = functions.https.onCall(async (data, context) => {

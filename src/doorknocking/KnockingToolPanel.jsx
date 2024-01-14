@@ -145,9 +145,9 @@ const DoorknockingToolPanel = ({ knockingData, setKnockingData, fileData, setFil
     }
 
     try {
-      const result = await getRoadMap(bboxData)
-      console.log(result)
-      console.log(typeof result)
+      const { data } = await getRoadMap(bboxData)
+      console.log(data) // Now 'data' contains the actual response from your Cloud Run service
+      console.log(typeof data)
     } catch (error) {
       console.error(error)
     }
