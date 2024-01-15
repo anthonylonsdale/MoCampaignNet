@@ -1,13 +1,9 @@
 import osmnx as ox
-import json
+from flask import Flask, jsonify, request
+import os
 
 app = Flask(__name__)
 
-def create_graph_from_bbox(north, south, east, west, network_type='drive'):
-    G = ox.graph_from_bbox(north, south, east, west, network_type=network_type, simplify=True)
-    nodes, edges = ox.graph_to_gdfs(G, nodes=True, edges=True)
-    edges_geojson = edges.to_json()
-    return edges_geojson
 
 @app.route('/get_graph', methods=['POST'])
 def get_graph():
@@ -28,10 +24,13 @@ def get_graph():
         return jsonify({"error": "Invalid coordinate format"}), 400
 
     try:
-        graph_geojson = create_graph_from_bbox(north, south, east, west)
-        return graph_geojson
+        G = ox.graph_from_bbox(north, south, east, west, network_type='drive', simplify=True)
+        nodes, edges = ox.graph_to_gdfs(G, nodes=True, edges=True)
+        edges_geojson = edges.to_json()
+        return edges_geojson
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 if __name__ == '__main__':
     # Set debug to False in production
