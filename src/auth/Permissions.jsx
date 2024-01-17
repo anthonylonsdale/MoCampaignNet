@@ -22,7 +22,10 @@ const adminPermissions = {
   'Remove Subaccounts': true,
   'View Premium Data': true,
   'Build and Export Datasets': true,
-  'View Election Simulator': true,
+  // 'View Election Simulator': true,
+  // 'View Voter Contacts': true,
+  // 'View Fundraising Analytics': true,
+  // 'Volunteer Management': true,
 }
 
 export const getActiveSessions = async (userId) => {

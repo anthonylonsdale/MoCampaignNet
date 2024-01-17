@@ -1,4 +1,4 @@
-import { DeploymentUnitOutlined, HomeOutlined, NodeCollapseOutlined } from '@ant-design/icons'
+import { DeploymentUnitOutlined, DollarOutlined, GlobalOutlined, HomeOutlined, NodeCollapseOutlined, TeamOutlined } from '@ant-design/icons'
 import { Button, Card, Col, Layout, Row, Typography } from 'antd'
 import 'leaflet/dist/leaflet.css'
 import React from 'react'
@@ -8,7 +8,7 @@ import Auth from '../auth/auth.jsx'
 import CustomHeader from '../components/CustomHeader.jsx'
 import AppFooter from '../components/Footer.jsx'
 import Sidebar from '../components/SideBar.jsx'
-import styles from './CampaignTools.module.css'; // Import CSS module
+import styles from './CampaignTools.module.css'
 
 const { Content } = Layout
 const { Text } = Typography
@@ -29,6 +29,21 @@ const applications = [
     type: 'electionsim',
     permissionKey: 'View Election Simulator',
   },
+  {
+    route: '/votercontacts',
+    type: 'votercontacts',
+    permissionKey: 'View Voter Contacts',
+  },
+  {
+    route: '/fundraising',
+    type: 'fundraising',
+    permissionKey: 'View Fundraising Analytics',
+  },
+  {
+    route: '/volunteermgmt',
+    type: 'volunteermgmt',
+    permissionKey: 'Volunteer Management',
+  },
 ]
 
 const ApplicationCard = ({ app }) => {
@@ -45,11 +60,17 @@ const ApplicationCard = ({ app }) => {
   const renderAvatar = () => {
     switch (app.type) {
       case 'mapping':
-        return <DeploymentUnitOutlined style={{ fontSize: '350%' }} />
+        return <GlobalOutlined style={{ fontSize: '350%' }} />
       case 'doorknocking':
         return <HomeOutlined style={{ fontSize: '350%' }} />
       case 'electionsim':
         return <NodeCollapseOutlined style={{ fontSize: '350%' }} />
+      case 'votercontacts':
+        return < DeploymentUnitOutlined style={{ fontSize: '350%' }} />
+      case 'fundraising':
+        return <DollarOutlined style={{ fontSize: '350%' }} />
+      case 'volunteermgmt':
+        return <TeamOutlined style={{ fontSize: '350%' }} />
     }
   }
 
@@ -70,7 +91,25 @@ const ApplicationCard = ({ app }) => {
       case 'electionsim':
         return (
           <div className={styles.mappingClientContainer}>
-            <Text className={styles.interactiveTitle}>Election Simulator</Text>
+            <Text className={styles.interactiveTitle}>Election Simulator *WIP*</Text>
+          </div>
+        )
+      case 'votercontacts':
+        return (
+          <div className={styles.mappingClientContainer}>
+            <Text className={styles.interactiveTitle}>Voter Contact Analysis *WIP*</Text>
+          </div>
+        )
+      case 'fundraising':
+        return (
+          <div className={styles.mappingClientContainer}>
+            <Text className={styles.interactiveTitle}>Fundraising Analytics *WIP*</Text>
+          </div>
+        )
+      case 'volunteermgmt':
+        return (
+          <div className={styles.mappingClientContainer}>
+            <Text className={styles.interactiveTitle}>Volunteer Management *WIP*</Text>
           </div>
         )
     }

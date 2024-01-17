@@ -1,24 +1,40 @@
-import { CarOutlined, DeleteOutlined, EditOutlined, EyeInvisibleOutlined, EyeOutlined, IdcardOutlined, InfoCircleOutlined } from '@ant-design/icons'
-import { Button, Collapse, List, Popconfirm, Tooltip, Upload, message } from 'antd'
+import { CarOutlined, DeleteOutlined, EditOutlined, EyeInvisibleOutlined, EyeOutlined, FilterOutlined, IdcardOutlined, InfoCircleOutlined } from '@ant-design/icons'
+import { Button, Collapse, List, Pagination, Popconfirm, Tooltip, Upload, message } from 'antd'
 import { getFunctions, httpsCallable } from 'firebase/functions'
+import getDistance from 'geolib/es/getDistance'
+import osmtogeojson from 'osmtogeojson'
 import React, { useEffect, useState } from 'react'
+import LoadingScreen from '../LoadingScreen.jsx'
 import styles from './KnockingToolPanel.module.css'
 import ExcelDataPlotModal from './modals/ExcelDataPlotModal.jsx'
+import { addRoadData, addRoadMetrics, getRoadData, getRoadMetrics } from './utils/IndexedDBUtils.jsx'
+import { filterMarkersByShape } from './utils/MarkerPlotting.jsx'
 
 const { Panel } = Collapse
 const { Dragger } = Upload
 
 
 const DoorknockingToolPanel = ({ knockingData, setKnockingData, fileData, setFileData, featureGroupRef }) => {
-  const { drawnShape, selectedShapeForEditing } = knockingData
-  const { setKnockingPoints, setSelectedShapeForEditing } = setKnockingData
+  const { knockingPoints, drawnShape, selectedShapeForEditing } = knockingData
+  const { setKnockingPoints, setSelectedShapeForEditing, setRoadMetrics } = setKnockingData
   const { voterDataFiles } = fileData
   const { handleAddVoterDataFile, handleRemoveVoterDataFile } = setFileData
+
+  const [isLoading, setIsLoading] = useState(false)
 
   const [voterDataModalVisible, setVoterDataModalVisible] = useState(false)
   const [currentVoterDataFile, setCurrentVoterDataFile] = useState(null)
   const [drawnShapeList, setDrawnShapeList] = useState([])
-  // const [selectedTrafficShape, setSelectedTrafficShape] = useState(null)
+  const [roadMapRetrieved, setRoadMapRetrieved] = useState({})
+  const [roadLayers, setRoadLayers] = useState({})
+  const [roadTypes, setRoadTypes] = useState(new Set())
+
+  const [currentPage, setCurrentPage] = useState(1)
+  const shapesPerPage = 5
+  const indexOfLastShape = currentPage * shapesPerPage
+  const indexOfFirstShape = indexOfLastShape - shapesPerPage
+  const currentShapes = drawnShapeList.slice(indexOfFirstShape, indexOfLastShape)
+  const totalShapes = drawnShapeList.length
 
   const functions = getFunctions()
   const getRoadMap = httpsCallable(functions, 'getStreetDataFromPolygon')
@@ -126,33 +142,178 @@ const DoorknockingToolPanel = ({ knockingData, setKnockingData, fileData, setFil
   }
 
   const handleRetrieveRoadMap = async (shapeId) => {
-    const shapeToRetrieve = drawnShapeList.find((s) => s.id === shapeId)
-    if (!shapeToRetrieve) {
-      console.error('Shape not found.')
-      return
-    }
+    const roadMapData = await getRoadMetrics(shapeId)
+    if (!roadMapData) {
+      const shapeToRetrieve = drawnShapeList.find((s) => s.id === shapeId)
+      if (!shapeToRetrieve) {
+        console.error('Shape not found.')
+        return
+      }
 
-    console.log(shapeToRetrieve)
+      const ne = shapeToRetrieve.bounds._northEast
+      const sw = shapeToRetrieve.bounds._southWest
+      const bboxData = { north: ne.lat, south: sw.lat, east: ne.lng, west: sw.lng }
 
-    const ne = shapeToRetrieve.bounds._northEast
-    const sw = shapeToRetrieve.bounds._southWest
+      try {
+        setIsLoading(true)
+        const response = await getRoadMap(bboxData)
+        const osmData = response.data
 
-    const bboxData = {
-      north: ne.lat,
-      south: sw.lat,
-      east: ne.lng,
-      west: sw.lng,
-    }
+        const geoJsonData = osmtogeojson({ elements: osmData.elements })
+        const roadLayer = plotRoadData(geoJsonData, featureGroupRef, shapeId)
 
-    try {
-      const { data } = await getRoadMap(bboxData)
-      console.log(data) // Now 'data' contains the actual response from your Cloud Run service
-      console.log(typeof data)
-    } catch (error) {
-      console.error(error)
+        let totalDistance = 0
+        roadLayer.eachLayer((layer) => {
+          if (layer.feature.geometry.type === 'LineString') {
+            const coordinates = layer.feature.geometry.coordinates
+            const convertedCoords = coordinates.map((coord) => ({
+              longitude: coord[0],
+              latitude: coord[1],
+            }))
+
+            for (let i = 1; i < convertedCoords.length; i++) {
+              totalDistance += getDistance(
+                  convertedCoords[i - 1],
+                  convertedCoords[i],
+              )
+            }
+          }
+        })
+
+        const roadData = { id: shapeId, geoJsonData }
+        const roadMetrics = { id: shapeId, totalDistance, roadTypes: Array.from(roadTypes) }
+        await addRoadData(roadData)
+        await addRoadMetrics(roadMetrics)
+        setRoadMetrics(roadMetrics)
+        setRoadMapRetrieved((prevState) => ({
+          ...prevState,
+          [shapeId]: {
+            retrieved: true,
+            visible: true,
+          },
+        }))
+      } catch (error) {
+        console.error('Error retrieving road map:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    } else {
+      try {
+        setIsLoading(true)
+        const roadData = await getRoadData(shapeId)
+        const roadMetrics = await getRoadMetrics(shapeId)
+
+        if (roadData && roadData.geoJsonData) {
+          plotRoadData(geoJsonData, featureGroupRef, shapeId)
+        } else {
+          console.error('No road data found in IndexedDB for this shape.')
+        }
+
+        if (roadMetrics) {
+          setRoadMetrics(roadMetrics)
+        } else {
+          console.error('No road metrics found in IndexedDB for this shape.')
+        }
+
+        setRoadMapRetrieved((prevState) => ({
+          ...prevState,
+          [shapeId]: {
+            retrieved: true,
+            visible: true,
+          },
+        }))
+      } catch (error) {
+        console.error('Error retrieving road map data from IndexedDB:', error)
+      } finally {
+        setIsLoading(false)
+      }
     }
   }
 
+  const toggleRoadDataVisibility = (shapeId) => {
+    setRoadMapRetrieved((prevState) => {
+      const isVisible = !(prevState[shapeId] && prevState[shapeId].visible)
+      const updatedState = {
+        ...prevState,
+        [shapeId]: {
+          ...prevState[shapeId],
+          visible: isVisible,
+        },
+      }
+
+      setTimeout(() => {
+        const roadLayer = roadLayers[shapeId]
+        if (roadLayer) {
+          if (isVisible) {
+            featureGroupRef.current.addLayer(roadLayer)
+          } else {
+            try {
+              featureGroupRef.current.removeLayer(roadLayer)
+            } catch {}
+          }
+        }
+      }, 0)
+      return updatedState
+    })
+  }
+
+  const plotRoadData = (geoJsonData, featureGroupRef, shapeId) => {
+    const roadLayer = L.geoJSON(geoJsonData, {
+      style: function(feature) {
+        const roadStyle = {
+          color: '#000',
+          weight: 1,
+          opacity: 0.95,
+        }
+
+        if (feature.properties && feature.properties.highway) {
+          const roadType = feature.properties.highway
+          roadTypes.add(roadType) // Add the roadType to the set
+          switch (roadType) {
+            case 'motorway':
+              roadStyle.color = '#ff4d4d'
+              roadStyle.weight = 2
+              break
+            case 'primary':
+              roadStyle.color = '#ff9900'
+              break
+            case 'secondary':
+              roadStyle.color = '#ffdb4d'
+              break
+            default:
+              roadStyle.color = '#ffffff'
+          }
+        }
+        return roadStyle
+      },
+    })
+
+    setRoadTypes(new Set(roadTypes))
+    roadLayer.shapeId = shapeId
+    roadLayer.addTo(featureGroupRef.current)
+    setRoadLayers((prevLayers) => ({ ...prevLayers, [shapeId]: roadLayer }))
+    return roadLayer
+  }
+
+  useEffect(() => {
+    return () => {
+      try {
+        Object.values(roadLayers).forEach((layer) => {
+          featureGroupRef.current.removeLayer(layer)
+        })
+      } catch {}
+    }
+  }, [roadLayers])
+
+  const handleFilterClick = (shape) => {
+    filterMarkersByShape(featureGroupRef, shape, knockingPoints)
+  }
+
+  if (isLoading) {
+    return (
+      <LoadingScreen />
+    )
+  }
 
   return (
     <div className={styles.knockingPanel}>
@@ -202,41 +363,52 @@ const DoorknockingToolPanel = ({ knockingData, setKnockingData, fileData, setFil
       </div>
       <div className={styles.shapeContainer}>
         <h3>SHAPES</h3>
-        <List
-          itemLayout="horizontal"
-          dataSource={drawnShapeList}
-          renderItem={(shape) => (
-            <List.Item key={shape.id}>
-              <List.Item.Meta
-                title={shape.name}
-                description={`ID: ${shape.id}`}
-              />
-              <div className={styles.actionContainer}>
-                {shape.visible ? (
+        <div className={styles.listContainer}>
+          <List
+            itemLayout="horizontal"
+            dataSource={currentShapes}
+            renderItem={(shape) => (
+              <List.Item key={shape.id} className={styles.listItem}>
+                <List.Item.Meta
+                  title={shape.name}
+                  description={`ID: ${shape.id}`}
+                />
+                <div className={styles.actionContainer}>
+                  {shape.visible ? (
                   <EyeOutlined onClick={() => toggleVisibility(shape.id)} />
                 ) : (
                   <EyeInvisibleOutlined onClick={() => toggleVisibility(shape.id)} />
                 )}
-                <span className={styles.iconSeparator}></span>
-                <EditOutlined onClick={() => startEditingShape(shape.id)} />
-                <span className={styles.iconSeparator}></span>
-                <Popconfirm
-                  title="Are you sure you want to delete this shape?"
-                  onConfirm={() => confirmDelete(shape.id)}
-                  okText="Yes"
-                  cancelText="No"
-                >
-                  <DeleteOutlined />
-                </Popconfirm>
-                {selectedShapeForEditing && selectedShapeForEditing.id === shape.id && (
-                  <>
-                    <span className={styles.iconSeparator}></span>
-                    <Button type="primary" size="small" onClick={() => stopEditingShape(shape.id)}>Apply</Button>
-                  </>
-                )}
-              </div>
-            </List.Item>
-          )}
+                  <span className={styles.iconSeparator}></span>
+                  <FilterOutlined onClick={() => handleFilterClick(shape)} />
+                  <span className={styles.iconSeparator}></span>
+                  <EditOutlined onClick={() => startEditingShape(shape.id)} />
+                  <span className={styles.iconSeparator}></span>
+                  <Popconfirm
+                    title="Are you sure you want to delete this shape?"
+                    onConfirm={() => confirmDelete(shape.id)}
+                    okText="Yes"
+                    cancelText="No"
+                  >
+                    <DeleteOutlined />
+                  </Popconfirm>
+                  {selectedShapeForEditing && selectedShapeForEditing.id === shape.id && (
+                    <>
+                      <span className={styles.iconSeparator}></span>
+                      <Button type="primary" size="small" onClick={() => stopEditingShape(shape.id)}>Apply</Button>
+                    </>
+                  )}
+                </div>
+              </List.Item>
+            )}
+          />
+        </div>
+        <Pagination
+          current={currentPage}
+          onChange={(page) => setCurrentPage(page)}
+          pageSize={shapesPerPage}
+          total={totalShapes}
+          className={styles.paginationContainer}
         />
       </div>
       <div className={styles.sectionContainer}>
@@ -253,9 +425,19 @@ const DoorknockingToolPanel = ({ knockingData, setKnockingData, fileData, setFil
                     description={`ID: ${shape.id}`}
                   />
                   <div className={styles.actionContainer}>
-                    <Button type="primary" size="small" onClick={() => handleRetrieveRoadMap(shape.id)}>
-                      Retrieve Road Map
-                    </Button>
+                    {roadMapRetrieved[shape.id] && roadMapRetrieved[shape.id].retrieved ? (
+                      <Button
+                        type="primary"
+                        size="small"
+                        onClick={() => toggleRoadDataVisibility(shape.id)}
+                      >
+                        {roadMapRetrieved[shape.id].visible ? 'Hide Road Data' : 'Show Road Data'}
+                      </Button>
+                    ) : (
+                      <Button type="primary" size="small" onClick={() => handleRetrieveRoadMap(shape.id)}>
+                        Retrieve Road Map
+                      </Button>
+                    )}
                   </div>
                 </List.Item>
               )}

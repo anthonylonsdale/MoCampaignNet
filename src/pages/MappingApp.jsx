@@ -41,7 +41,6 @@ function MappingApp() {
     )
   }
 
-
   return (
     <>
       <Layout className={styles.campaignLayout}>

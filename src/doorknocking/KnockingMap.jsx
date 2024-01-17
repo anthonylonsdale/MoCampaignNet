@@ -8,11 +8,12 @@ import 'leaflet.heat'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import 'leaflet.markercluster/dist/leaflet.markercluster'
 import 'leaflet/dist/leaflet.css'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { FeatureGroup, MapContainer, TileLayer, useMap } from 'react-leaflet'
 import { EditControl } from 'react-leaflet-draw'
 import styles from './KnockingMap.module.css'
-
+import RoadwayMetricsPanel from './TrafficPanel.jsx'
+import { processKnockingPoints } from './utils/MarkerPlotting.jsx'
 
 function CoordinatesDisplay() {
   const map = useMap()
@@ -91,7 +92,7 @@ const SetViewToBounds = ({ points }) => {
 }
 
 const KnockingMap = ({ knockingData, setKnockingData, clearData, featureGroupRef }) => {
-  const { knockingPoints, selectedShapeForEditing } = knockingData
+  const { knockingPoints, selectedShapeForEditing, roadMetrics } = knockingData
   const { setDrawnShape } = setKnockingData
   const { clearKnockingData } = clearData
 
@@ -164,83 +165,8 @@ const KnockingMap = ({ knockingData, setKnockingData, clearData, featureGroupRef
   }
 
   useEffect(() => {
-    if (featureGroupRef.current) {
-      featureGroupRef.current.clearLayers()
-    }
-
-    const createHouseIconSVG = (color) => `<svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill="${color}">
-        <path d="M12 2.69l-6 5.16V19a2 2 0 0 0 2 2h4v-5h2v5h4a2 2 0 0 0 2-2V7.85l-6-5.16zM12 4.07l4 3.44V18h-2v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4H8V7.51l4-3.44z"/>
-      </svg>`
-
-    const determineColor = (point) => {
-      return point.color || '#000000'
-    }
-
-    const spreadOutVoters = (point, voters) => {
-      featureGroupRef.current.clearLayers()
-
-      voters.forEach((voter, index) => {
-        const angle = (index / voters.length) * Math.PI * 2
-        const latOffset = Math.cos(angle) * 0.0001
-        const lngOffset = Math.sin(angle) * 0.0001
-        L.marker([point.lat + latOffset, point.lng + lngOffset], {
-          icon: L.divIcon({
-            className: 'custom-house-icon',
-            html: createHouseIconSVG('#ff0000'),
-            iconSize: L.point(24, 24),
-            iconAnchor: [12, 24],
-          }),
-        })
-            .addTo(featureGroupRef.current)
-            .bindPopup(`Voter: ${voter.name}`)
-      })
-    }
-
-    const pointsByLocation = {}
-    knockingPoints.forEach((point) => {
-      const key = `${point.lat},${point.lng}`
-      pointsByLocation[key] = pointsByLocation[key] || []
-      pointsByLocation[key].push(point)
-    })
-
-    const createAndAddMarker = (point, latOffset = 0, lngOffset = 0) => {
-      const color = determineColor(point)
-      const houseIcon = L.divIcon({
-        className: 'custom-house-icon',
-        html: createHouseIconSVG(color),
-        iconSize: L.point(24, 24),
-        iconAnchor: [12, 24],
-      })
-
-      const marker = L.marker([point.lat + latOffset, point.lng + lngOffset], {
-        icon: houseIcon,
-      }).bindTooltip(point.name, {
-        permanent: false,
-        interactive: true,
-        direction: 'top',
-      })
-
-      featureGroupRef.current.addLayer(marker)
-    }
-
-    Object.values(pointsByLocation).forEach((points) => {
-      if (points.length === 1) {
-        createAndAddMarker(points[0])
-      } else {
-        const mainPoint = points[0]
-        const color = determineColor(mainPoint)
-        const marker = L.marker([mainPoint.lat, mainPoint.lng], {
-          icon: L.divIcon({
-            className: 'custom-house-icon',
-            html: createHouseIconSVG(color),
-            iconSize: L.point(24, 24),
-            iconAnchor: [12, 24],
-          }),
-        }).addTo(featureGroupRef.current)
-        marker.on('click', () => spreadOutVoters(mainPoint, points))
-      }
-    })
-  }, [knockingPoints])
+    processKnockingPoints(featureGroupRef, knockingPoints)
+  }, [knockingPoints, featureGroupRef])
 
   useEffect(() => {
     if (selectedShapeForEditing && selectedShapeForEditing.layer) {
@@ -271,7 +197,9 @@ const KnockingMap = ({ knockingData, setKnockingData, clearData, featureGroupRef
     }
   }, [featureGroupRef])
 
-  console.log(selectedShapeForEditing)
+  const hasRealData = useMemo(() => {
+    return roadMetrics.totalDistance > 0 || roadMetrics.roadTypes.length > 0
+  }, [roadMetrics])
 
   return (
     <div className={styles.mappingContainer}>
@@ -281,7 +209,7 @@ const KnockingMap = ({ knockingData, setKnockingData, clearData, featureGroupRef
         fullscreenControl={true}
       >
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"
+          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"
           attribution='Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
         />
         <FeatureGroup ref={featureGroupRef}>
@@ -318,6 +246,8 @@ const KnockingMap = ({ knockingData, setKnockingData, clearData, featureGroupRef
           onPressEnter={handleOk} // Allows pressing Enter to submit
         />
       </Modal>
+
+      {!!hasRealData && <RoadwayMetricsPanel roadMetrics={roadMetrics} />}
     </div>
   )
 }

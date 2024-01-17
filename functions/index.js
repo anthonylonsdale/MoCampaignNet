@@ -29,21 +29,29 @@ exports.getStreetDataFromPolygon = functions.https.onCall(async (data, context) 
     throw new functions.https.HttpsError("unauthenticated", "The function must be called while authenticated.")
   }
 
-  const serviceUrl = "https://mocampaignnet-bgx3wjt2ea-uc.a.run.app/get_graph"
+  const { north, south, east, west } = data
 
-  const payload = {
-    north: data.north,
-    south: data.south,
-    east: data.east,
-    west: data.west,
-  }
+  const highwayTypes = ["motorway", "primary", "secondary", "tertiary", "residential"]
+  const highwayFilters = highwayTypes.map((type) => `way["highway"="${type}"](${south},${west},${north},${east});`).join("")
+
+  const query = `
+    [out:json][timeout:30];
+    (
+      ${highwayFilters}
+    );
+    out body;
+    >;
+    out skel qt;
+  `
+
+  const overpassUrl = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`
 
   try {
-    const response = await axios.post(serviceUrl, payload)
+    const response = await axios.get(overpassUrl)
     return response.data
   } catch (error) {
-    console.error("Error calling Python service:", error)
-    throw new functions.https.HttpsError("internal", "Failed to call the Python service.")
+    console.error("Error calling Overpass API:", error)
+    throw new functions.https.HttpsError("internal", "Failed to call the Overpass API.")
   }
 })
 

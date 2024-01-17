@@ -18,7 +18,7 @@ def get_graph():
     try:
         north = float(request_json['north'])
         south = float(request_json['south'])
-        east = float(request_json['south'])
+        east = float(request_json['east'])
         west = float(request_json['west'])
     except ValueError:
         return jsonify({"error": "Invalid coordinate format"}), 400
@@ -33,5 +33,4 @@ def get_graph():
 
 
 if __name__ == '__main__':
-    # Set debug to False in production
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)), debug=False)

@@ -6,6 +6,8 @@ const useKnockingData = () => {
   const [drawnShape, setDrawnShape] = useState(null)
   const [selectedShapeForEditing, setSelectedShapeForEditing] = useState(null)
 
+  const [roadMetrics, setRoadMetrics] = useState({ totalDistance: 0, roadTypes: [] })
+
   const clearKnockingData = () => {
     setKnockingPoints([])
     setSelectedHouses([])
@@ -21,12 +23,14 @@ const useKnockingData = () => {
       selectedHouses,
       drawnShape,
       selectedShapeForEditing,
+      roadMetrics,
     },
     setKnockingData: {
       setKnockingPoints,
       setSelectedHouses,
       setDrawnShape,
       setSelectedShapeForEditing,
+      setRoadMetrics,
     },
     clearData: {
       clearKnockingData,

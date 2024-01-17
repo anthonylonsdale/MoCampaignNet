@@ -1,6 +1,6 @@
 .knockingPanel {
   width: 350px;
-  min-width: 250px;
+  min-width: 275px;
   max-width: 400px;
   resize: horizontal;
   background-color: #f8f9fa;
@@ -17,8 +17,18 @@
 
 .shapeContainer {
   margin-top: 20px;
+  min-height: 240px; /* or the height you prefer */
   max-height: 300px;
-  overflow-y: auto;
+  display: flex; /* New */
+  flex-direction: column; /* New */
+  justify-content: space-between; /* New */
+  overflow-y: hidden;
+}
+
+.paginationContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .uploadContainer {
@@ -96,14 +106,15 @@
 }
 
 .listItem {
+  height: 50px; /* Replace with the height you want */
+  display: flex;
+  align-items: center; /* This will vertically center the content of the ListItem */
+  justify-content: space-between; /* This will maintain space between list item contents */
   border-bottom: 1px solid #f0f0f0; /* Adds a separator between list items */
-  padding: 16px 24px; /* Adjust padding as needed */
+  padding: 0 24px; /* Adjust padding as needed */
 }
 
-.listItem:last-child {
-  border-bottom: none; /* Removes separator from the last item */
-}
-
-.listItemMeta {
-  margin-right: 16px; /* Ensures space between the meta and the actions */
+.listContainer {
+  flex-grow: 1;
+  overflow: auto; /* Allows the list to scroll internally if there are many items */
 }
