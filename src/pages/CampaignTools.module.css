@@ -108,3 +108,25 @@
   filter: blur(2px);
   cursor: not-allowed;
 }
+
+.sectionSeparator {
+  width: 100%;
+  text-align: center;
+  margin: 40px 0; /* Adjust top and bottom margin as needed */
+}
+
+.sectionTitle {
+  display: block; /* Makes the text occupy the full width */
+  font-size: 1.5rem; /* Adjust the size as needed */
+  color: #0052cc; /* Adjust the color as needed */
+  margin-bottom: 10px; /* Space between the title and the divider */
+}
+
+.sectionDivider {
+  border: 0;
+  height: 2px;
+  background-image: linear-gradient(to right, transparent, #0052cc, transparent);
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%; /* Adjust the width of the divider as needed */
+}

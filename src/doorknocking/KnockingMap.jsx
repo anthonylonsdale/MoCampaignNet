@@ -180,10 +180,10 @@ const KnockingMap = ({ knockingData, setKnockingData, clearData, featureGroupRef
 
       const handleEdit = (e) => {
         const layers = e.layers
+
         layers.eachLayer((layer) => {
           if (selectedShapeForEditing && layer === selectedShapeForEditing.layer) {
             const newGeometry = layer.toGeoJSON()
-
             setDrawnShape(newGeometry)
             updateSelectedShapeGeometry(selectedShapeForEditing.id, newGeometry)
           }
@@ -200,6 +200,8 @@ const KnockingMap = ({ knockingData, setKnockingData, clearData, featureGroupRef
   const hasRealData = useMemo(() => {
     return roadMetrics.totalDistance > 0 || roadMetrics.roadTypes.length > 0
   }, [roadMetrics])
+
+  console.log()
 
   return (
     <div className={styles.mappingContainer}>

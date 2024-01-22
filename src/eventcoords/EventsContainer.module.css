@@ -1,0 +1,11 @@
+.interactiveMapperContainer {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    background-color: #fff;
+    flex-grow: 1;
+    z-index: 0;
+  }
+  

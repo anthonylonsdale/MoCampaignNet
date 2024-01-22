@@ -21,6 +21,7 @@ const DoorknockingToolPanel = ({ knockingData, setKnockingData, fileData, setFil
   const { handleAddVoterDataFile, handleRemoveVoterDataFile } = setFileData
 
   const [isLoading, setIsLoading] = useState(false)
+  const [isFilterActive, setIsFilterActive] = useState(false)
 
   const [voterDataModalVisible, setVoterDataModalVisible] = useState(false)
   const [currentVoterDataFile, setCurrentVoterDataFile] = useState(null)
@@ -307,6 +308,7 @@ const DoorknockingToolPanel = ({ knockingData, setKnockingData, fileData, setFil
 
   const handleFilterClick = (shape) => {
     filterMarkersByShape(featureGroupRef, shape, knockingPoints)
+    setIsFilterActive(!isFilterActive)
   }
 
   if (isLoading) {
@@ -314,6 +316,8 @@ const DoorknockingToolPanel = ({ knockingData, setKnockingData, fileData, setFil
       <LoadingScreen />
     )
   }
+
+  console.log(isFilterActive)
 
   return (
     <div className={styles.knockingPanel}>
@@ -343,9 +347,7 @@ const DoorknockingToolPanel = ({ knockingData, setKnockingData, fileData, setFil
                 <p className="ant-upload-drag-icon">
                   <IdcardOutlined />
                 </p>
-                <p className={styles.uploadText}>Drag in Excel File</p>
-                <p className={styles.uploadText}>or</p>
-                <p className={styles.uploadText}>Click to Browse Files</p>
+                <p className={styles.uploadText}>Drag in Excel File<br />or<br />Click to Browse Files</p>
               </Dragger>
               <div className={styles.fileList}>
                 {voterDataFiles.map((file, index) => (
@@ -369,32 +371,32 @@ const DoorknockingToolPanel = ({ knockingData, setKnockingData, fileData, setFil
             dataSource={currentShapes}
             renderItem={(shape) => (
               <List.Item key={shape.id} className={styles.listItem}>
-                <List.Item.Meta
-                  title={shape.name}
-                  description={`ID: ${shape.id}`}
-                />
+                <List.Item.Meta title={shape.name} description={`ID: ${shape.id}`} />
                 <div className={styles.actionContainer}>
                   {shape.visible ? (
                   <EyeOutlined onClick={() => toggleVisibility(shape.id)} />
                 ) : (
                   <EyeInvisibleOutlined onClick={() => toggleVisibility(shape.id)} />
                 )}
-                  <span className={styles.iconSeparator}></span>
-                  <FilterOutlined onClick={() => handleFilterClick(shape)} />
-                  <span className={styles.iconSeparator}></span>
+                  <span className={styles.iconSeparator} />
+                  <FilterOutlined
+                    onClick={() => handleFilterClick(shape)}
+                    className={isFilterActive ? styles.activeFilter : null}
+                  />
+                  <span className={styles.iconSeparator} />
                   <EditOutlined onClick={() => startEditingShape(shape.id)} />
-                  <span className={styles.iconSeparator}></span>
+                  <span className={styles.iconSeparator} />
                   <Popconfirm
                     title="Are you sure you want to delete this shape?"
                     onConfirm={() => confirmDelete(shape.id)}
                     okText="Yes"
                     cancelText="No"
                   >
-                    <DeleteOutlined />
+                    <DeleteOutlined className={styles.trashCan} />
                   </Popconfirm>
                   {selectedShapeForEditing && selectedShapeForEditing.id === shape.id && (
                     <>
-                      <span className={styles.iconSeparator}></span>
+                      <span className={styles.iconSeparator} />
                       <Button type="primary" size="small" onClick={() => stopEditingShape(shape.id)}>Apply</Button>
                     </>
                   )}

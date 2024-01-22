@@ -1,0 +1,128 @@
+.knockingPanel {
+  width: 350px;
+  min-width: 275px;
+  max-width: 400px;
+  resize: horizontal;
+  background-color: #f8f9fa;
+  padding: 20px;
+  box-shadow: 1px 0 5px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  border-right: 1px solid #eaeaea;
+  overflow-y: auto;
+}
+
+.sectionContainer {
+  margin-top: 20px;
+}
+
+.shapeContainer {
+  margin-top: 20px;
+  min-height: 240px; /* or the height you prefer */
+  max-height: 300px;
+  display: flex; /* New */
+  flex-direction: column; /* New */
+  justify-content: space-between; /* New */
+  overflow-y: hidden;
+}
+
+.paginationContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.uploadContainer {
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 2px dashed #cccccc;
+  text-align: center;
+  padding: 20px;
+}
+
+.uploadText {
+  margin: 0;
+  font-size: 12px;
+}
+
+.fileList {
+  margin-top: 10px;
+}
+
+.fileItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 5px;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+  border-radius: 4px;
+}
+
+.fileItem:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.fileDeleteIcon {
+  color: red;
+  cursor: pointer;
+}
+
+.fileDeleteIcon:hover {
+  background-color: transparent;
+}
+
+.antBtnPrimary {
+  background-color: #0052cc;
+  border-color: #0052cc;
+}
+
+.antBtnPrimary:hover,
+.antBtnPrimary:focus {
+  background-color: #40a9ff;
+  border-color: #40a9ff;
+}
+
+.actionContainer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* This aligns your icons to the right */
+}
+
+.actionIcons {
+  display: inline-flex; /* This allows for inline display of your icons with flex properties */
+  align-items: center; /* This vertically centers the icons in the actionIcons div */
+}
+
+.applyButton {
+  margin-left: 8px; /* This gives some space between the last icon and the button */
+}
+
+.iconSeparator {
+  border-left: 1px solid #d9d9d9; /* Adjust the color as needed */
+  margin: 0 8px; /* Adjust the spacing as needed */
+  height: 24px; /* Adjust to the height of your icons */
+  display: inline-block;
+  vertical-align: middle; /* This ensures it aligns nicely with the icons */
+}
+
+.listItem {
+  height: 50px; /* Replace with the height you want */
+  display: flex;
+  align-items: center; /* This will vertically center the content of the ListItem */
+  justify-content: space-between; /* This will maintain space between list item contents */
+  border-bottom: 1px solid #f0f0f0; /* Adds a separator between list items */
+  padding: 0 24px; /* Adjust padding as needed */
+}
+
+.listContainer {
+  flex-grow: 1;
+  overflow: auto; /* Allows the list to scroll internally if there are many items */
+}
+
+.activeFilter {
+  color: #1890ff; /* Change to your preferred active color */
+}
+
+.trashCan {
+  color: #db2505; /* Change to your preferred active color */
+}

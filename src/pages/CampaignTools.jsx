@@ -46,6 +46,60 @@ const applications = [
   },
 ]
 
+const EigApplications = [
+  {
+    route: '/eventcoordination',
+    type: 'eventcoordination',
+  },
+]
+
+const EigelApps = ({ app }) => {
+  const navigate = useNavigate()
+  const { permissions } = usePermissions()
+  const hasPermission = permissions['Can View Eigel Tools']
+
+  const handleClick = () => {
+    if (hasPermission) {
+      navigate(app.route)
+    }
+  }
+
+  const renderAvatar = () => {
+    switch (app.type) {
+      case 'eventcoordination':
+        return <TeamOutlined style={{ fontSize: '350%' }} />
+    }
+  }
+
+  const renderCardContent = () => {
+    switch (app.type) {
+      case 'eventcoordination':
+        return (
+          <div className={styles.mappingClientContainer}>
+            <Text className={styles.interactiveTitle}>Event Coordination</Text>
+          </div>
+        )
+    }
+  }
+
+  return (
+    <Col xs={24} sm={12} md={10} lg={8} xl={8}>
+      <Card
+        hoverable={hasPermission}
+        onClick={handleClick}
+        className={hasPermission ? styles.applicationCard : styles.blurredCard}
+      >
+        <Card.Meta
+          avatar={renderAvatar()}
+          description={renderCardContent()}
+          className="card-meta"
+        />
+      </Card>
+    </Col>
+  )
+}
+
+
 const ApplicationCard = ({ app }) => {
   const navigate = useNavigate()
   const { permissions } = usePermissions()
@@ -136,6 +190,15 @@ const ApplicationCard = ({ app }) => {
 function CampaignTools() {
   const { user, handleSignOut } = usePermissions()
 
+  const SectionSeparator = ({ title }) => {
+    return (
+      <div className={styles.sectionSeparator}>
+        <Text className={styles.sectionTitle}>{title}</Text>
+        <hr className={styles.sectionDivider} />
+      </div>
+    )
+  }
+
   return (
     <>
       <CustomHeader />
@@ -157,6 +220,12 @@ function CampaignTools() {
               <Row gutter={[16, 16]} className={styles.rowPadding}>
                 {applications.map((app, index) => (
                   <ApplicationCard key={index} app={app} />
+                ))}
+              </Row>
+              <SectionSeparator title="Eigel Campaign Tools" /> {/* Add this line */}
+              <Row gutter={[16, 16]} className={styles.rowPadding}>
+                {EigApplications.map((app, index) => (
+                  <EigelApps key={index} app={app} />
                 ))}
               </Row>
             </>

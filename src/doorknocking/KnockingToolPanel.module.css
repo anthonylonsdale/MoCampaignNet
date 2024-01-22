@@ -118,3 +118,11 @@
   flex-grow: 1;
   overflow: auto; /* Allows the list to scroll internally if there are many items */
 }
+
+.activeFilter {
+  color: #1890ff; /* Change to your preferred active color */
+}
+
+.trashCan {
+  color: #db2505; /* Change to your preferred active color */
+}

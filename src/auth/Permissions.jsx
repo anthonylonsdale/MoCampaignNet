@@ -26,6 +26,7 @@ const adminPermissions = {
   // 'View Voter Contacts': true,
   // 'View Fundraising Analytics': true,
   // 'Volunteer Management': true,
+  'Can View Eigel Tools': true,
 }
 
 export const getActiveSessions = async (userId) => {

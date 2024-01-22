@@ -11,6 +11,7 @@ import ProtectedRoute from './auth/protectedRoute.jsx'
 import './index.css'
 import CampaignTools from './pages/CampaignTools.jsx'
 import DoorknockingApp from './pages/DoorknockingApp.jsx'
+import EventCoordination from './pages/EventCoordination.jsx'
 import Homescreen from './pages/Homescreen.jsx'
 import MappingApp from './pages/MappingApp.jsx'
 import Portfolio from './pages/Portfolio.jsx'
@@ -85,6 +86,12 @@ root.render(
           <ProtectedRoute>
             <PermissionsProvider>
               <DoorknockingApp />
+            </PermissionsProvider>
+          </ProtectedRoute>} />
+        <Route path='/eventcoordination' element={
+          <ProtectedRoute>
+            <PermissionsProvider>
+              <EventCoordination />
             </PermissionsProvider>
           </ProtectedRoute>} />
         {/* Repeat for other applications */}
