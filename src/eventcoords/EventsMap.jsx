@@ -4,7 +4,7 @@ import 'leaflet.fullscreen'
 import 'leaflet.fullscreen/Control.FullScreen.css'
 import 'leaflet/dist/leaflet.css'
 import React, { useEffect, useState } from 'react'
-import { FeatureGroup, MapContainer, TileLayer, useMap } from 'react-leaflet'
+import { FeatureGroup, GeoJSON, MapContainer, TileLayer, useMap } from 'react-leaflet'
 import { EditControl } from 'react-leaflet-draw'
 import styles from './EventsMap.module.css'
 
@@ -38,7 +38,44 @@ function CoordinatesDisplay() {
   )
 }
 
+const styleFeature = (feature) => {
+  const getColor = (population) => {
+    return population > 1000000 ? '#800026' :
+           population > 500000 ? '#BD0026' :
+           population > 100000 ? '#E31A1C' :
+           population > 50000 ? '#FC4E2A' :
+           population > 20000 ? '#FD8D3C' :
+           population > 10000 ? '#FEB24C' :
+           population > 5000 ? '#FED976' :
+                                  '#FFEDA0'
+  }
+
+  const population = feature.properties.pop_2000
+
+  return {
+    fillColor: getColor(population),
+    weight: 1,
+    opacity: 1,
+    color: 'white',
+    dashArray: '3',
+    fillOpacity: 0.7,
+  }
+}
+
 const EventsMap = ({ featureGroupRef }) => {
+  const [geojsonData, setGeojsonData] = useState(null)
+
+  useEffect(() => {
+    fetch('/mo_counties.geojson')
+        .then((response) => response.json())
+        .then((data) => {
+          setGeojsonData(data)
+        })
+        .catch((error) => {
+          console.error('Error fetching the GeoJSON file:', error)
+        })
+  }, [])
+
   const onCreated = (e) => {
     const layer = e.layer
     featureGroupRef.current.addLayer(layer)
@@ -54,6 +91,8 @@ const EventsMap = ({ featureGroupRef }) => {
       }
     })
   }
+
+  console.log(geojsonData)
 
   return (
     <div className={styles.mappingContainer}>
@@ -84,8 +123,9 @@ const EventsMap = ({ featureGroupRef }) => {
               remove: true,
             }}
           />
-        </FeatureGroup>
 
+          {geojsonData && <GeoJSON data={geojsonData} style={styleFeature} /> }
+        </FeatureGroup>
         <CoordinatesDisplay />
       </MapContainer>
     </div>
