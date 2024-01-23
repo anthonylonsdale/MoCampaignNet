@@ -62,8 +62,37 @@ const styleFeature = (feature) => {
   }
 }
 
-const EventsMap = ({ featureGroupRef }) => {
+const MapViewManager = ({ selectedCounty, featureGroupRef }) => {
+  const map = useMap()
+
+  useEffect(() => {
+    if (selectedCounty && featureGroupRef && featureGroupRef.current) {
+      if (featureGroupRef.current.getLayers) {
+        const layers = featureGroupRef.current.getLayers()
+        const layerArray = Object.values(layers[0]._layers) // Convert the layers object to an array
+        const layer = layerArray.find(
+            (layerItem) => layerItem.feature && layerItem.feature.properties.countyname === selectedCounty,
+        )
+        if (layer) {
+          const bounds = layer.getBounds()
+          if (bounds.isValid()) {
+            map.fitBounds(bounds, { padding: [50, 50] })
+          }
+        }
+      }
+    } else {
+      map.setView([38.573936, -92.603760], 7)
+    }
+  }, [selectedCounty, map, featureGroupRef])
+
+  return null
+}
+
+
+const EventsMap = ({ featureGroupRef, eventsData }) => {
   const [geojsonData, setGeojsonData] = useState(null)
+  const { selectedCounty } = eventsData
+
 
   useEffect(() => {
     fetch('/mo_counties.geojson')
@@ -92,18 +121,24 @@ const EventsMap = ({ featureGroupRef }) => {
     })
   }
 
-  console.log(geojsonData)
+  const onEachFeature = (feature, layer) => {
+    if (feature.properties && feature.properties.countyname) {
+      layer.bindTooltip(feature.properties.countyname)
+    }
+  }
 
   return (
     <div className={styles.mappingContainer}>
       <MapContainer
         center={[38.573936, -92.603760]}
-        zoom={13}
+        zoom={7}
         fullscreenControl={true}
       >
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"
           attribution='Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.'
+          updateWhenZooming={false}
+          updateWhenIdle={true}
         />
         <FeatureGroup ref={featureGroupRef}>
           <EditControl
@@ -124,9 +159,17 @@ const EventsMap = ({ featureGroupRef }) => {
             }}
           />
 
-          {geojsonData && <GeoJSON data={geojsonData} style={styleFeature} /> }
+          {geojsonData && (
+            <GeoJSON
+              data={geojsonData}
+              style={styleFeature}
+              onEachFeature={onEachFeature} // Add the onEachFeature prop
+            />
+          )}
         </FeatureGroup>
         <CoordinatesDisplay />
+
+        <MapViewManager selectedCounty={selectedCounty} featureGroupRef={featureGroupRef} />
       </MapContainer>
     </div>
   )

@@ -2,27 +2,46 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const functions = require("firebase-functions")
 const admin = require("firebase-admin")
-// const cors = require("cors")
 const { v4: uuidv4 } = require("uuid")
 const axios = require("axios")
 
 admin.initializeApp()
 
-// the cors handler is mostly for if we want to make barebones http requests,
-// we can just use onCall to avoid this messiness
-// const allowedOrigins = ["https://bernoullitechnologies.net", "http://localhost:3000"]
+exports.addDataToCounty = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError("unauthenticated", "The function must be called while authenticated.")
+  }
 
-/*
-const corsHandler = cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true)
-    } else {
-      callback(new Error("Not allowed by CORS"))
-    }
-  },
+  const { countyId, dataType, dataValues } = data
+
+  try {
+    const docRef = admin.firestore().collection("counties").doc(countyId).collection(dataType).doc()
+    await docRef.set(dataValues)
+
+    return { success: true, id: docRef.id }
+  } catch (error) {
+    console.error("Error adding data to county: ", error)
+    throw new functions.https.HttpsError("internal", "Failed to add data to county.")
+  }
 })
-*/
+
+exports.getDataForCounty = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError("unauthenticated", "The function must be called while authenticated.")
+  }
+
+  const { countyId, dataType } = data
+
+  try {
+    const querySnapshot = await admin.firestore().collection("counties").doc(countyId).collection(dataType).get()
+    const data = querySnapshot.docs.map((doc) => doc.data())
+
+    return data
+  } catch (error) {
+    console.error("Error retrieving data for county: ", error)
+    throw new functions.https.HttpsError("internal", "Failed to retrieve data for county.")
+  }
+})
 
 exports.getStreetDataFromPolygon = functions.https.onCall(async (data, context) => {
   if (!context.auth) {

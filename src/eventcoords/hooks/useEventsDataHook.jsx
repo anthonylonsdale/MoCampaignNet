@@ -1,17 +1,16 @@
+import { useState } from 'react'
 
 const useEventsData = () => {
+  const [selectedCounty, setSelectedCounty] = useState(null)
+
+  const clearData = () => {
+    setSelectedCounty(null)
+  }
+
   return {
-    eventsData: {
-    },
-    setEventsData: {
-      setKnockingPoints,
-      setSelectedHouses,
-      setDrawnShape,
-      setSelectedShapeForEditing,
-      setRoadMetrics,
-    },
-    clearData: {
-    },
+    eventsData: { selectedCounty },
+    setEventsData: { setSelectedCounty },
+    clearData: { clearData },
   }
 }
 
