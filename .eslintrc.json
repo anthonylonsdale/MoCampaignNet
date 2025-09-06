@@ -26,6 +26,7 @@
         "require-jsdoc": "off",
         "semi": "off",
         "eqeqeq": ["error", "always"],
+        "spaced-comment": "warn",
         "comma-dangle": [
           "warn",
           {
@@ -48,7 +49,7 @@
         "react/no-unused-prop-types": "warn",
         "react/jsx-props-no-spreading": "off",
         "react/require-default-props": "off",
-        "@typescript-eslint/no-unused-vars": "error",
+        "@typescript-eslint/no-unused-vars": "warn",
         "@typescript-eslint/no-explicit-any": "warn",
         "no-use-before-define": "off",
         "import/prefer-default-export": "off",

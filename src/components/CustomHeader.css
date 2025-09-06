@@ -1,64 +1,92 @@
 .site-layout-background {
-  padding: 0;
+  padding: 0 2rem;
   display: flex;
   width: 100%;
   justify-content: space-between;
   position: sticky;
-  transition: top 0.3s ease-in-out; /* This provides the smooth slide effect */
   top: 0;
   z-index: 100;
   align-items: center;
   height: 64px;
-  background-color: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,.1);
+  background: linear-gradient(90deg, #0d223f, #1e3a8a); /* modern gradient */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+  transition: top 0.3s ease-in-out, background 0.3s ease-in-out;
+}
+
+/* Force Ant Design image inside header to fit */
+.site-layout-background .ant-image-img {
+  height: 40px !important;   /* stays inside 64px header */
+  width: auto !important;
+  object-fit: contain;
+  display: block;
+}
+
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  height: 100%; /* matches the header height */
 }
 
 .header-logo {
+  height: 40px;   /* stays well within the 64px header */
   width: auto;
-  height: 32px;
+  object-fit: contain; /* ensures no stretching */
+  transition: transform 0.2s ease-in-out;
 }
+
+.header-logo:hover {
+  transform: scale(1.05);
+}
+
 
 .header-title {
-  font-size: 24px;
-  color: #0052cc;
-  font-weight: bold;
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-left: 1rem;
+  letter-spacing: 1px;
   text-transform: uppercase;
-  margin-left: 48px;
-  
-  white-space: nowrap; /* Keeps the text on a single line */
-  overflow: hidden; /* Ensures the overflow is not visible */
-  text-overflow: ellipsis; /* Adds an ellipsis (...) at the end of the truncated text */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.site-layout-background a {
-  cursor: pointer;
+.header-right {
+  margin-left: auto;
 }
 
-.site-layout-background img {
-  max-width: 64px;
-  height: auto;
+.custom-menu {
+  background: transparent;
+  border-bottom: none;
 }
 
-.site-layout-background .ant-typography {
-  margin-left: 5rem;
+.custom-menu .ant-menu-item {
+  font-weight: 500;
+  transition: background 0.3s, color 0.3s;
 }
 
-.site-layout-background .custom-menu .ant-menu-item:hover {
-  background-color: #0052cc;
+.custom-menu .ant-menu-item a {
+  color: #d1d5db;
 }
 
-.site-layout-background .custom-menu .ant-menu-item:hover a {
-  color: #fff;
+.custom-menu .ant-menu-item:hover {
+  background-color: transparent;
 }
 
-.site-layout-background .custom-menu .ant-menu-item-selected {
-  background-color: #0052cc;
+.custom-menu .ant-menu-item:hover a {
+  color: #ffffff;
 }
 
-.site-layout-background .custom-menu .ant-menu-item-selected a {
+.custom-menu .ant-menu-item-selected {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+}
+
+.custom-menu .ant-menu-item-selected a {
   color: #fff;
 }
 
 .header-hidden {
-  top: -64px; /* Adjust this value to match your header's height */
+  top: -64px; /* slides out */
 }
