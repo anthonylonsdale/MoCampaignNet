@@ -65,3 +65,23 @@
     text-transform: uppercase; /* Make text all caps */
     font-family: 'Roboto', 'Open Sans', 'Helvetica Neue', sans-serif; /* Modern typefaces, with a generic fallback */
 }
+
+@media (max-width: 480px) {
+  .animation-container {
+    min-height: 200px;
+  }
+
+  .covering-line,
+  .animated-line {
+    width: 6px;
+  }
+
+  .text-panel {
+    padding: 10px 14px;
+  }
+
+  .text-panel p {
+    font-size: clamp(12px, 3.8vw, 16px);
+    line-height: 1.15;
+  }
+}

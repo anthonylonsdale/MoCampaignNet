@@ -1,16 +1,20 @@
 .typing-effect {
-  font-size: 2rem;
-  color: #0052cc;
-  font-weight: bold;
+  font-weight: 800;
   text-transform: uppercase;
+  position: relative;
+  white-space: nowrap;
 }
 
 .typing-effect::after {
-  content: '|';
-  animation: blink 1s infinite;
+  content: '▌';
+  margin-left: .15rem;
+  display: inline-block;
+  animation: caretBlink 1s steps(2, jump-none) infinite;
+  color: #4aa8ff;
+  text-shadow: 0 0 6px rgba(79,170,255,.6);
 }
 
-@keyframes blink {
-  50% { opacity: 0; }
+@keyframes caretBlink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
 }
-  

@@ -1,72 +1,98 @@
-.footer {
-  background-color: #070b42;
-  padding: 20px 50px;
-  color: #f5f5f5;
-}
-
-.footerContent {
+.footerBar {
+  position: relative;
+  z-index: 10;                             /* sit above aurora/overlays */
+  mix-blend-mode: normal;                  /* avoid blending with bg */
+  padding: 16px 2rem;
   display: flex;
+  width: 100%;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
+  min-height: 112px;
+  background: linear-gradient(90deg, #0d223f, #1e3a8a);
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, .15);
+  border-top: 1px solid rgba(255,255,255,.08);
+  color: #fff;
 }
 
-.logoSection {
-  margin-right: 20px;
+/* Nuke all non-white colors inside the footer (Ant + custom) */
+.footerBar,
+.footerBar * {
+  color: #fff !important;
 }
 
-.textSection {
-  flex-grow: 1;
+/* Ant Image sizing like header */
+.footerBar :global(.ant-image-img) {
+  height: 40px !important;
+  width: auto !important;
+  object-fit: contain;
+  display: block;
+}
+
+/* Make sure icons inherit white */
+.footerBar :global(.anticon),
+.footerBar :global(.anticon svg) {
+  color: #fff !important;
+  fill: currentColor !important;
+}
+
+/* Brand (left) */
+.brand {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 12px;
 }
-
-.buttonLikeText {
-  color: whitesmoke;
-  font-weight: 600;
-  font-size: 1.2rem;
+.footerLogo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  transition: transform .2s ease-in-out;
 }
+.footerLogo:hover { transform: scale(1.05); }
 
-.contactInfo {
-  display: flex;
-  flex-direction: column; /* Stack items vertically */
-  align-items: flex-start; /* Align items to the start */
-}
-
-.contactItem {
-  display: flex;
-  align-items: center;
-  margin-bottom: 16px;
-  font-weight: 500;
-}
-
-.icon {
-  color: #f5f5f5;
+.footerTitle {
   font-size: 22px;
-  margin-right: 8px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.footerText {
-  color: #FFF;
+/* Contact (right) — stacked vertically for a thicker footer */
+.contact {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+.contactItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
 }
 
+.copy { font-weight: 600; margin-top: 4px; }
+
+/* Links: keep white through all states */
+.footerBar a,
+.footerBar a:link,
+.footerBar a:visited,
+.footerBar a:hover,
+.footerBar a:active,
+.footerBar :global(.ant-typography a) {
+  color: #fff !important;
+  text-decoration: none;
+  opacity: 1;
+}
+
+/* Mobile */
 @media (max-width: 768px) {
-  .footerContent {
+  .footerBar {
     flex-direction: column;
-    align-items: center;
+    gap: 12px;
+    padding: 16px 1rem;
   }
-
-  .logoSection,
-  .textSection,
-  .contactInfo {
-    width: 100%;
-    text-align: center;
-    margin-bottom: 10px;
-  }
-
-  .contactItem {
-    justify-content: center;
-    margin-right: 0;
-  }
+  .contact { align-items: center; }
 }

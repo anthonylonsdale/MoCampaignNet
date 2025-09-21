@@ -1,7 +1,7 @@
 import { MailOutlined, PhoneOutlined } from '@ant-design/icons'
 import { Image, Layout, Typography } from 'antd'
 import React from 'react'
-import logo from '../images/logo.png'
+import logo from '../images/logoblank.png' // ⬅ same logo as header
 import styles from './Footer.module.css'
 
 const { Footer } = Layout
@@ -9,29 +9,32 @@ const { Text } = Typography
 
 function AppFooter() {
   return (
-    <Footer className={styles.footer}>
-      <div className={styles.footerContent}>
+    <Footer className={styles.footerBar}>
+      <div className={styles.brand}>
         <Image
           src={logo}
-          alt="Logo"
-          width={160} // Set your desired size
+          alt="Bernoulli Technologies"
           preview={false}
+          className={styles.footerLogo}
         />
-        <div className={styles.buttonLikeText}>
-          &copy; {new Date().getFullYear()} Bernoulli Technologies. All rights reserved.
+        <div className={styles.footerTitle}>Bernoulli Technologies</div>
+      </div>
+
+      <div className={styles.contact}>
+        <div className={styles.contactItem}>
+          <MailOutlined className={styles.icon} />
+          <Text className={styles.footerText}>
+            <a href="mailto:alonsdale@bernoullitechnologies.net">alonsdale@bernoullitechnologies.net</a>
+          </Text>
         </div>
-        <div className={styles.contactInfo}>
-          <div className={styles.contactItem}>
-            <Text className={styles.footerText}>Contact:</Text>
-          </div>
-          <div className={styles.contactItem}>
-            <MailOutlined className={styles.icon} />
-            <Text className={styles.footerText}>alonsdale@bernoullitechnologies.net</Text>
-          </div>
-          <div className={styles.contactItem}>
-            <PhoneOutlined className={styles.icon} />
-            <Text className={styles.footerText}>(816) 872-7762</Text>
-          </div>
+        <div className={styles.contactItem}>
+          <PhoneOutlined className={styles.icon} />
+          <Text className={styles.footerText}>
+            <a href="tel:+18168727762">(816) 872-7762</a>
+          </Text>
+        </div>
+        <div className={styles.copy}>
+          &copy; {new Date().getFullYear()} Bernoulli Technologies. All rights reserved.
         </div>
       </div>
     </Footer>
