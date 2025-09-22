@@ -38,18 +38,22 @@
   transform: scale(1.05);
 }
 
-
-.header-title {
-  font-size: 22px;
-  font-weight: 700;
-  color: #ffffff;
-  margin-left: 1rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.header-title{
+  display:inline-flex;
+  flex-direction:column;
+  gap:2px;
+  font-size:clamp(14px,2.2vw,22px);
+  font-weight:700;
+  color:#fff;
+  margin-left:1rem;
+  letter-spacing:1px;
+  text-transform:uppercase;
 }
+.header-title span{ display:block; }
+
+@media (max-width: 900px) { .header-title { font-size: 18px; } }
+@media (max-width: 640px) { .header-title { font-size: 16px; } }
+@media (max-width: 420px) { .header-title { font-size: 14px; letter-spacing: .5px; } }
 
 .header-right {
   margin-left: auto;
@@ -87,4 +91,42 @@
 
 .header-hidden {
   top: -64px; /* slides out */
+}
+/* lock the header bar height and center items */
+.ant-layout-header,
+.site-header {
+  height: 64px;              /* same as Ant default */
+  padding: 0 16px;
+  display: flex;
+  align-items: center;       /* vertically centers logo + title + nav */
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+/* stacked title: compact lines so it doesn't balloon the header */
+.header-title {
+  display: inline-flex;
+  flex-direction: row;    /* stack by word */
+  gap: 0;                    /* remove extra gap between lines */
+  line-height: 1;            /* tight line height */
+  margin: 0 0 0 12px;        /* left spacing next to logo */
+  font-size: clamp(14px, 2.2vw, 18px);
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #fff;
+  text-transform: uppercase;
+  white-space: normal;       /* allow stacking */
+  overflow: hidden;
+}
+
+/* each word on its own line (if you’re rendering <span>Bernoulli</span><span>Technologies</span>) */
+.header-title > span { display: block; }
+
+/* tiny screens: optionally return to a single line to keep header compact */
+@media (max-width: 420px) {
+  .header-title { 
+    flex-direction: column; 
+    gap: .4rem; 
+    line-height: 1.05;
+  }
 }

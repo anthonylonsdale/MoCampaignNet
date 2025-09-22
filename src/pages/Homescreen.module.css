@@ -606,49 +606,40 @@ box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   100% { background-position: 5% 50%; }
 }
 
-/* Extra calm variant for numbers/section titles */
 .calmTyping {
   animation-duration: 40s;     /* much slower */
   background-size: 140% 140%;  /* even subtler movement */
 }
 
-/* Conic border rotation on the cards: slower + lighter */
 .card::before {
   opacity: .12;                      /* was .22 */
   filter: blur(8px);                 /* was 10px */
   animation: spinBorder 16s linear infinite; /* was 12s */
 }
 
-/* Shine sweep: smaller motion + softer opacity */
 .heroShine {
-  animation: shineSweep 8s ease-in-out infinite; /* was 8s */
+  animation: shineSweep 8s ease-in-out infinite;
 }
 @keyframes shineSweep {
   0%, 100% { transform: translateY(-6%); opacity: .7; }
   50%      { transform: translateY(3%);  opacity: .55; }
 }
 
-
-/* --- Mobile overflow fix --- */
 @media (max-width: 480px){
   html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
 
-  /* Never use 100vw on phones (scrollbar adds extra px) */
   [style*="100vw"], .full-bleed, .w-100vw { width: 100% !important; max-width: 100% !important; }
 
-  /* Kill fixed/large widths that cause bleed */
   [style*="width: 50rem"], .carouselContainer, .imageContainer { width: 100% !important; max-width: 100% !important; }
 
-  /* Keep containers from expanding beyond viewport */
   .ant-layout, .ant-layout-content, .container, .page, .centerContainer {
     width: 100%;
     max-width: 100%;
     padding-left: 14px;
     padding-right: 14px;
-    overflow-x: clip;   /* hides transforms without disabling scrolling */
+    overflow-x: clip;
   }
 
-  /* Ant Design gutters can add negative margins inside padded parents */
   .no-gutter.ant-row,
   .ant-row.mobile-tight {
     margin-left: 0 !important;
@@ -706,8 +697,9 @@ box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     min-width: 40%;
   }
 }
-.mapSection { padding: clamp(12px, 2vw, 20px); }
 
+.mapSection { padding: clamp(12px, 2vw, 20px); }
+.mapHeader { text-align: center; }
 .mapHeader h3 {
   margin: 0 0 6px;
   color: #c7d2fe;
@@ -721,26 +713,32 @@ box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .mapFrame {
-  width: 100%;
-  aspect-ratio: 16 / 9;
+  width: 70%;
+  margin: 0 auto;
+  padding: clamp(10px, 1.6vw, 14px);
   background: rgba(255,255,255,.04);
   border: 1px solid rgba(255,255,255,.08);
   border-radius: 12px;
-  overflow: hidden;
   box-shadow: 0 12px 30px rgba(0,0,0,.18);
 }
-.mapFrame iframe {
+
+.mapInner {
+  width: 94%;
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.14);
+}
+.mapInner iframe {
   width: 100%;
   height: 100%;
   border: 0;
   display: block;
 }
 
-.mapFooter {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 8px;
-}
+.mapFooter { display: flex; justify-content: center; margin-top: 10px; }
 
 .badgePython {
   display: inline-flex;
@@ -753,17 +751,96 @@ box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   border-radius: 999px;
   font-weight: 700;
   font-size: 12px;
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.04),
-    0 6px 18px rgba(0,0,0,.25);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.04), 0 6px 18px rgba(0,0,0,.25);
 }
+
 .badgePython::before {
   content: ">>";
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   opacity: .8;
 }
+.pyIconImg {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.25));
+}
 
+.mapMobileNotice {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  margin: 8px 0 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  backdrop-filter: blur(4px);
+}
+.mapMobileTitle { font-weight: 800; letter-spacing: .01em; color: #e5e7eb; margin-bottom: 2px; }
+.mapMobileSub { font-size: 12px; color: #cbd5e1; opacity: .9; }
+.mapCtaBtn {
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: .02em;
+  color: #0b1220;
+  background: linear-gradient(135deg,#6fcaff,#4aa8ff);
+  box-shadow: 0 6px 18px rgba(0,0,0,.25);
+  cursor: pointer;
+  transition: transform .1s ease, filter .2s ease;
+}
+.mapCtaBtn:hover { filter: brightness(1.05); }
+.mapCtaBtn:active { transform: translateY(1px); }
+.mapCtaBtn:focus-visible { outline: 2px solid #93c5fd; outline-offset: 2px; }
+
+@media (max-width: 1100px) {
+  .mapFrame { width: 86%; }
+  .mapInner { width: 96%; }
+}
 @media (max-width: 768px) {
-  .mapFrame { aspect-ratio: 4 / 3; }
+  .mapMobileNotice { display: flex; }
   .mapHeader p { font-size: .9rem; }
+  .mapInner { aspect-ratio: 4 / 3; }
+  .centerContainer {
+    margin-top: clamp(20px, 6vw, 36px);
+  }
+  .centerContainer .heroInner {
+    padding: clamp(10px, 2.6vw, 14px) clamp(14px, 3.2vw, 18px);
+  }
+  .centerContainer .heroTyping {
+    font-size: clamp(20px, 7.8vw, 30px);
+    line-height: 1.12;
+  }
+}
+
+@media (max-width: 820px) {
+  .metricsWrap .heroTyping {
+    font-size: clamp(24px, 9.5vw, 40px);
+    line-height: 1.05;
+  }
+  .metricsWrap .metricCaption {
+    font-size: clamp(13px, 3.6vw, 16px);
+    letter-spacing: .14em;
+  }
+}
+
+@media (max-width: 420px) {
+  .metricsWrap .heroTyping {
+    font-size: clamp(26px, 12vw, 44px);
+  }
+  .metricsWrap .metricCaption {
+    font-size: clamp(12px, 3.8vw, 15px);
+  }
+  .centerContainer {
+    margin-top: clamp(24px, 8vw, 40px);
+  }
+  .centerContainer .heroTyping {
+    font-size: clamp(22px, 9.5vw, 34px);
+  }
 }

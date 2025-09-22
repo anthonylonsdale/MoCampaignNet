@@ -1,6 +1,6 @@
 import { GlobalOutlined, LeftOutlined, LineChartOutlined, MailOutlined, MessageOutlined, PhoneOutlined, RightOutlined } from '@ant-design/icons'
 import { Card, Carousel, Col, Divider, Layout, Row, Space, Typography } from 'antd'
-import React, { useRef } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import CustomHeader from '../components/CustomHeader.jsx'
 import AppFooter from '../components/Footer.jsx'
 import DotToLineTextAnimation from '../components/styles/DotToLineTextAnimation.jsx'
@@ -21,6 +21,7 @@ import jennbauer from '../images/jenn_bauer.jpg'
 import josiahtown from '../images/josiah_town.jpg'
 import lancepollard from '../images/lance_pollard.jpg'
 import nathanwillett from '../images/nathanwillett.jpg'
+import pythonLogo from '../images/python_logo.png'
 import report1 from '../images/page_1.png'
 import report2 from '../images/page_2.png'
 import report3 from '../images/page_3.png'
@@ -190,8 +191,26 @@ function OfferSectionHelper() {
   )
 }
 
+function useMedia(query) {
+  const get = () => (typeof window !== 'undefined' && 'matchMedia' in window) ? window.matchMedia(query).matches : false
+  const [matches, set] = useState(get)
+  useEffect(() => {
+    const mql = window.matchMedia(query)
+    const onChange = (e) => set(e.matches)
+    if (mql.addEventListener) mql.addEventListener('change', onChange)
+    else mql.addListener(onChange)
+    set(mql.matches)
+    return () => {
+      if (mql.removeEventListener) mql.removeEventListener('change', onChange)
+      else mql.removeListener(onChange)
+    }
+  }, [query])
+  return matches
+}
+
 function Homescreen() {
   const partnershipRef = useRef()
+  const isMobile = useMedia('(max-width: 768px)')
 
   return (
     <>
@@ -206,15 +225,14 @@ function Homescreen() {
             </div>
 
             <div className={styles.heroWrap}>
-              {/* removed <div className={styles.aurora} /> */}
               <div className={styles.heroInner}>
                 <Text className={styles.headerLead}>Specializing in&nbsp;</Text>
                 <TypingEffect
                   phrases={[
-                    'Innovative Political Strategies',
-                    'Advanced Data Modeling and Analysis',
-                    'Affordability and Reliability',
-                    'Delivering Conservative Victories',
+                    'Data-Driven Voter Targeting',
+                    'Advanced Modeling and Analysis',
+                    'Innovative Digital Strategies',
+                    'Delivering Republican Victories',
                   ]}
                   typingSpeed={50}
                   untypeSpeed={25}
@@ -248,37 +266,66 @@ function Homescreen() {
 
             <section className={styles.mapSection}>
               <div className={styles.mapHeader}>
-                <h3>Missouri Weekly Ad Spend Timeline</h3>
+                <h3>Missouri 2024 Republican Gubernatorial Primary Weekly Ad Spend Timeline</h3>
                 <p>
-                  Interactive Folium/Leaflet map that animates weekly DMA spend across Missouri.
-                  Press play, scrub the slider, or click a DMA for a breakdown.
+                  Interactive Folium map that animates weekly DMA spend across Missouri.
+                  Press play, scrub the slider, or click a DMA for a breakdown by spending source.
                 </p>
               </div>
 
-              <div className={styles.mapFrame}>
-                <iframe
-                  src="/maps/timeline.html"
-                  title="MO Ad Spend Timeline"
-                  loading="lazy"
-                  ref={(el) => {
-                    if (!el) return;
-                    el.onload = () => {
-                      try {
-                        const w = el.contentWindow;
-                        const mapEl = w.document.querySelector('.folium-map');
-                        if (!mapEl) return;
-                        const map = w[mapEl.id];
-                        const go = () => map?.timeDimensionControl?._player?.start?.();
-                        if (map?.timeDimension?._availableTimes?.length) go();
-                        else map?.timeDimension?.on?.('availabletimeschanged', go);
-                      } catch (e) {}
-                    };
-                  }}
-                />
-              </div>
+              {isMobile ? (
+                <div className={styles.mapMobileNotice}>
+                  <div>
+                    <div className={styles.mapMobileTitle}>Best viewed full-screen</div>
+                    <div className={styles.mapMobileSub}>
+                      Map labels are dense on small screens. Open the timeline in a new tab for a clearer view.
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className={styles.mapCtaBtn}
+                    onClick={() =>
+                      window.open(`${process.env.PUBLIC_URL}/mo_dma_spending_timeline.html`, '_blank', 'noopener,noreferrer')
+                    }
+                  >
+                    Open Full Screen
+                  </button>
+                </div>
+              ) : (
+                <div className={styles.mapFrame}>
+                  <div className={styles.mapInner}>
+                    <iframe
+                      src={`${process.env.PUBLIC_URL}/mo_dma_spending_timeline.html`}
+                      title="MO Ad Spend Timeline"
+                      loading="lazy"
+                      ref={(el) => {
+                        if (!el) return;
+                        el.onload = () => {
+                          try {
+                            const w = el.contentWindow;
+                            const doc = w.document;
+                            const st = doc.createElement('style');
+                            doc.head.appendChild(st);
+
+                            const mapEl = doc.querySelector('.folium-map');
+                            if (!mapEl) return;
+                            const map = w[mapEl.id];
+                            const go = () => map?.timeDimensionControl?._player?.start?.();
+                            if (map?.timeDimension?._availableTimes?.length) go();
+                            else map?.timeDimension?.on?.('availabletimeschanged', go);
+                          } catch (e) {}
+                        };
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
 
               <div className={styles.mapFooter}>
-                <span className={styles.badgePython}>Powered by Python · Folium</span>
+                <span className={styles.badgePython}>
+                  <img src={pythonLogo} alt="Python logo" className={styles.pyIconImg} />
+                  Powered by Python · Folium
+                </span>
               </div>
             </section>
 
@@ -290,7 +337,6 @@ function Homescreen() {
                 <div className={styles.heroShine} />
               </div>
             </div>
-
 
             <OfferSectionHelper />
           </Space>

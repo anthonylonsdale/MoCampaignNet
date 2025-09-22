@@ -41,7 +41,10 @@ function CustomHeader() {
     <Header className={`site-layout-background ${!visible && 'header-hidden'}`}>
       <Link to="/" className="logo-link">
         <Image src={logo} alt="Logo" className="header-logo" preview={false} />
-        <div className='header-title'>Bernoulli Technologies</div>
+        <div className="header-title">
+          <span>Bernoulli&nbsp;</span>
+          <span>Technologies</span>
+        </div>
       </Link>
       <div className="header-right">
         <Menu theme="dark" mode="horizontal" className="disable-select custom-menu">

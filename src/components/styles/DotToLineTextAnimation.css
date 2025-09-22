@@ -7,7 +7,7 @@
     min-height: 300px; /* Minimum height, but can grow */
     background: transparent;
     overflow: hidden;
-    left: -30%; /* Move the container 10% from the left side of the page */
+    left: -10%; /* Move the container 10% from the left side of the page */
 }
 
 .covering-line {
@@ -84,4 +84,22 @@
     font-size: clamp(12px, 3.8vw, 16px);
     line-height: 1.15;
   }
+}
+
+@media (min-width: 1200px) {
+  .animation-container { left: -30%; }
+}
+
+@media (max-width: 900px) {
+  .animation-container {
+    width: 92vw;
+    min-width: 0;
+    left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .animation-container { min-height: 200px; }
+  .covering-line, .animated-line { width: 6px; }
+  .text-panel p { font-size: clamp(14px, 4.6vw, 18px); }
 }
