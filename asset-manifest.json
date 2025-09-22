@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.cd0c88aa.css",
-    "main.js": "/static/js/main.7512854e.js",
+    "main.css": "/static/css/main.a6a5e8d0.css",
+    "main.js": "/static/js/main.5436b8f4.js",
     "static/media/lance_pollard.jpg": "/static/media/lance_pollard.9cc9937651c7719dcca3.jpg",
     "static/media/jenn_bauer.jpg": "/static/media/jenn_bauer.fa9d505e00fbc4e77529.jpg",
     "static/media/text_messages.jpg": "/static/media/text_messages.d2a332fb5e516f93df76.jpg",
@@ -29,15 +29,16 @@
     "static/media/page_2.png": "/static/media/page_2.b350f90e54d7065cca29.png",
     "static/media/JCRPlogo.jpg": "/static/media/JCRPlogo.2de2234ad625601208fd.jpg",
     "static/media/page_8.png": "/static/media/page_8.418ce960a3d9d1877f71.png",
+    "static/media/python_logo.png": "/static/media/python_logo.4bf914cb7d3451960262.png",
     "static/media/NLStrongLogo.jpg": "/static/media/NLStrongLogo.314d1b2cf485d919e101.jpg",
     "static/media/spritesheet.svg": "/static/media/spritesheet.a4e0eb7ad904a4858361.svg",
     "static/media/icon-fullscreen.svg": "/static/media/icon-fullscreen.a8f4a7de091d4a05f2de.svg",
     "index.html": "/index.html",
-    "main.cd0c88aa.css.map": "/static/css/main.cd0c88aa.css.map",
-    "main.7512854e.js.map": "/static/js/main.7512854e.js.map"
+    "main.a6a5e8d0.css.map": "/static/css/main.a6a5e8d0.css.map",
+    "main.5436b8f4.js.map": "/static/js/main.5436b8f4.js.map"
   },
   "entrypoints": [
-    "static/css/main.cd0c88aa.css",
-    "static/js/main.7512854e.js"
+    "static/css/main.a6a5e8d0.css",
+    "static/js/main.5436b8f4.js"
   ]
 }
