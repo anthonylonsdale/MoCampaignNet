@@ -12,7 +12,6 @@ import logo4 from '../images/KCFOPLogo.png'
 import statehouse from '../images/LegDistrictMap.png'
 import logo3 from '../images/NLStrongLogo.jpg'
 import schoolboards from '../images/SchoolBoardMap.png'
-import sendgrid from '../images/SendgridDashboard.png'
 import billallen from '../images/billallen.jpg'
 import clonsdale from '../images/chrislonsdale.jpg'
 import debbieflorido from '../images/debbieflorido.jpg'
@@ -22,18 +21,9 @@ import josiahtown from '../images/josiah_town.jpg'
 import lancepollard from '../images/lance_pollard.jpg'
 import nathanwillett from '../images/nathanwillett.jpg'
 import pythonLogo from '../images/python_logo.png'
-import report1 from '../images/page_1.png'
-import report2 from '../images/page_2.png'
-import report3 from '../images/page_3.png'
-import report4 from '../images/page_4.png'
-import report5 from '../images/page_5.png'
-import report6 from '../images/page_6.png'
-import report7 from '../images/page_7.png'
-import report8 from '../images/page_8.png'
-import robocalls from '../images/robocalling.jpg'
-import textmsgs from '../images/text_messages.jpg'
-import walkbooks from '../images/walkbook_gen.JPG'
 import styles from './Homescreen.module.css'
+import OfferSectionHelper from '../components/OfferSection.jsx'
+
 
 const { Content } = Layout
 const { Title, Text } = Typography
@@ -64,129 +54,6 @@ function CarouselComponent() {
       <Carousel autoplay>
         {carouselData.map(renderCarouselItem)}
       </Carousel>
-    </div>
-  )
-}
-
-function OfferSectionHelper() {
-  const offerData = [
-    {
-      title: 'Mass Email Campaigns',
-      icon: <MailOutlined />,
-      content: [
-        'Custom-designed email templates tailored to campaign branding',
-        'Advanced audience segmentation for targeted outreach',
-        'Comprehensive analytics for campaign optimization',
-      ],
-      images: [sendgrid],
-      reverse: false,
-      size: { height: '25rem' },
-    },
-    {
-      title: 'Mass Text Campaigns',
-      icon: <MessageOutlined />,
-      content: [
-        'Personalized political messaging campaigns with high deliverability rates',
-        'Image / Video MMS capabilities for engaging and impactful content',
-        'Opt-in and compliance management guaranteed',
-      ],
-      images: [textmsgs],
-      reverse: true,
-      size: { height: '25rem' },
-    },
-    {
-      title: 'Robocalling: Surveys, Polling and Advertising',
-      icon: <PhoneOutlined />,
-      content: [
-        'Interactive voice response for surveys and polls',
-        'Efficient message delivery with voicemail drop',
-        'Scalable solutions for large-scale outreach',
-      ],
-      images: [robocalls],
-      reverse: false,
-      size: { height: '28rem' },
-    },
-    {
-      title: 'Walkbook Building and Voter Analytics',
-      icon: <LineChartOutlined />,
-      content: [
-        'Customized and deliberate walkbook creation for effective canvassing',
-        'Data-driven voter analytics for informed campaign decisions',
-        'Reliable voter data with modeled behavior analytics, party affiliation, and voting records with 85%+ confidence',
-      ],
-      images: [walkbooks],
-      reverse: true,
-      size: { height: '28rem' },
-    },
-    {
-      title: 'Professional Research and Analysis',
-      icon: <GlobalOutlined />,
-      content: [
-        'In-depth political trend analysis and forecasting',
-        'Data-driven insights into voter behavior and demographics',
-        'Advanced analytics for electoral and campaign performance',
-        'Interactive data visualizations for complex political scenarios',
-      ],
-      images: [report1, report2, report3, report4, report5, report6, report7, report8],
-      reverse: false,
-      size: { height: '42rem' },
-    },
-  ]
-
-  const renderOfferSection = (offer, index) => {
-    const { title, icon, content, images, reverse, size } = offer
-    const isMultipleImages = images.length > 1
-
-    return (
-      <Row gutter={[16, 16]} className={styles.offerSection} key={index}>
-        {!reverse && (
-          <Col xs={24} md={12}>
-            <Card className={styles.offerCard}>
-              <div className={styles.iconStyle}>
-                {icon}
-              </div>
-              <Title level={3}>{title}</Title>
-              <div className={styles.customList}>
-                {content.map((item, idx) => (<div className={styles.customListItem} key={idx}>{item}</div>))}
-              </div>
-            </Card>
-          </Col>
-        )}
-        <Col xs={24} md={12} style={{ height: size.height }}>
-          {isMultipleImages ? (
-            <Carousel autoplay slidesToShow={2} dots={false}>
-              {images.map((img, idx) => (
-                <div key={idx} style={{ width: '50%', float: 'left' }}>
-                  <img src={img} alt={`Description for ${title}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                </div>
-              ))}
-            </Carousel>
-          ) : (
-            <img src={images[0]} alt={`Description for ${title}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          )}
-        </Col>
-        {reverse && (
-          <Col xs={24} md={12}>
-            <Card className={styles.offerCard}>
-              <div className={styles.iconStyle}>
-                {icon}
-              </div>
-              <Title level={3}>{title}</Title>
-              <div className={styles.customList}>
-                {content.map((item, idx) => (
-                  <div className={styles.customListItem} key={idx}>{item}</div>
-                ))}
-              </div>
-            </Card>
-          </Col>
-        )}
-      </Row>
-    )
-  }
-
-  return (
-    <div>
-      {offerData.map(renderOfferSection)}
     </div>
   )
 }
@@ -338,7 +205,9 @@ function Homescreen() {
               </div>
             </div>
 
-            <OfferSectionHelper />
+            <section id="offers" style={{ padding: '8px 20px 24px', maxWidth: 1180, margin: '0 auto' }}>
+              <OfferSectionHelper />
+            </section>
           </Space>
         </Content>
 

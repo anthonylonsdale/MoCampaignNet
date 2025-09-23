@@ -1,0 +1,124 @@
+.section {
+  display: grid;
+  gap: 28px;
+}
+
+.offerRow {
+  margin: 0;
+}
+
+.offerCard {
+  border: 0;
+  background: linear-gradient(180deg, #ffffff, #fafbff);
+  box-shadow: 0 12px 28px rgba(21, 32, 67, 0.06);
+  border-radius: 18px;
+  padding: 22px 22px 18px;
+}
+
+.iconBubble {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  background: rgba(31, 111, 235, 0.1);
+  color: #1f6feb;
+  margin-bottom: 10px;
+}
+
+.cardTitle { margin-bottom: 6px; }
+.cardSubtitle { color: #6b7280; margin: 0 0 14px; }
+
+.customList {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.customListItem {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  align-items: start;
+  gap: 10px;
+  line-height: 1.4;
+  color: #111827;
+}
+
+.bullet {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #1f6feb;
+  margin-top: 6px;
+  box-shadow: 0 0 0 6px rgba(31, 111, 235, 0.12);
+}
+
+.tagsRow { margin-top: 2px; }
+
+.tag {
+  border: 0;
+  background: #f1f5ff;
+  color: #1f3a8a;
+  font-weight: 500;
+}
+
+.mediaCard {
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 14px 30px rgba(16, 24, 40, 0.12);
+  background: #0b1021;
+  padding: 10px;
+}
+
+.mediaWrap {
+  position: relative;
+  width: 100%;
+  height: auto; /* let it grow naturally */
+  max-height: none;
+  aspect-ratio: auto; /* don’t force landscape */
+}
+
+.mediaCarousel,
+.slide {
+  width: 100%;
+  height: 100%;
+}
+
+.slide {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: #0b1021;
+  padding: 10px;
+  overflow-y: auto;
+  max-height: 80vh;
+}
+
+.mediaImg {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+  background: #fff; /* white background behind report page */
+  box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+}
+
+/* Tweak ratios to give more vertical space on smaller screens */
+@media (max-width: 1200px) {
+  .mediaWrap { aspect-ratio: 16 / 11; max-height: min(70svh, 40rem); }
+}
+
+@media (max-width: 991px) {
+  .mediaWrap { aspect-ratio: 4 / 3; max-height: min(68svh, 36rem); }
+  .offerCard { padding: 18px 18px 16px; }
+}
+
+@media (max-width: 575px) {
+  .mediaWrap { aspect-ratio: 1 / 1; max-height: min(64svh, 28rem); }
+  .customListItem { grid-template-columns: 16px 1fr; }
+  .bullet { width: 8px; height: 8px; box-shadow: 0 0 0 5px rgba(31, 111, 235, 0.12); }
+}
