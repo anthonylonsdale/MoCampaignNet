@@ -1,62 +1,16 @@
-import { GlobalOutlined, LeftOutlined, LineChartOutlined, MailOutlined, MessageOutlined, PhoneOutlined, RightOutlined } from '@ant-design/icons'
-import { Card, Carousel, Col, Divider, Layout, Row, Space, Typography } from 'antd'
-import React, { useRef, useEffect, useState } from 'react'
+import { Layout, Typography } from 'antd'
+import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import CustomHeader from '../components/CustomHeader.jsx'
 import AppFooter from '../components/Footer.jsx'
 import DotToLineTextAnimation from '../components/styles/DotToLineTextAnimation.jsx'
 import TypingEffect from '../components/styles/TypingEffect.jsx'
-import logo2 from '../images/JCRPlogo.jpg'
-import logo1 from '../images/JacksonCountyLogo.jpg'
-import KCCouncil from '../images/KCCouncilMap.png'
-import logo4 from '../images/KCFOPLogo.png'
-import statehouse from '../images/LegDistrictMap.png'
-import logo3 from '../images/NLStrongLogo.jpg'
-import schoolboards from '../images/SchoolBoardMap.png'
-import billallen from '../images/billallen.jpg'
-import clonsdale from '../images/chrislonsdale.jpg'
-import debbieflorido from '../images/debbieflorido.jpg'
-import jayjohnson from '../images/jayjohnson.jpg'
-import jennbauer from '../images/jenn_bauer.jpg'
-import josiahtown from '../images/josiah_town.jpg'
-import lancepollard from '../images/lance_pollard.jpg'
-import nathanwillett from '../images/nathanwillett.jpg'
 import pythonLogo from '../images/python_logo.png'
 import styles from './Homescreen.module.css'
 import OfferSectionHelper from '../components/OfferSection.jsx'
 
-
 const { Content } = Layout
-const { Title, Text } = Typography
-
-function CarouselComponent() {
-  const carouselData = [
-    { image: clonsdale, text: 'Chris Lonsdale (MO R-38)' },
-    { image: billallen, text: 'Bill Allen (MO R-17)' },
-    { image: jennbauer, text: 'Jenn Bauer (Liberty Public Schools SB)' },
-    { image: jayjohnson, text: 'Jay Johnson (Clay Co Eastern Commissioner)' },
-    { image: debbieflorido, text: 'Debbie Florido (Clay Co Health Board)' },
-    { image: josiahtown, text: 'Josiah Town (Henry Co Health Board)' },
-    { image: lancepollard, text: 'Lance Pollard (Grain Valley School Board)' },
-    { image: nathanwillett, text: 'KC Councilman Nathan Willett' },
-  ]
-
-  const renderCarouselItem = (item, index) => (
-    <div className={styles.carouselItem} key={index}>
-      <img className={styles.carouselImage} src={item.image} alt={item.alt} />
-      <div className={styles.overlay}>
-        <div style={{ fontSize: '24px' }}>{item.text}</div>
-      </div>
-    </div>
-  )
-
-  return (
-    <div className={styles.carouselContainer}>
-      <Carousel autoplay>
-        {carouselData.map(renderCarouselItem)}
-      </Carousel>
-    </div>
-  )
-}
+const { Text } = Typography
 
 function useMedia(query) {
   const get = () => (typeof window !== 'undefined' && 'matchMedia' in window) ? window.matchMedia(query).matches : false
@@ -76,17 +30,16 @@ function useMedia(query) {
 }
 
 function Homescreen() {
-  const partnershipRef = useRef()
   const isMobile = useMedia('(max-width: 768px)')
 
   return (
     <>
       <CustomHeader />
       <Layout>
-        <Content>
+        <Content style={{ padding: 0, overflow: 'hidden' }}>
           <div className={styles.globalAurora} />
 
-          <Space direction="vertical" size={0} className={styles.pageStack} style={{ width: '100%' }}>
+          <div className={styles.pageStack}>
             <div className={styles.recordContainer}>
               <DotToLineTextAnimation text={'Proven Record of Success in Americas Heartland'} />
             </div>
@@ -109,6 +62,7 @@ function Homescreen() {
               </div>
               <div className={styles.heroShine} />
             </div>
+
             <div className={styles.metricsWrap}>
               <div className={`${styles.metric} ${styles.card}`}>
                 <div className={`${styles.heroTyping} ${styles.calmTyping}`}>1.5M+</div>
@@ -166,22 +120,22 @@ function Homescreen() {
                       title="MO Ad Spend Timeline"
                       loading="lazy"
                       ref={(el) => {
-                        if (!el) return;
+                        if (!el) return
                         el.onload = () => {
                           try {
-                            const w = el.contentWindow;
-                            const doc = w.document;
-                            const st = doc.createElement('style');
-                            doc.head.appendChild(st);
+                            const w = el.contentWindow
+                            const doc = w.document
+                            const st = doc.createElement('style')
+                            doc.head.appendChild(st)
 
-                            const mapEl = doc.querySelector('.folium-map');
-                            if (!mapEl) return;
-                            const map = w[mapEl.id];
-                            const go = () => map?.timeDimensionControl?._player?.start?.();
-                            if (map?.timeDimension?._availableTimes?.length) go();
-                            else map?.timeDimension?.on?.('availabletimeschanged', go);
+                            const mapEl = doc.querySelector('.folium-map')
+                            if (!mapEl) return
+                            const map = w[mapEl.id]
+                            const go = () => map?.timeDimensionControl?._player?.start?.()
+                            if (map?.timeDimension?._availableTimes?.length) go()
+                            else map?.timeDimension?.on?.('availabletimeschanged', go)
                           } catch (e) {}
-                        };
+                        }
                       }}
                     />
                   </div>
@@ -205,10 +159,14 @@ function Homescreen() {
               </div>
             </div>
 
-            <section id="offers" style={{ padding: '8px 20px 24px', maxWidth: 1180, margin: '0 auto' }}>
+            <section id="offers" style={{ padding: '8px 20px 24px', maxWidth: 1200, margin: '0 auto', width: '100%' }}>
               <OfferSectionHelper />
             </section>
-          </Space>
+
+            <div className={styles.testPlatform}>
+              <Link to="/contact" className={styles.testButton}>Contact Us</Link>
+            </div>
+          </div>
         </Content>
 
         {/* <div>
