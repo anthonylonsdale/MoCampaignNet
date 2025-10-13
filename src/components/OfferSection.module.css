@@ -1,10 +1,14 @@
 .section {
   display: grid;
   gap: 28px;
+  width: 100%;
+  max-width: 100%;
 }
 
 .offerRow {
   margin: 0;
+  width: 100%;
+  max-width: 100%;
 }
 
 .offerCard {
@@ -12,47 +16,63 @@
   background: linear-gradient(180deg, #ffffff, #fafbff);
   box-shadow: 0 12px 28px rgba(21, 32, 67, 0.06);
   border-radius: 18px;
-  padding: 22px 22px 18px;
+  padding: 18px 20px 16px;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
 }
 
 .iconBubble {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 18px;
   background: rgba(31, 111, 235, 0.1);
   color: #1f6feb;
-  margin-bottom: 10px;
+  flex-shrink: 0;
 }
 
-.cardTitle { margin-bottom: 6px; }
-.cardSubtitle { color: #6b7280; margin: 0 0 14px; }
+.cardTitle {
+  margin-bottom: 0;
+  font-size: 20px;
+}
+
+.cardSubtitle {
+  color: #6b7280;
+  margin: 0 0 10px;
+  font-size: 14px;
+}
 
 .customList {
   display: grid;
-  gap: 8px;
-  margin-bottom: 14px;
+  gap: 6px;
+  margin-bottom: 10px;
 }
 
 .customListItem {
   display: grid;
-  grid-template-columns: 18px 1fr;
+  grid-template-columns: 16px 1fr;
   align-items: start;
-  gap: 10px;
-  line-height: 1.4;
+  gap: 8px;
+  line-height: 1.45;
   color: #111827;
+  font-size: 14px;
 }
 
 .bullet {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 999px;
   background: #1f6feb;
-  margin-top: 6px;
-  box-shadow: 0 0 0 6px rgba(31, 111, 235, 0.12);
+  margin-top: 5px;
+  box-shadow: 0 0 0 5px rgba(31, 111, 235, 0.12);
 }
 
 .tagsRow { margin-top: 2px; }
@@ -70,14 +90,14 @@
   box-shadow: 0 14px 30px rgba(16, 24, 40, 0.12);
   background: #0b1021;
   padding: 10px;
+  width: 100%;
 }
 
 .mediaWrap {
   position: relative;
   width: 100%;
-  height: auto; /* let it grow naturally */
-  max-height: none;
-  aspect-ratio: auto; /* don’t force landscape */
+  height: auto;
+  aspect-ratio: 16 / 10;
 }
 
 .mediaCarousel,
@@ -88,37 +108,108 @@
 
 .slide {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   background: #0b1021;
   padding: 10px;
-  overflow-y: auto;
-  max-height: 80vh;
+  overflow: hidden;
 }
 
 .mediaImg {
-  width: auto;
-  max-width: 100%;
-  height: auto;
-  max-height: 100%;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   display: block;
-  background: #fff; /* white background behind report page */
+  background: #fff;
   box-shadow: 0 6px 14px rgba(0,0,0,0.2);
 }
 
-/* Tweak ratios to give more vertical space on smaller screens */
+/* Responsive adjustments */
 @media (max-width: 1200px) {
-  .mediaWrap { aspect-ratio: 16 / 11; max-height: min(70svh, 40rem); }
+  .mediaWrap {
+    aspect-ratio: 16 / 11;
+  }
 }
 
 @media (max-width: 991px) {
-  .mediaWrap { aspect-ratio: 4 / 3; max-height: min(68svh, 36rem); }
-  .offerCard { padding: 18px 18px 16px; }
+  .mediaWrap {
+    aspect-ratio: 4 / 3;
+  }
+  .offerCard {
+    padding: 18px 18px 16px;
+  }
 }
 
 @media (max-width: 575px) {
-  .mediaWrap { aspect-ratio: 1 / 1; max-height: min(64svh, 28rem); }
-  .customListItem { grid-template-columns: 16px 1fr; }
-  .bullet { width: 8px; height: 8px; box-shadow: 0 0 0 5px rgba(31, 111, 235, 0.12); }
+  .section {
+    gap: 16px;
+  }
+
+  .offerCard {
+    padding: 14px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+  }
+
+  .cardHeader {
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  .iconBubble {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .cardTitle {
+    font-size: 17px;
+  }
+
+  .cardSubtitle {
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+
+  .customList {
+    gap: 5px;
+    margin-bottom: 8px;
+  }
+
+  .customListItem {
+    grid-template-columns: 14px 1fr;
+    gap: 6px;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .bullet {
+    width: 6px;
+    height: 6px;
+    margin-top: 4px;
+    box-shadow: 0 0 0 4px rgba(31, 111, 235, 0.12);
+  }
+
+  .tagsRow {
+    margin-top: 6px;
+  }
+
+  .tag {
+    font-size: 11px;
+    padding: 2px 8px;
+  }
+
+  .mediaCard {
+    padding: 6px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+  }
+
+  .mediaWrap {
+    aspect-ratio: 4 / 3;
+  }
+
+  .slide {
+    padding: 6px;
+  }
 }

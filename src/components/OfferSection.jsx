@@ -24,9 +24,9 @@ export default function OfferSectionHelper() {
       title: 'Mass Email Campaigns',
       icon: <MailOutlined />,
       points: [
-        'Brand-true templates that render cleanly across clients',
-        'Audience segmentation that actually moves KPIs',
-        'Live dashboards for delivery, opens, clicks, and conversions'
+        'Fundraise, persuade, and mobilize with branded emails that land in inboxes',
+        'Segment by district, issue, donor history, and volunteer intent to move vote share',
+        'Specific donation pages tracking dollars raised, RSVPs, sign-ups, and conversions'
       ],
       tags: ['Branding', 'Segmentation', 'Analytics'],
       images: [sendgrid],
@@ -36,9 +36,9 @@ export default function OfferSectionHelper() {
       title: 'Mass Text Campaigns',
       icon: <MessageOutlined />,
       points: [
-        'High-deliverability P2P & A2P sends with personalization',
-        'MMS support for image/video moments that stand out',
-        'Compliance guardrails baked in from day one'
+        'High-deliverability A2P sends with personalization',
+        'MMS support for image/video with donation links',
+        'Creatives for rapid response, contrast hits, and event reminders',
       ],
       tags: ['MMS', 'Personalization', 'Compliance'],
       images: [textmsgs],
@@ -48,9 +48,9 @@ export default function OfferSectionHelper() {
       title: 'Robocalling: Surveys, Polling & Ads',
       icon: <PhoneOutlined />,
       points: [
-        'Structured IVR for issue ID and micro-polling',
-        'Voicemail drop for efficient message saturation',
-        'Elastic capacity for peak GOTV windows'
+        'Rapid-turn robocalls for contrast ads, event promos, and GOTV nudges',
+        'Voicemail “silent drops” for saturation without ringing — ideal for reminders & awareness',
+        'AI phone polling (IVR+LLM) to test messages, ID supporters, and track movement overnight',
       ],
       tags: ['IVR', 'Voicemail', 'Scale'],
       images: [robocalls],
@@ -60,9 +60,9 @@ export default function OfferSectionHelper() {
       title: 'Walkbook Building & Voter Analytics',
       icon: <LineChartOutlined />,
       points: [
-        'Deliberate turfing and drive-time aware routing',
-        'Behavioral & turnout models to prioritize touches',
-        'Actionable dashboards your field can actually use'
+        'Precinct-level turfing with drive-time-aware routing for maximum doors/hour',
+        'Turnout, persuasion, and donor-upgrade models to prioritize touches',
+        'Live canvass dashboards: IDs, lit drops, follow-ups, and turf completion'
       ],
       tags: ['Field Ops', 'Targeting', 'Dashboards'],
       images: [walkbooks],
@@ -118,8 +118,10 @@ export default function OfferSectionHelper() {
         viewport={{ once: true, amount: 0.3 }}
         transition={{ type: 'spring', stiffness: 110, damping: 20 }}
       >
-        <div className={styles.iconBubble}>{o.icon}</div>
-        <Title level={3} className={styles.cardTitle}>{o.title}</Title>
+        <div className={styles.cardHeader}>
+          <div className={styles.iconBubble}>{o.icon}</div>
+          <Title level={3} className={styles.cardTitle}>{o.title}</Title>
+        </div>
         <Paragraph className={styles.cardSubtitle}>{o.subtitle}</Paragraph>
         <div className={styles.customList}>
           {o.points.map((p, i) => (
