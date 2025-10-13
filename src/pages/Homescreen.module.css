@@ -170,6 +170,7 @@
 }
 
 @keyframes spinBorder {
+  from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
@@ -371,72 +372,91 @@
   display: inline-block;
 }
 
-/* ==================== CONTACT BUTTON ==================== */
-.testPlatform {
+/* ==================== CTA SECTION ==================== */
+.ctaSection {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  padding: clamp(20px, 3vw, 32px);
+  justify-content: center;
+  padding: clamp(32px, 5vw, 64px) clamp(20px, 3vw, 32px);
   width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  overflow: hidden;
 }
 
-.testButton {
+.ctaHeader {
+  margin-bottom: clamp(24px, 4vw, 32px);
+}
+
+.ctaTitle {
+  margin: 0 0 12px;
+  font-size: clamp(28px, 4.5vw, 42px);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  background: linear-gradient(90deg, #6fcaff 0%, #4aa8ff 40%, #0052cc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 180% 180%;
+  animation: gradientShift 22s ease-in-out infinite;
+}
+
+.ctaSubtitle {
+  margin: 0;
+  font-size: clamp(15px, 2vw, 18px);
+  color: #9aa6c1;
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.ctaButton {
   position: relative;
-  isolation: isolate;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 12px 24px;
+  gap: 12px;
+  padding: clamp(14px, 2vw, 18px) clamp(32px, 4vw, 48px);
   border-radius: 14px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  background: radial-gradient(140% 90% at 50% -20%, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.9) 60%, rgba(255, 255, 255, 0.86) 100%);
+  background: rgba(255, 255, 255, 0.95);
   color: #0b0d12;
-  font-size: 14px;
+  font-size: clamp(15px, 2vw, 18px);
   font-weight: 700;
   line-height: 1;
   cursor: pointer;
   text-decoration: none;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 0.5px 0 rgba(255, 255, 255, 0.5);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  overflow: visible;
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
 }
 
-.testButton::before {
-  content: "";
-  position: absolute;
-  inset: -12px;
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: -1;
-  background: conic-gradient(from 210deg at 50% 50%, #7c3aed, #3b82f6, #22d3ee, #a78bfa, #f472b6, #7c3aed),
-    radial-gradient(180px 180px at var(--mx, -1000px) var(--my, -1000px), rgba(255, 255, 255, 0.55), rgba(124, 58, 237, 0.3) 40%, transparent 70%),
-    linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.95) 50%, rgba(255, 255, 255, 0) 100%);
-  background-repeat: no-repeat, no-repeat, no-repeat;
-  background-size: cover, 0 0, 38% 100%;
-  background-position: 50% 50%, var(--mx, -1000px) var(--my, -1000px), -60% 50%;
-  filter: blur(22px);
-  opacity: 0.92;
+.ctaButton:hover {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 12px 32px rgba(255, 255, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 1);
+  transform: translateY(-2px);
 }
 
-.testButton:hover {
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.98), 0 6px 18px rgba(124, 58, 237, 0.35);
-  transform: translateY(-1px);
+.ctaButton:hover .ctaButtonArrow {
+  transform: translateX(4px);
 }
 
-.testButton:hover::before {
-  background-size: cover, 180px 180px, 38% 100%;
-  animation: sheenRun 10s linear infinite;
-}
-
-@keyframes sheenRun {
-  0% { background-position: 50% 50%, var(--mx, -1000px) var(--my, -1000px), -60% 50%; }
-  100% { background-position: 50% 50%, var(--mx, -1000px) var(--my, -1000px), 160% 50%; }
-}
-
-.testButton:active {
+.ctaButton:active {
   transform: translateY(0);
 }
+
+.ctaButtonText {
+  position: relative;
+  z-index: 1;
+}
+
+.ctaButtonArrow {
+  position: relative;
+  z-index: 1;
+  font-size: clamp(18px, 2.5vw, 22px);
+  transition: transform 0.2s ease;
+}
+
 
 /* ==================== RESPONSIVE DESIGN ==================== */
 
@@ -565,8 +585,30 @@
     font-size: clamp(24px, 8vw, 36px);
   }
 
-  .testPlatform {
-    padding: 16px 12px;
+  .ctaSection {
+    padding: 24px 12px;
+  }
+
+  .ctaHeader {
+    margin-bottom: 20px;
+  }
+
+  .ctaTitle {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  .ctaSubtitle {
+    font-size: 14px;
+  }
+
+  .ctaButton {
+    padding: 14px 28px;
+    font-size: 15px;
+  }
+
+  .ctaButtonArrow {
+    font-size: 18px;
   }
 }
 

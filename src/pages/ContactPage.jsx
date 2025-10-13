@@ -1,8 +1,11 @@
-// src/pages/ContactPage.jsx
+import { Button, Input, Layout, Typography } from 'antd'
 import React from 'react'
 import { useForm, ValidationError } from '@formspree/react'
-import { Input, Button, Typography } from 'antd'
+import CustomHeader from '../components/CustomHeader.jsx'
+import AppFooter from '../components/Footer.jsx'
+import styles from './ContactPage.module.css'
 
+const { Content } = Layout
 const { Title, Paragraph } = Typography
 
 export default function ContactPage() {
@@ -10,46 +13,117 @@ export default function ContactPage() {
 
   if (state.succeeded) {
     return (
-      <div style={{ maxWidth: 720, margin: '0 auto', padding: '32px 20px' }}>
-        <Title level={2} style={{ marginBottom: 8 }}>Thanks!</Title>
-        <Paragraph>We’ve received your message and will get back to you shortly.</Paragraph>
-      </div>
+      <>
+        <CustomHeader />
+        <Layout>
+          <Content className={styles.pageContent}>
+            <div className={styles.globalAurora} />
+            <div className={styles.successContainer}>
+              <div className={styles.successCard}>
+                <Title level={2} className={styles.successTitle}>Thank You!</Title>
+                <Paragraph className={styles.successText}>
+                  We&apos;ve received your message and will get back to you shortly.
+                </Paragraph>
+              </div>
+            </div>
+          </Content>
+        </Layout>
+        <AppFooter />
+      </>
     )
   }
 
   return (
-    <div style={{ maxWidth: 720, margin: '0 auto', padding: '32px 20px' }}>
-      <Title level={2} style={{ marginBottom: 8 }}>Contact Us</Title>
-      <Paragraph style={{ marginBottom: 24 }}>
-        We’ll get back to you quickly. Fields marked * are required.
-      </Paragraph>
+    <>
+      <CustomHeader />
+      <Layout>
+        <Content className={styles.pageContent}>
+          <div className={styles.globalAurora} />
 
-      {/* Native <form> so Formspree can capture the submit event */}
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="name" style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>Name *</label>
-        <Input id="name" name="name" size="large" placeholder="Your name" required style={{ marginBottom: 14 }} />
+          <div className={styles.contactContainer}>
+            <div className={styles.contactCard}>
+              <Title level={2} className={styles.contactTitle}>Get In Touch</Title>
+              <Paragraph className={styles.contactSubtitle}>
+                Ready to elevate your campaign? Let&apos;s discuss how we can help you achieve victory.
+              </Paragraph>
 
-        <label htmlFor="email" style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>Email *</label>
-        <Input id="email" name="email" type="email" size="large" placeholder="you@company.com" required style={{ marginBottom: 4 }} />
-        <ValidationError prefix="Email" field="email" errors={state.errors} />
+              <form onSubmit={handleSubmit} className={styles.contactForm}>
+                <div className={styles.formGroup}>
+                  <label htmlFor="name" className={styles.formLabel}>Name *</label>
+                  <Input
+                    id="name"
+                    name="name"
+                    size="large"
+                    placeholder="Your name"
+                    required
+                    className={styles.formInput}
+                  />
+                </div>
 
-        <label htmlFor="phone" style={{ display: 'block', fontWeight: 600, marginTop: 12, marginBottom: 6 }}>Phone</label>
-        <Input id="phone" name="phone" size="large" placeholder="(555) 555-5555" style={{ marginBottom: 14 }} />
+                <div className={styles.formGroup}>
+                  <label htmlFor="email" className={styles.formLabel}>Email *</label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    size="large"
+                    placeholder="you@company.com"
+                    required
+                    className={styles.formInput}
+                  />
+                  <ValidationError prefix="Email" field="email" errors={state.errors} />
+                </div>
 
-        <label htmlFor="subject" style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>Subject</label>
-        <Input id="subject" name="subject" size="large" placeholder="How can we help?" style={{ marginBottom: 14 }} />
+                <div className={styles.formGroup}>
+                  <label htmlFor="phone" className={styles.formLabel}>Phone</label>
+                  <Input
+                    id="phone"
+                    name="phone"
+                    size="large"
+                    placeholder="(555) 555-5555"
+                    className={styles.formInput}
+                  />
+                </div>
 
-        <label htmlFor="message" style={{ display: 'block', fontWeight: 600, marginBottom: 6 }}>Message *</label>
-        <Input.TextArea id="message" name="message" rows={6} placeholder="Tell us about your project…" required style={{ marginBottom: 4 }} />
-        <ValidationError prefix="Message" field="message" errors={state.errors} />
+                <div className={styles.formGroup}>
+                  <label htmlFor="subject" className={styles.formLabel}>Subject</label>
+                  <Input
+                    id="subject"
+                    name="subject"
+                    size="large"
+                    placeholder="How can we help?"
+                    className={styles.formInput}
+                  />
+                </div>
 
-        {/* Optional metadata */}
-        {/* <input type="hidden" name="_subject" value="New inquiry from website" /> */}
+                <div className={styles.formGroup}>
+                  <label htmlFor="message" className={styles.formLabel}>Message *</label>
+                  <Input.TextArea
+                    id="message"
+                    name="message"
+                    rows={6}
+                    placeholder="Tell us about your campaign goals…"
+                    required
+                    className={styles.formTextarea}
+                  />
+                  <ValidationError prefix="Message" field="message" errors={state.errors} />
+                </div>
 
-        <Button htmlType="submit" type="primary" size="large" loading={state.submitting} style={{ marginTop: 12 }}>
-          Send Message
-        </Button>
-      </form>
-    </div>
+                <Button
+                  htmlType="submit"
+                  type="primary"
+                  size="large"
+                  loading={state.submitting}
+                  className={styles.submitButton}
+                >
+                  Send Message
+                </Button>
+              </form>
+            </div>
+          </div>
+        </Content>
+      </Layout>
+      <AppFooter />
+    </>
   )
 }

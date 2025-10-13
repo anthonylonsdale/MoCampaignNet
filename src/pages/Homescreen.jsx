@@ -163,8 +163,15 @@ function Homescreen() {
               <OfferSectionHelper />
             </section>
 
-            <div className={styles.testPlatform}>
-              <Link to="/contact" className={styles.testButton}>Contact Us</Link>
+            <div className={styles.ctaSection}>
+              <div className={styles.ctaHeader}>
+                <h3 className={styles.ctaTitle}>Ready to Win?</h3>
+                <p className={styles.ctaSubtitle}>Let&apos;s discuss your campaign goals and create a winning strategy together.</p>
+              </div>
+              <Link to="/contact" className={styles.ctaButton}>
+                <span className={styles.ctaButtonText}>Get in Touch</span>
+                <span className={styles.ctaButtonArrow}>→</span>
+              </Link>
             </div>
           </div>
         </Content>

@@ -10,6 +10,7 @@ import { auth } from './auth/firebase.jsx'
 import ProtectedRoute from './auth/protectedRoute.jsx'
 import './index.css'
 import CampaignTools from './pages/CampaignTools.jsx'
+import ContactPage from './pages/ContactPage.jsx'
 import DoorknockingApp from './pages/DoorknockingApp.jsx'
 import EventCoordination from './pages/EventCoordination.jsx'
 import Homescreen from './pages/Homescreen.jsx'
@@ -67,6 +68,7 @@ root.render(
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<Homescreen />} />
+        <Route path='/contact' element={<ContactPage />} />
         <Route path='/login' element={<Auth />} />
         <Route path='/signup' element={<Signup />} />
         <Route path='/portfolio' element={<Portfolio />} />

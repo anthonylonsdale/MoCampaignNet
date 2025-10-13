@@ -1,0 +1,156 @@
+.hamburger-menu-container {
+  position: relative;
+}
+
+.hamburger-button {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  z-index: 1001;
+  transition: transform 0.3s ease;
+}
+
+.hamburger-button:hover {
+  transform: scale(1.1);
+}
+
+.hamburger-line {
+  width: 100%;
+  height: 2.5px;
+  background: #ffffff;
+  border-radius: 10px;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transform-origin: center;
+}
+
+.hamburger-button.open .hamburger-line:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.hamburger-button.open .hamburger-line:nth-child(2) {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.hamburger-button.open .hamburger-line:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+.menu-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  min-width: 200px;
+  background: linear-gradient(135deg, rgba(13, 34, 63, 0.98), rgba(30, 58, 138, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px) scale(0.95);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.menu-dropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  color: #d1d5db;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  padding-left: 24px;
+}
+
+.menu-icon {
+  font-size: 18px;
+  transition: transform 0.2s ease;
+}
+
+.menu-item:hover .menu-icon {
+  transform: scale(1.15);
+}
+
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Add a subtle pulse animation on first appearance */
+.menu-dropdown.open .menu-item {
+  animation: slideIn 0.3s ease forwards;
+  opacity: 0;
+}
+
+.menu-dropdown.open .menu-item:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.menu-dropdown.open .menu-item:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+  .menu-dropdown {
+    min-width: 160px;
+    right: -8px;
+  }
+
+  .menu-item {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+}

@@ -1,8 +1,8 @@
-import { HomeOutlined, SettingOutlined } from '@ant-design/icons'
-import { Image, Layout, Menu } from 'antd'
+import { Image, Layout } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import logo from '../images/logoblank.png'
+import HamburgerMenu from './HamburgerMenu.jsx'
 import './CustomHeader.css'
 
 const { Header } = Layout
@@ -47,19 +47,7 @@ function CustomHeader() {
         </div>
       </Link>
       <div className="header-right">
-        <Menu theme="dark" mode="horizontal" className="disable-select custom-menu">
-          <Menu.Item key="1" className="custom-menu-item" icon={<HomeOutlined />}>
-            <Link to="/">Home</Link>
-          </Menu.Item>
-          {/*
-          <Menu.Item key="2" className="custom-menu-item" icon={<UserOutlined />}>
-            <Link to="/portfolio">Portfolio</Link>
-          </Menu.Item>
-          <Menu.Item key="3" className="custom-menu-item" icon={<SettingOutlined />}>
-            <Link to="/campaign-tools">Campaign Tools</Link>
-          </Menu.Item>
-          */}
-        </Menu>
+        <HamburgerMenu />
       </div>
     </Header>
   )

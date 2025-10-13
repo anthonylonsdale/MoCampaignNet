@@ -1,0 +1,275 @@
+/* ==================== GLOBAL AURORA BACKGROUND ==================== */
+.globalAurora {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 120% at 30% 20%, rgba(18, 31, 60, 0.8) 0%, rgba(8, 12, 20, 0.92) 45%, rgba(3, 6, 12, 0.96) 100%);
+  overflow: hidden;
+}
+
+.globalAurora::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background: radial-gradient(40% 60% at 20% 30%, rgba(0, 136, 255, 0.28) 0%, transparent 60%),
+    radial-gradient(35% 55% at 80% 20%, rgba(0, 255, 163, 0.2) 0%, transparent 60%),
+    radial-gradient(50% 70% at 50% 80%, rgba(255, 0, 128, 0.16) 0%, transparent 70%);
+  filter: blur(38px) saturate(112%);
+  animation: auroraFloat 16s ease-in-out infinite;
+}
+
+@keyframes auroraFloat {
+  0%, 100% { transform: none; }
+  50% { transform: translate3d(2%, -2%, 0) scale(1.03); }
+}
+
+/* ==================== PAGE CONTENT ==================== */
+.pageContent {
+  position: relative;
+  min-height: calc(100vh - 64px);
+  padding: 0;
+  overflow: hidden;
+}
+
+/* ==================== CONTACT CONTAINER ==================== */
+.contactContainer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 64px);
+  padding: clamp(40px, 6vw, 80px) 20px;
+}
+
+.contactCard {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+  padding: clamp(32px, 5vw, 48px);
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(12px);
+  isolation: isolate;
+}
+
+.contactCard::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  border-radius: inherit;
+  background: conic-gradient(from 0deg, #6fcaff, #4aa8ff, #0052cc, #4aa8ff, #6fcaff);
+  filter: blur(12px);
+  opacity: 0.15;
+  animation: spinBorder 20s linear infinite;
+}
+
+@keyframes spinBorder {
+  to { transform: rotate(360deg); }
+}
+
+.contactTitle {
+  margin: 0 0 12px;
+  font-size: clamp(28px, 4vw, 36px);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #ffffff !important;
+  text-align: center;
+}
+
+.contactSubtitle {
+  margin: 0 0 32px;
+  color: #ffffff;
+  font-size: clamp(14px, 1.8vw, 16px);
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* ==================== FORM STYLING ==================== */
+.contactForm {
+  width: 100%;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.formLabel {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+  color: #c7d2fe;
+  margin-bottom: 8px;
+  letter-spacing: 0.01em;
+}
+
+.formInput,
+.formTextarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+.formInput:hover,
+.formTextarea:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.formInput:focus,
+.formTextarea:focus {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #4aa8ff;
+  box-shadow: 0 0 0 3px rgba(74, 168, 255, 0.15);
+}
+
+.formInput::placeholder,
+.formTextarea::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.formTextarea {
+  resize: vertical;
+  min-height: 150px;
+}
+
+.submitButton {
+  width: 100%;
+  height: 48px;
+  margin-top: 8px;
+  background: linear-gradient(135deg, #6fcaff, #4aa8ff);
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+  box-shadow: 0 8px 24px rgba(74, 168, 255, 0.35);
+  transition: all 0.2s ease;
+}
+
+.submitButton:hover {
+  background: linear-gradient(135deg, #7dd4ff, #5ab5ff);
+  box-shadow: 0 10px 28px rgba(74, 168, 255, 0.45);
+  transform: translateY(-2px);
+}
+
+.submitButton:active {
+  transform: translateY(0);
+}
+
+/* ==================== SUCCESS CONTAINER ==================== */
+.successContainer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 64px);
+  padding: 40px 20px;
+}
+
+.successCard {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  padding: 48px 32px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(12px);
+  text-align: center;
+}
+
+.successTitle {
+  margin: 0 0 16px;
+  font-size: clamp(28px, 4vw, 36px);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #ffffff !important;
+}
+
+.successText {
+  margin: 0;
+  color: #9aa6c1;
+  font-size: clamp(15px, 2vw, 17px);
+  line-height: 1.6;
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 768px) {
+  .contactContainer {
+    padding: 30px 16px;
+  }
+
+  .contactCard {
+    padding: 28px 20px;
+  }
+
+  .contactTitle {
+    font-size: 26px;
+  }
+
+  .contactSubtitle {
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .formGroup {
+    margin-bottom: 16px;
+  }
+
+  .submitButton {
+    height: 44px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contactContainer {
+    padding: 20px 12px;
+  }
+
+  .contactCard {
+    padding: 24px 16px;
+  }
+
+  .contactTitle {
+    font-size: 24px;
+  }
+
+  .contactSubtitle {
+    font-size: 13px;
+  }
+
+  .formLabel {
+    font-size: 13px;
+  }
+
+  .formInput,
+  .formTextarea {
+    font-size: 14px;
+  }
+
+  .submitButton {
+    height: 42px;
+    font-size: 14px;
+  }
+}
+
+/* ==================== REDUCED MOTION ==================== */
+@media (prefers-reduced-motion: reduce) {
+  .globalAurora,
+  .globalAurora::before,
+  .contactCard::before {
+    animation: none;
+  }
+}
