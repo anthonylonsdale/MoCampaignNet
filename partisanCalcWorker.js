@@ -100,7 +100,17 @@ self.onmessage = function(e) {
     Object.keys(districtResults[districtId]).forEach((electionCode) => {
       const parties = districtResults[districtId][electionCode]
       const sortedParties = Object.entries(parties).sort((a, b) => b[1].totalVotes - a[1].totalVotes)
-      const winningMargin = ((sortedParties[0][1].totalVotes - sortedParties[1][1].totalVotes) / sortedParties[0][1].totalVotes) * 100
+
+      if (sortedParties.length < 2) {
+        // Uncontested race - assign full party color
+        const winningParty = sortedParties[0][0]
+        districtMargins[districtId][electionCode] = winningParty === 'R' ? '#c37884' : '#3434c0'
+        return
+      }
+
+      const winningMargin = sortedParties[0][1].totalVotes > 0
+        ? ((sortedParties[0][1].totalVotes - sortedParties[1][1].totalVotes) / sortedParties[0][1].totalVotes) * 100
+        : 0
       const winningParty = sortedParties[0][0]
 
       const colorScale = chroma.scale([

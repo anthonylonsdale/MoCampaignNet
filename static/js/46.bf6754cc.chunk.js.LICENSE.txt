@@ -1,0 +1,5 @@
+/*!_map
+* leaflet.fullscreen
+* (c) Bruno B.; MIT License
+* Uses fragments from the package 'screenfull'
+*/
